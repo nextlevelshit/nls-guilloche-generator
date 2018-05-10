@@ -1,6 +1,5 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { Config } from './models/config.model';
-import * as d3 from 'd3';
 
 @Component({
   selector: 'app-root',
