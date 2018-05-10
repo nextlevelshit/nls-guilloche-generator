@@ -1,4 +1,4 @@
-<canvas appCanvas (emitConfig)="updateCanvasConfig($event)"></canvas>
+<div class="canvas" appCanvas (emitConfig)="updateCanvasConfig($event)"></div>
 
 <ul *ngIf="canvasConfig">
   <li><pre>{{canvasConfig | json}}</pre></li>

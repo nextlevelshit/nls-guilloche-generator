@@ -1,7 +1,7 @@
 import { Point } from './../models/point.model';
 import { Directive, ElementRef, Renderer, AfterViewInit, HostListener, Output, EventEmitter, OnInit } from '@angular/core';
 import { Config } from './../models/config.model';
-import { select } from 'd3-selection';
+import { select, selectAll } from 'd3-selection';
 
 @Directive({
   selector: '[appCanvas]'
@@ -14,13 +14,7 @@ export class CanvasDirective implements OnInit {
   @Output() emitConfig: EventEmitter<Config>;
   @HostListener('window:resize', ['$event'])
   private onResize(event) {
-    this.updateConfig();
-
-    if (this.svg) {
-      this.updateSvg();
-    } else {
-      this.initSvg();
-    }
+    this.init();
   }
 
   constructor(
@@ -32,13 +26,20 @@ export class CanvasDirective implements OnInit {
   }
 
   ngOnInit() {
+    this.init();
+  }
+
+  private init() {
     this.updateConfig();
     this.initSvg();
     this.render();
   }
 
   private initSvg() {
-    this.svg = select(this.canvas).append('svg')
+    if (!this.svg) {
+      this.svg = select(this.canvas).append('svg');
+    }
+    this.svg
       .attr('width', this.config.width)
       .attr('height', this.config.height);
   }
@@ -50,17 +51,25 @@ export class CanvasDirective implements OnInit {
   }
 
   private render() {
-    this.drawLine([
+    this.resetPoints();
+    this.drawPoints([
       this.config.start,
       this.config.end
     ]);
   }
 
-  private drawLine(points: Point[]) {
-    // d3.line()
-    //   .x(function(d) { return x(d.date); })
-    //   .y(function(d) { return y(d.value); })
-    //   .curve(d3.curveCatmullRom.alpha(0.5));
+  private resetPoints(): void {
+    selectAll('circle').remove();
+  }
+
+  private drawPoints(points: Point[]) {
+    points.forEach(point => {
+      this.svg.append('circle')
+        .attr('r', 50)
+        .attr('cx', point.x)
+        .attr('cy', point.y)
+        .attr('fill', '#971240');
+    });
   }
 
   private updateConfig(): void {
