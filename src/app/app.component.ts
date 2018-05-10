@@ -1,4 +1,5 @@
-import { Component } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { Config } from './models/config.model';
 import * as d3 from 'd3';
 
 @Component({
@@ -7,5 +8,9 @@ import * as d3 from 'd3';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
-  title = 'app';
+  public canvasConfig: Config|null;
+
+  public updateCanvasConfig(config): void {
+    this.canvasConfig = config;
+  }
 }

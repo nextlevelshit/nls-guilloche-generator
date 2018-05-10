@@ -9,13 +9,20 @@ canvas {
 ul {
   display: flex;
   position: absolute;
+  top: 0;
+  right: auto;
   bottom: 0;
   left: 0;
-  right: 0;
   justify-content: center;
   margin: 0;
   padding: 3rem;
   background: rgba(0,0,0,0.1);
 
   list-style-type: none;
+
+  li {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
 }

@@ -1,8 +1,6 @@
-<canvas appCanvas></canvas>
+<canvas appCanvas (emitConfig)="updateCanvasConfig($event)"></canvas>
 
-<ul>
-  <li>https://github.com/d3/d3-interpolate</li>
-  <li>https://github.com/d3/d3-timer</li>
-  <li>https://github.com/d3/d3-scale-chromatic</li>
+<ul *ngIf="canvasConfig">
+  <li><pre>{{canvasConfig | json}}</pre></li>
 </ul>
 

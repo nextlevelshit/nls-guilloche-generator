@@ -1,14 +1,15 @@
-import { Directive, ElementRef, Renderer, AfterViewInit, HostListener } from '@angular/core';
+import { Directive, ElementRef, Renderer, AfterViewInit, HostListener, Output, EventEmitter, OnInit } from '@angular/core';
 import { Config } from './../models/config.model';
 
 @Directive({
   selector: '[appCanvas]'
 })
-export class CanvasDirective implements AfterViewInit {
+export class CanvasDirective implements OnInit {
   private canvas: any;
   private context: any;
   public config: Config;
 
+  @Output() emitConfig: EventEmitter<Config>;
   @HostListener('window:resize', ['$event'])
   private onResize(event) {
     this.updateConfig();
@@ -20,9 +21,10 @@ export class CanvasDirective implements AfterViewInit {
   ) {
     this.canvas = el.nativeElement;
     this.context = this.canvas.getContext('2d');
+    this.emitConfig = new EventEmitter();
   }
 
-  ngAfterViewInit() {
+  ngOnInit() {
     this.updateConfig();
   }
 
@@ -39,6 +41,7 @@ export class CanvasDirective implements AfterViewInit {
         y: this.canvas.clientHeight
       },
     };
-    console.log(this.config);
+    // Emit Config to parent Component
+    this.emitConfig.next(this.config);
   }
 }
