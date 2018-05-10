@@ -1,7 +1,7 @@
 import { Point } from './../models/point.model';
 import { Directive, ElementRef, Renderer, AfterViewInit, HostListener, Output, EventEmitter, OnInit } from '@angular/core';
 import { Config } from './../models/config.model';
-import * as d3 from 'd3';
+import { select } from 'd3-selection';
 
 @Directive({
   selector: '[appCanvas]'
@@ -38,7 +38,7 @@ export class CanvasDirective implements OnInit {
   }
 
   private initSvg() {
-    this.svg = d3.select(this.canvas).append('svg')
+    this.svg = select(this.canvas).append('svg')
       .attr('width', this.config.width)
       .attr('height', this.config.height);
   }
