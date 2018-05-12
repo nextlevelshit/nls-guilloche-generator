@@ -1,19 +1,25 @@
-import { Directive, ElementRef, Renderer, AfterViewInit, HostListener, Output, EventEmitter, OnInit } from '@angular/core';
+import { Directive, ElementRef, Renderer, AfterViewInit, HostListener, Output, EventEmitter, OnInit, Input } from '@angular/core';
 import * as Selection from 'd3-selection';
 import * as Shape from 'd3-shape';
 
 import { Config } from './../models/config.model';
 import { Point } from './../models/point.model';
+import { Param } from './../models/param.model';
 
 @Directive({
   selector: '[appCanvas]'
 })
 export class CanvasDirective implements OnInit {
   private canvas: any;
+  private defs: any;
+  private gradient: any;
   private svg: any;
   public config: Config;
 
+  @Input() param: Param;
+
   @Output() emitConfig: EventEmitter<Config>;
+
   @HostListener('window:resize', ['$event'])
   private onResize(event) {
     this.init();
@@ -44,6 +50,17 @@ export class CanvasDirective implements OnInit {
     this.svg
       .attr('width', this.config.width)
       .attr('height', this.config.height);
+
+    this.defs = this.svg.append('defs');
+
+    this.gradient = this.defs.append('linearGradient')
+      .attr('id', 'gradient');
+    this.gradient.append('stop')
+      .attr('stop-color', this.param.colors.end)
+      .attr('offset', '0%');
+    this.gradient.append('stop')
+      .attr('stop-color', this.param.colors.start)
+      .attr('offset', '100%');
   }
 
   private render() {
@@ -69,15 +86,15 @@ export class CanvasDirective implements OnInit {
         .attr('r', 50)
         .attr('cx', point.x)
         .attr('cy', point.y)
-        .attr('fill', '#971240');
+        .attr('fill', point.color ? point.color : 'black');
     });
   }
 
   private drawLine(points: Point[]) {
     return this.svg.append('path')
       .attr('d', Shape.line().x(p => p.x).y(p => p.y)(points))
-      .attr('stroke', 'blue')
-      .attr('stroke-width', 2)
+      .attr('stroke', 'url(#gradient)')
+      .attr('stroke-width', 4)
       .attr('fill', 'none');
   }
 
@@ -91,11 +108,13 @@ export class CanvasDirective implements OnInit {
       height: this.canvas.clientHeight,
       start: {
         x: this.canvas.clientWidth,
-        y: 0
+        y: 0,
+        color: this.param.colors.start
       },
       end: {
         x: 0,
-        y: this.canvas.clientHeight
+        y: this.canvas.clientHeight,
+        color: this.param.colors.end
       },
     };
     // Emit Canvas Config to parent Component

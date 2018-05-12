@@ -9,6 +9,7 @@
 
 ul {
   display: flex;
+  flex-direction: column;
   position: absolute;
   top: 0;
   right: auto;
@@ -23,7 +24,6 @@ ul {
 
   li {
     display: flex;
-    justify-content: center;
     align-items: center;
   }
 }
