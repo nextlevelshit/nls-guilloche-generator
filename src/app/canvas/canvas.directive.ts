@@ -1,7 +1,9 @@
-import { Point } from './../models/point.model';
 import { Directive, ElementRef, Renderer, AfterViewInit, HostListener, Output, EventEmitter, OnInit } from '@angular/core';
+import * as Selection from 'd3-selection';
+import * as Shape from 'd3-shape';
+
 import { Config } from './../models/config.model';
-import { select, selectAll } from 'd3-selection';
+import { Point } from './../models/point.model';
 
 @Directive({
   selector: '[appCanvas]'
@@ -37,14 +39,8 @@ export class CanvasDirective implements OnInit {
 
   private initSvg() {
     if (!this.svg) {
-      this.svg = select(this.canvas).append('svg');
+      this.svg = Selection.select(this.canvas).append('svg');
     }
-    this.svg
-      .attr('width', this.config.width)
-      .attr('height', this.config.height);
-  }
-
-  private updateSvg() {
     this.svg
       .attr('width', this.config.width)
       .attr('height', this.config.height);
@@ -56,10 +52,15 @@ export class CanvasDirective implements OnInit {
       this.config.start,
       this.config.end
     ]);
+    this.resetLines();
+    this.drawLine([
+      this.config.start,
+      this.config.end
+    ]);
   }
 
   private resetPoints(): void {
-    selectAll('circle').remove();
+    Selection.selectAll('circle').remove();
   }
 
   private drawPoints(points: Point[]) {
@@ -70,6 +71,18 @@ export class CanvasDirective implements OnInit {
         .attr('cy', point.y)
         .attr('fill', '#971240');
     });
+  }
+
+  private drawLine(points: Point[]) {
+    return this.svg.append('path')
+      .attr('d', Shape.line().x(p => p.x).y(p => p.y)(points))
+      .attr('stroke', 'blue')
+      .attr('stroke-width', 2)
+      .attr('fill', 'none');
+  }
+
+  private resetLines(): void {
+    Selection.selectAll('path').remove();
   }
 
   private updateConfig(): void {
