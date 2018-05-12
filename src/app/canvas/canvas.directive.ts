@@ -2,6 +2,7 @@ import { Directive, ElementRef, Renderer, AfterViewInit, HostListener, Output, E
 import * as Selection from 'd3-selection';
 import * as Shape from 'd3-shape';
 import * as Random from 'd3-random';
+import * as Drag from 'd3-drag';
 
 import { Config } from './../models/config.model';
 import { Point } from './../models/point.model';
@@ -16,6 +17,7 @@ export class CanvasDirective implements OnInit {
   private gradient: any;
   private svg: any;
   private expandedPoints: Point[];
+  private drag: Point;
   public config: Config;
 
   @Input() param: Param;
@@ -51,7 +53,14 @@ export class CanvasDirective implements OnInit {
     }
     this.svg
       .attr('width', this.config.width)
-      .attr('height', this.config.height);
+      .attr('height', this.config.height)
+      .call(Drag.drag().on('drag', () => {
+        this.drag = {
+          x: Selection.event.x,
+          y: Selection.event.y
+        };
+        this.updateConfig();
+      }));
 
     this.defs = this.svg.append('defs');
 
@@ -151,6 +160,7 @@ export class CanvasDirective implements OnInit {
         y: this.canvas.clientHeight,
         color: this.param.colors.end
       },
+      drag: this.drag
     };
     // Emit Canvas Config to parent Component
     this.emitConfig.next(this.config);
