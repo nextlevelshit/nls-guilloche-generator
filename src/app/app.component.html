@@ -9,14 +9,26 @@
   <li>
     <label>
       <div>Amount of points</div>
-      <input type="number" [(ngModel)]="canvasParam.points">
+      <input type="number" [(ngModel)]="canvasParam.points" max="10" min="0" step="1">
     </label>
   </li>
   <li>
     <label>
-      <div>Margin</div>
-      <input type="number" [(ngModel)]="canvasParam.margin">
+      <div>Margin X</div>
+      <input type="number" [(ngModel)]="canvasParam.margin.x" max="1" min="0" step="0.1">
     </label>
   </li>
+  <li>
+    <label>
+      <div>Margin Y</div>
+      <input type="number" [(ngModel)]="canvasParam.margin.y" max="1" min="0" step="0.1">
+    </label>
+  </li>
+  <li>
+      <label>
+        <div>Stroke Width</div>
+        <input type="number" [(ngModel)]="canvasParam.stroke.width" max="10" min="0" step="0.1">
+      </label>
+    </li>
 </ul>
 

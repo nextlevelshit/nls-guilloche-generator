@@ -59,6 +59,15 @@ export class CanvasDirective implements OnInit, OnChanges {
   private initSvg() {
     if (!this.svg) {
       this.svg = Selection.select(this.canvas).append('svg');
+      this.defs = this.svg.append('defs');
+        this.gradient = this.defs.append('linearGradient')
+          .attr('id', 'gradient');
+        this.gradient.append('stop')
+          .attr('stop-color', this.param.colors.end)
+          .attr('offset', '0%');
+        this.gradient.append('stop')
+          .attr('stop-color', this.param.colors.start)
+          .attr('offset', '100%');
     }
     this.svg
       .attr('width', this.config.width)
@@ -78,17 +87,6 @@ export class CanvasDirective implements OnInit, OnChanges {
           this.render();
         })
       );
-
-    this.defs = this.svg.append('defs');
-
-    this.gradient = this.defs.append('linearGradient')
-      .attr('id', 'gradient');
-    this.gradient.append('stop')
-      .attr('stop-color', this.param.colors.end)
-      .attr('offset', '0%');
-    this.gradient.append('stop')
-      .attr('stop-color', this.param.colors.start)
-      .attr('offset', '100%');
   }
 
   private render() {
@@ -105,10 +103,12 @@ export class CanvasDirective implements OnInit, OnChanges {
   private drawPoints(points: Point[]) {
     points.forEach(point => {
       this.svg.append('circle')
-        .attr('r', point.color ? 50 : 10)
+        .attr('r', point.color ? 20 : 10)
         .attr('cx', point.x)
         .attr('cy', point.y)
-        .attr('fill', point.color ? point.color : 'gray');
+        .attr('fill', point.color ? point.color : 'lightgray')
+        .attr('stroke-width', !point.color ? 2 : 0)
+        .attr('stroke', !point.color ? 'gray' : '');
     });
   }
 
@@ -120,7 +120,7 @@ export class CanvasDirective implements OnInit, OnChanges {
         .curve(Shape.curveBasis)
         (points))
       .attr('stroke', 'url(#gradient)')
-      .attr('stroke-width', 4)
+      .attr('stroke-width', this.param.stroke ? this.param.stroke.width : 4)
       .attr('fill', 'none');
   }
 
@@ -141,8 +141,17 @@ export class CanvasDirective implements OnInit, OnChanges {
       }
     };
 
-    for (let i = 0; i <= this.param.points; i++) {
-      points.splice(1, 0, this.generateRandomPoint(matrix));
+    points.splice(1, 0, {
+      x: this.config.end.x,
+      y: this.config.height - this.config.height * this.param.margin.y
+    });
+    points.splice(1, 0, {
+      x: this.config.start.x,
+      y: this.config.height * this.param.margin.y
+    });
+
+    for (let i = 0; i < this.param.points; i++) {
+      points.splice(2, 0, this.generateRandomPoint(matrix));
     }
     return points;
   }
@@ -163,7 +172,7 @@ export class CanvasDirective implements OnInit, OnChanges {
   }
 
   private updateConfig(): void {
-    const margin = this.canvas.clientWidth * this.param.margin;
+    const margin = this.canvas.clientWidth * this.param.margin.x;
 
     this.config = {
       width: this.canvas.clientWidth,

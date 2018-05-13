@@ -4,5 +4,11 @@ export interface Param {
     end: string
   };
   points: number;
-  margin: number;
+  margin: {
+    x: number,
+    y: number
+  };
+  stroke?: {
+    width: number;
+  };
 }

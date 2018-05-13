@@ -21,7 +21,13 @@ export class AppComponent {
         end: '#0067cc'
       },
       points: 3,
-      margin: 0.1
+      margin: {
+        x: 0.2,
+        y: 0.4
+      },
+      stroke: {
+        width: 2
+      }
     };
   }
 
