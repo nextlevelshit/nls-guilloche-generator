@@ -1,4 +1,5 @@
-import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 
 import { Param } from './models/param.model';
 import { Config } from './models/config.model';
@@ -11,6 +12,7 @@ import { Config } from './models/config.model';
 export class AppComponent {
   public canvasConfig: Config;
   public canvasParam: Param;
+  public test: number;
 
   constructor() {
     this.canvasParam = {
@@ -18,8 +20,9 @@ export class AppComponent {
         start: '#cc0045',
         end: '#0067cc'
       },
-      points: 5
+      points: 3
     };
+    this.test = 1;
   }
 
   public updateCanvasConfig(config): void {

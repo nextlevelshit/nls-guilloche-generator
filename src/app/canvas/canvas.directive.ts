@@ -1,4 +1,4 @@
-import { Directive, ElementRef, Renderer, AfterViewInit, HostListener, Output, EventEmitter, OnInit, Input } from '@angular/core';
+import { ElementRef, HostListener, Output, EventEmitter, OnInit, Input, OnChanges, SimpleChanges, Directive } from '@angular/core';
 import * as Selection from 'd3-selection';
 import * as Shape from 'd3-shape';
 import * as Random from 'd3-random';
@@ -11,7 +11,7 @@ import { Param } from './../models/param.model';
 @Directive({
   selector: '[appCanvas]'
 })
-export class CanvasDirective implements OnInit {
+export class CanvasDirective implements OnInit, OnChanges {
   private canvas: any;
   private defs: any;
   private gradient: any;
@@ -20,9 +20,11 @@ export class CanvasDirective implements OnInit {
   private drag: Point;
   public config: Config;
 
-  @Input() param: Param;
+  @Input()
+  private param: Param;
 
-  @Output() emitConfig: EventEmitter<Config>;
+  @Output()
+  private emitConfig: EventEmitter<Config>;
 
   @HostListener('window:resize', ['$event'])
   private onResize(event) {
@@ -30,11 +32,14 @@ export class CanvasDirective implements OnInit {
   }
 
   constructor(
-    private el: ElementRef,
-    private renderer: Renderer
+    private el: ElementRef
   ) {
     this.canvas = el.nativeElement;
     this.emitConfig = new EventEmitter();
+  }
+
+  ngOnChanges(changes: SimpleChanges) {
+    console.log(changes.param);
   }
 
   ngOnInit() {
