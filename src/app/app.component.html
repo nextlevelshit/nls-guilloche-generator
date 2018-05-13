@@ -7,7 +7,16 @@
   <li><pre>{{canvasParam | json}}</pre></li>
 
   <li>
-    <div><input type="number" [(ngModel)]="canvasParam.points"></div>
+    <label>
+      <div>Amount of points</div>
+      <input type="number" [(ngModel)]="canvasParam.points">
+    </label>
+  </li>
+  <li>
+    <label>
+      <div>Margin</div>
+      <input type="number" [(ngModel)]="canvasParam.margin">
+    </label>
   </li>
 </ul>
 

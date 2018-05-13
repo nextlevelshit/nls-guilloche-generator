@@ -4,4 +4,5 @@ export interface Param {
     end: string
   };
   points: number;
+  margin: number;
 }

@@ -163,16 +163,18 @@ export class CanvasDirective implements OnInit, OnChanges {
   }
 
   private updateConfig(): void {
+    const margin = this.canvas.clientWidth * this.param.margin;
+
     this.config = {
       width: this.canvas.clientWidth,
       height: this.canvas.clientHeight,
       start: {
-        x: this.canvas.clientWidth,
+        x: this.canvas.clientWidth - margin,
         y: 0,
         color: this.param.colors.start
       },
       end: {
-        x: 0,
+        x: 0 + margin,
         y: this.canvas.clientHeight,
         color: this.param.colors.end
       },

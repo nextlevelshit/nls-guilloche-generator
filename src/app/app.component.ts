@@ -20,9 +20,9 @@ export class AppComponent {
         start: '#cc0045',
         end: '#0067cc'
       },
-      points: 3
+      points: 3,
+      margin: 0.1
     };
-    this.test = 1;
   }
 
   public updateCanvasConfig(config): void {
