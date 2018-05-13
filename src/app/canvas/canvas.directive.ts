@@ -43,6 +43,10 @@ export class CanvasDirective implements OnInit {
 
   private init() {
     this.updateConfig();
+    this.expandedPoints = this.expandPoints([
+      this.config.start,
+      this.config.end
+    ]);
     this.initSvg();
     this.render();
   }
@@ -54,13 +58,21 @@ export class CanvasDirective implements OnInit {
     this.svg
       .attr('width', this.config.width)
       .attr('height', this.config.height)
-      .call(Drag.drag().on('drag', () => {
-        this.drag = {
-          x: Selection.event.x,
-          y: Selection.event.y
-        };
-        this.updateConfig();
-      }));
+      .call(Drag.drag()
+        .on('drag', () => {
+          this.drag = {
+            x: Selection.event.x,
+            y: Selection.event.y
+          };
+          this.updateConfig();
+          this.render();
+        })
+        .on('end', () => {
+          delete this.drag;
+          this.updateConfig();
+          this.render();
+        })
+      );
 
     this.defs = this.svg.append('defs');
 
@@ -76,13 +88,9 @@ export class CanvasDirective implements OnInit {
 
   private render() {
     this.resetPoints();
-    this.expandedPoints = this.expandPoints([
-      this.config.start,
-      this.config.end
-    ]);
-    this.drawPoints(this.expandedPoints);
+    this.drawPoints(this.getExpandedPoints);
     this.resetLines();
-    this.drawLine(this.expandedPoints);
+    this.drawLine(this.getExpandedPoints);
   }
 
   private resetPoints(): void {
@@ -128,11 +136,14 @@ export class CanvasDirective implements OnInit {
       }
     };
 
-    points.splice(1, 0, this.generateRandomPoint(matrix));
-    points.splice(1, 0, this.generateRandomPoint(matrix));
-    points.splice(1, 0, this.generateRandomPoint(matrix));
-
+    for (let i = 0; i <= this.param.points; i++) {
+      points.splice(1, 0, this.generateRandomPoint(matrix));
+    }
     return points;
+  }
+
+  private get getExpandedPoints() {
+    return this.expandedPoints;
   }
 
   private calcDelta(a: Point, b: Point) {

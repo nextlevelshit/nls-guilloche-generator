@@ -1,7 +1,9 @@
 <div class="canvas" appCanvas (emitConfig)="updateCanvasConfig($event)" [param]="canvasParam"></div>
 
 <ul *ngIf="canvasConfig">
+  <li><b>Static Configuration</b></li>
   <li><pre>{{canvasConfig | json}}</pre></li>
+  <li><b>Changeable Parameters</b></li>
   <li><pre>{{canvasParam | json}}</pre></li>
 </ul>
 

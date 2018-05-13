@@ -3,4 +3,5 @@ export interface Param {
     start: string,
     end: string
   };
+  points: number;
 }

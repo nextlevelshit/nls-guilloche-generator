@@ -5,4 +5,5 @@ export interface Config {
   height: number;
   start: Point;
   end: Point;
+  drag?: Point;
 }

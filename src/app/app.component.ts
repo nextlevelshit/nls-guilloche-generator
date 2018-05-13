@@ -17,7 +17,8 @@ export class AppComponent {
       colors: {
         start: '#cc0045',
         end: '#0067cc'
-      }
+      },
+      points: 5
     };
   }
 
