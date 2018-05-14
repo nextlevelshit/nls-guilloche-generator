@@ -11,4 +11,5 @@ export interface Param {
   stroke?: {
     width: number;
   };
+  showGrid?: boolean;
 }

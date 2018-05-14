@@ -31,8 +31,6 @@ export class CanvasDirective implements OnInit, OnChanges {
   private onResize(event) {
     this.updateConfig();
     this.initSvg();
-    this.resetPoints();
-    this.resetLines();
     this.render();
   }
 
@@ -78,6 +76,9 @@ export class CanvasDirective implements OnInit, OnChanges {
   private render() {
     this.drawPoints(this.getExpandedPoints);
     this.drawLine(this.getExpandedPoints);
+    if (this.param.showGrid) {
+      this.renderGrid(this.getExpandedPoints);
+    }
   }
 
   private resetPoints(): void {
@@ -86,7 +87,7 @@ export class CanvasDirective implements OnInit, OnChanges {
 
   private drawPoints(points: Point[]) {
     const that = this;
-    const group = this.svg.append('g');
+    const group = this.svg.append('g').attr('class', 'points');
 
     points.forEach(point => {
       group.append('circle')
@@ -96,6 +97,7 @@ export class CanvasDirective implements OnInit, OnChanges {
         .attr('fill', point.color ? point.color : 'lightgray')
         .attr('stroke-width', !point.color ? 2 : 0)
         .attr('stroke', !point.color ? 'gray' : '')
+        .style('cursor', 'pointer')
         .call(Drag.drag()
           .on('drag', function() {
             Selection.select(this)
@@ -103,10 +105,7 @@ export class CanvasDirective implements OnInit, OnChanges {
               .attr('cy', Selection.event.y);
           })
           .on('end', () => {
-            // this.render();
             this.drawLine(this.getExpandedPoints);
-            console.log('end');
-            delete this.drag;
           }));
     });
   }
@@ -156,20 +155,20 @@ export class CanvasDirective implements OnInit, OnChanges {
   }
 
   private get getExpandedPoints() {
-    const circles = Selection.selectAll('circle');
+    const group = Selection.select('g.points');
     const points = [];
     const that = this;
 
     let point = null;
 
-    if (!circles.size()) {
+    if (!group.size()) {
       return this.expandPoints([
         this.config.start,
         this.config.end
       ]);
     }
 
-    circles.each(function() {
+    group.selectAll('circle').each(function() {
       point = Selection.select(this);
       points.push({
         x: point.attr('cx'),
@@ -181,7 +180,7 @@ export class CanvasDirective implements OnInit, OnChanges {
     return points;
   }
 
-  private calcDelta(a: Point, b: Point) {
+  private Δ(a: Point, b: Point) {
     return Math.pow(Math.pow(a.x - b.x, 2) + Math.pow(a.y - b.y, 2), 0.5);
   }
 
@@ -190,6 +189,32 @@ export class CanvasDirective implements OnInit, OnChanges {
       x: Random.randomUniform(matrix.min.x, matrix.max.x)(),
       y: Random.randomUniform(matrix.min.y, matrix.max.y)()
     };
+  }
+
+  private renderGrid(points: Point[]) {
+    const startingPoints = [points.shift(), points.pop()];
+    // const startingPoints = [...points];
+    let group: any;
+
+    if (!Selection.select('g.grid').size()) {
+      group = this.svg.append('g').attr('class', 'grid');
+    } else {
+      group = Selection.select('g.grid');
+    }
+
+    points.forEach(p => {
+      startingPoints.forEach(s => {
+        group.append('circle')
+        .attr('cx', s.x)
+        .attr('cy', s.y)
+        .attr('r', this.Δ(p, s))
+        .attr('stroke-width', 1)
+        .attr('fill-opacity', 0)
+        .attr('stroke', 'gainsboro');
+      });
+    });
+
+    group.lower();
   }
 
   private updateConfig(): void {

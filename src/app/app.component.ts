@@ -27,7 +27,8 @@ export class AppComponent {
       },
       stroke: {
         width: 2
-      }
+      },
+      showGrid: true
     };
   }
 
