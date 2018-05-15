@@ -29,9 +29,7 @@ export class CanvasDirective implements OnInit, OnChanges {
 
   @HostListener('window:resize', ['$event'])
   private onResize(event) {
-    this.updateConfig();
-    this.initSvg();
-    this.render();
+    // this.init();
   }
 
   constructor(
