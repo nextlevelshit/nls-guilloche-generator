@@ -28,6 +28,7 @@ export class AppComponent {
       stroke: {
         width: 2
       },
+      spread: 40,
       showGrid: true
     };
   }

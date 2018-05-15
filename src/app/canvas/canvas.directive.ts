@@ -29,6 +29,8 @@ export class CanvasDirective implements OnInit, OnChanges {
 
   @HostListener('window:resize', ['$event'])
   private onResize(event) {
+    // this.resetLines();
+    // this.resetPoints();
     // this.init();
   }
 
@@ -77,6 +79,7 @@ export class CanvasDirective implements OnInit, OnChanges {
     if (this.param.showGrid) {
       this.renderGrid(this.getExpandedPoints);
     }
+    this.spreadLines(this.getExpandedPoints);
   }
 
   private resetPoints(): void {
@@ -106,21 +109,6 @@ export class CanvasDirective implements OnInit, OnChanges {
             this.drawLine(this.getExpandedPoints);
           }));
     });
-  }
-
-  private drawLine(points: Point[]) {
-    return this.svg.append('path')
-      .attr('d', Shape.line()
-        .x(p => p.x)
-        .y(p => p.y)
-        .curve(Shape.curveBasis)(points))
-      .attr('stroke', 'url(#gradient)')
-      .attr('stroke-width', this.param.stroke ? this.param.stroke.width : 4)
-      .attr('fill', 'none');
-  }
-
-  private resetLines(): void {
-    Selection.selectAll('path').remove();
   }
 
   private expandPoints(points: Point[]) {
@@ -178,10 +166,6 @@ export class CanvasDirective implements OnInit, OnChanges {
     return points;
   }
 
-  private Δ(a: Point, b: Point) {
-    return Math.pow(Math.pow(a.x - b.x, 2) + Math.pow(a.y - b.y, 2), 0.5);
-  }
-
   private generateRandomPoint(matrix) {
     return {
       x: Random.randomUniform(matrix.min.x, matrix.max.x)(),
@@ -189,9 +173,78 @@ export class CanvasDirective implements OnInit, OnChanges {
     };
   }
 
+  private spreadLines(points: Point[]) {
+    const indexMiddle = Math.floor(points.length * 0.5);
+    const pointMiddle = points[indexMiddle];
+    const closestCenter = this.getClosestCenter(pointMiddle);
+    const radius = this.Δ(pointMiddle, closestCenter);
+    const spreadPoints = [];
+    const group = this.svg.append('g').attr('id', 'spread-points');
+
+    for (let i = 0; i < this.param.spread; i++) {
+      spreadPoints.push({
+        x: radius * Math.cos(2 * i * Math.PI / this.param.spread) + closestCenter.x,
+        y: radius * Math.sin(2 * i * Math.PI / this.param.spread) + closestCenter.y
+      });
+    }
+
+    spreadPoints.forEach(point => {
+      group.append('circle')
+        .attr('cx', point.x)
+        .attr('cy', point.y)
+        .attr('r', 10)
+        .attr('fill', 'gainsboro');
+    });
+
+    group.lower();
+  }
+
+  private getClosestCenter(point: Point) {
+      if (this.Δ(point, this.config.start) > this.Δ(point, this.config.end)) {
+        return this.config.start;
+      } else {
+        return this.config.end;
+      }
+  }
+
+  /**
+   * Draw a curve with a given set of orientation points.
+   * @param points Point
+   */
+  private drawLine(points: Point[]) {
+    return this.svg.append('path')
+      .attr('d', Shape.line()
+        .x(p => p.x)
+        .y(p => p.y)
+        .curve(Shape.curveBasis)(points))
+      .attr('stroke', 'url(#gradient)')
+      .attr('stroke-width', this.param.stroke ? this.param.stroke.width : 4)
+      .attr('fill', 'none');
+  }
+
+  /**
+   * Remove all lines from Canvas.
+   */
+  private resetLines(): void {
+    Selection.selectAll('path').remove();
+  }
+
+  /**
+   * Calculate distance between to points with coordinates.
+   * @param a
+   * @param b
+   */
+  private Δ(a: Point, b: Point) {
+    return Math.pow(Math.pow(a.x - b.x, 2) + Math.pow(a.y - b.y, 2), 0.5);
+  }
+
+  /**
+   * Render a grid with concentrical radius from starting points
+   * to the center of each orientation point.
+   * @param points
+   */
   private renderGrid(points: Point[]) {
     const startingPoints = [points.shift(), points.pop()];
-    // const startingPoints = [...points];
     let group: any;
 
     if (!Selection.select('g.grid').size()) {
@@ -211,10 +264,13 @@ export class CanvasDirective implements OnInit, OnChanges {
         .attr('stroke', 'gainsboro');
       });
     });
-
+    // Pushing group layout to the bottom of the SVG.
     group.lower();
   }
 
+  /**
+   * Update Config Parameters and emit to parent component.
+   */
   private updateConfig(): void {
     const margin = this.canvas.clientWidth * this.param.margin.x;
 
@@ -233,7 +289,7 @@ export class CanvasDirective implements OnInit, OnChanges {
       },
       drag: this.drag
     };
-    // Emit Canvas Config to parent Component
+    // Emit Canvas Config to parent Component.
     this.emitConfig.next(this.config);
   }
 }

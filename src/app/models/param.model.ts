@@ -8,6 +8,7 @@ export interface Param {
     x: number,
     y: number
   };
+  spread: number;
   stroke?: {
     width: number;
   };
