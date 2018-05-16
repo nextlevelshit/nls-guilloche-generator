@@ -29,9 +29,9 @@ export class CanvasDirective implements OnInit, OnChanges {
 
   @HostListener('window:resize', ['$event'])
   private onResize(event) {
-    // this.resetLines();
-    // this.resetPoints();
-    // this.init();
+    this.resetLines();
+    this.resetPoints();
+    this.init();
   }
 
   constructor(
@@ -142,13 +142,14 @@ export class CanvasDirective implements OnInit, OnChanges {
   }
 
   private get getExpandedPoints() {
+    
     const group = Selection.select('g.points');
     const points = [];
     const that = this;
 
     let point = null;
-
-    if (!group.size()) {
+    
+    if (group.size() <= 1) {
       return this.expandPoints([
         this.config.start,
         this.config.end
@@ -157,13 +158,13 @@ export class CanvasDirective implements OnInit, OnChanges {
 
     group.selectAll('circle').each(function() {
       point = Selection.select(this);
+        
       points.push({
         x: point.attr('cx'),
         y: point.attr('cy'),
         color: (that.param.colors.start === point.attr('fill') || that.param.colors.end === point.attr('fill')) ? point.attr('fill') : '',
       });
     });
-
     return points;
   }
 
@@ -195,8 +196,6 @@ export class CanvasDirective implements OnInit, OnChanges {
       return this.Δ(a, pointMiddle) - this.Δ(b, pointMiddle);
     });
 
-    console.log(spreadPoints);
-
     spreadPoints.some((point, index) => {
       if (this.param.showGrid) {
         group.append('circle')
@@ -212,8 +211,6 @@ export class CanvasDirective implements OnInit, OnChanges {
 
       return index === 20;
     });
-
-    // console.log();
 
     group.lower();
   }
@@ -254,6 +251,7 @@ export class CanvasDirective implements OnInit, OnChanges {
    * @param b
    */
   private Δ(a: Point, b: Point) {
+  
     return Math.pow(Math.pow(a.x - b.x, 2) + Math.pow(a.y - b.y, 2), 0.5);
   }
 
@@ -292,7 +290,7 @@ export class CanvasDirective implements OnInit, OnChanges {
    */
   private updateConfig(): void {
     const margin = this.canvas.clientWidth * this.param.margin.x;
-
+    
     this.config = {
       width: this.canvas.clientWidth,
       height: this.canvas.clientHeight,
@@ -308,6 +306,7 @@ export class CanvasDirective implements OnInit, OnChanges {
       },
       drag: this.drag
     };
+    
     // Emit Canvas Config to parent Component.
     this.emitConfig.next(this.config);
   }
