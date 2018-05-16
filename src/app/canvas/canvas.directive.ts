@@ -95,19 +95,20 @@ export class CanvasDirective implements OnInit, OnChanges {
         .attr('r', point.color ? 20 : 10)
         .attr('cx', point.x)
         .attr('cy', point.y)
-        .attr('fill', point.color ? point.color : 'lightgray')
-        .attr('stroke-width', !point.color ? 2 : 0)
-        .attr('stroke', !point.color ? 'gray' : '')
-        .style('cursor', 'pointer')
-        .call(Drag.drag()
-          .on('drag', function() {
-            Selection.select(this)
-              .attr('cx', Selection.event.x)
-              .attr('cy', Selection.event.y);
-          })
-          .on('end', () => {
-            this.drawLine(this.getExpandedPoints);
-          }));
+        .attr('fill', () => {
+          if (!this.param.showGrid) {
+            return 'none';
+          }
+          return point.color ? point.color : 'lightgray';
+        })
+        .attr('stroke-width', () => {
+          if (!this.param.showGrid) {
+            return 0;
+          }
+          return !point.color ? 2 : 0;
+        })
+        .attr('stroke', !point.color && !this.param.showGrid ? 'gray' : 'none')
+        .style('cursor', 'pointer');
     });
   }
 
@@ -184,23 +185,41 @@ export class CanvasDirective implements OnInit, OnChanges {
     for (let i = 0; i < this.param.spread; i++) {
       spreadPoints.push({
         x: radius * Math.cos(2 * i * Math.PI / this.param.spread) + closestCenter.x,
-        y: radius * Math.sin(2 * i * Math.PI / this.param.spread) + closestCenter.y
+        y: radius * Math.sin(2 * i * Math.PI / this.param.spread) + closestCenter.y,
       });
     }
 
-    spreadPoints.forEach(point => {
-      group.append('circle')
-        .attr('cx', point.x)
-        .attr('cy', point.y)
-        .attr('r', 10)
-        .attr('fill', 'gainsboro');
+    console.warn(spreadPoints);
+
+    spreadPoints.sort((a, b) => {
+      return this.Δ(a, pointMiddle) - this.Δ(b, pointMiddle);
     });
+
+    console.log(spreadPoints);
+
+    spreadPoints.some((point, index) => {
+      if (this.param.showGrid) {
+        group.append('circle')
+          .attr('cx', point.x)
+          .attr('cy', point.y)
+          .attr('r', 4)
+          .attr('fill', 'gray');
+      }
+
+      points[indexMiddle] = point;
+
+      this.drawLine(points);
+
+      return index === 20;
+    });
+
+    // console.log();
 
     group.lower();
   }
 
   private getClosestCenter(point: Point) {
-      if (this.Δ(point, this.config.start) > this.Δ(point, this.config.end)) {
+      if (this.Δ(point, this.config.start) < this.Δ(point, this.config.end)) {
         return this.config.start;
       } else {
         return this.config.end;
