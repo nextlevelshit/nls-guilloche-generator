@@ -1,6 +1,6 @@
-# NlsNg6D3jsGuilloche
+# Automated guilloche graph generator
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 6.0.0.
+![d3-guilloche](https://user-images.githubusercontent.com/10194510/40121518-0dfd8eba-5922-11e8-8109-d5cc75cad172.png)
 
 ## Development server
 
