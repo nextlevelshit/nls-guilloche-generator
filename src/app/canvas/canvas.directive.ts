@@ -75,7 +75,6 @@ export class CanvasDirective implements OnInit, OnChanges {
 
   private render() {
     this.drawPoints(this.getExpandedPoints);
-    this.drawLine(this.getExpandedPoints);
     if (this.param.showGrid) {
       this.renderGrid(this.getExpandedPoints);
     }
