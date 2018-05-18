@@ -23,6 +23,7 @@ export class CanvasDirective implements OnInit, OnChanges {
 
   @Input()
   private param: Param;
+  
 
   @Output()
   private emitConfig: EventEmitter<Config>;
@@ -31,7 +32,7 @@ export class CanvasDirective implements OnInit, OnChanges {
   private onResize(event) {
     this.resetLines();
     this.resetPoints();
-    this.init();
+    this.init();  
   }
 
   constructor(
@@ -43,6 +44,12 @@ export class CanvasDirective implements OnInit, OnChanges {
 
   ngOnChanges(changes: SimpleChanges) {
     console.log(changes.param);
+  }
+
+  ngDoCheck(){
+    this.resetLines();
+    this.resetPoints();
+    this.init();  
   }
 
   ngOnInit() {
@@ -113,6 +120,8 @@ export class CanvasDirective implements OnInit, OnChanges {
 
   private expandPoints(points: Point[]) {
     const newPoints: Point[] = [];
+    
+    
     const matrix = {
       min: {
         x: points.reduce((a, b) => a.x < b.x ? a : b).x,
@@ -123,7 +132,7 @@ export class CanvasDirective implements OnInit, OnChanges {
         y: points.reduce((a, b) => a.y > b.y ? a : b).y,
       }
     };
-
+    
     points.splice(1, 0, {
       x: this.config.end.x,
       y: this.config.height - this.config.height * this.param.margin.y
@@ -134,7 +143,7 @@ export class CanvasDirective implements OnInit, OnChanges {
     });
 
     for (let i = 0; i < this.param.points; i++) {
-      points.splice(2, 0, this.generateRandomPoint(matrix));
+      points.splice(2, 0, this.generateRandomPoint(matrix));      
     }
 
     return points;
@@ -148,7 +157,7 @@ export class CanvasDirective implements OnInit, OnChanges {
 
     let point = null;
     
-    if (group.size() <= 1) {
+    if (group.size()<=1) {
       return this.expandPoints([
         this.config.start,
         this.config.end
@@ -167,8 +176,8 @@ export class CanvasDirective implements OnInit, OnChanges {
     return points;
   }
 
-  private generateRandomPoint(matrix) {
-    return {
+  private generateRandomPoint(matrix) {    
+    return { 
       x: Random.randomUniform(matrix.min.x, matrix.max.x)(),
       y: Random.randomUniform(matrix.min.y, matrix.max.y)()
     };
@@ -288,7 +297,7 @@ export class CanvasDirective implements OnInit, OnChanges {
    * Update Config Parameters and emit to parent component.
    */
   private updateConfig(): void {
-    const margin = this.canvas.clientWidth * this.param.margin.x;
+    const margin = this.canvas.clientWidth * this.param.margin.x;    
     
     this.config = {
       width: this.canvas.clientWidth,

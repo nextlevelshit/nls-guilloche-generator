@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+// import { FormsModule } from '@angular/forms';
 
 import { Param } from './models/param.model';
 import { Config } from './models/config.model';

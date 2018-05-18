@@ -12,7 +12,7 @@ import { CanvasDirective } from './canvas/canvas.directive';
   ],
   imports: [
     BrowserModule,
-    FormsModule
+    FormsModule,
   ],
   providers: [],
   bootstrap: [AppComponent]
