@@ -22,7 +22,8 @@ export class CanvasDirective implements OnInit, OnChanges {
   public config: Config;
 
   @Input()
-  private param: Param;
+  public param: Param;
+  public marginX: Param['margin']['x'];
   
 
   @Output()
@@ -43,13 +44,17 @@ export class CanvasDirective implements OnInit, OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges) {
-    console.log(changes.param);
+    console.log("ch ch ch chaaaangesss ",changes.param);
   }
 
   ngDoCheck(){
+    this.paramAdjustment();
+  }
+
+  paramAdjustment(){
     this.resetLines();
     this.resetPoints();
-    this.init();  
+    this.init(); 
   }
 
   ngOnInit() {
@@ -121,7 +126,6 @@ export class CanvasDirective implements OnInit, OnChanges {
   private expandPoints(points: Point[]) {
     const newPoints: Point[] = [];
     
-    
     const matrix = {
       min: {
         x: points.reduce((a, b) => a.x < b.x ? a : b).x,
@@ -131,7 +135,7 @@ export class CanvasDirective implements OnInit, OnChanges {
         x: points.reduce((a, b) => a.x > b.x ? a : b).x,
         y: points.reduce((a, b) => a.y > b.y ? a : b).y,
       }
-    };
+    }
     
     points.splice(1, 0, {
       x: this.config.end.x,
@@ -143,7 +147,7 @@ export class CanvasDirective implements OnInit, OnChanges {
     });
 
     for (let i = 0; i < this.param.points; i++) {
-      points.splice(2, 0, this.generateRandomPoint(matrix));      
+      points.splice(2, 0, this.generateRandomPoint(matrix));
     }
 
     return points;
@@ -176,7 +180,8 @@ export class CanvasDirective implements OnInit, OnChanges {
     return points;
   }
 
-  private generateRandomPoint(matrix) {    
+  private generateRandomPoint(matrix) { 
+       
     return { 
       x: Random.randomUniform(matrix.min.x, matrix.max.x)(),
       y: Random.randomUniform(matrix.min.y, matrix.max.y)()
