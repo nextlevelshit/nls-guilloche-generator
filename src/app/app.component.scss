@@ -5,7 +5,6 @@
   top: 0;
   left: 0;
   overflow: hidden;
-  background: rgb(55,55,55)
 }
 
 ul {
@@ -20,11 +19,9 @@ ul {
   margin: 0;
   padding: 3rem;
   background: rgba(0,0,0,0.3);
-  // opacity: 0.3;
   transition: all 360ms 120ms ease-out;
   cursor: pointer;
   list-style-type: none;
-  color:white;
 
   &:hover {
     opacity: 1;
