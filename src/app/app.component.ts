@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-// import { FormsModule } from '@angular/forms';
 
 import { Param } from './models/param.model';
 import { Config } from './models/config.model';
@@ -26,29 +25,12 @@ export class AppComponent {
         y: 0.4
       },
       stroke: {
-        width: 2
+        width: 0.2
       },
       spread: 80,
-      showGrid: true
+      showGrid: false
     };
-
-    /**
-     * A test of canvasParam.margin change and binding to canvas.directive
-     */
-    let x = 1;
-    let intrvlId = setInterval(() => {
-      if (x < 5) {
-        this.canvasParam.margin.x += 0.2;
-        x += 1;
-        console.log("canvas param  ", this.canvasParam.margin.x);
-      } else {
-        clearInterval(intrvlId);
-      }
-    }, 1000);
-    /**
-     * 
-     */
-  };
+  }
 
   public updateCanvasConfig(config): void {
     this.canvasConfig = config;

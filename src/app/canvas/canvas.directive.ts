@@ -1,4 +1,4 @@
-import { ElementRef, HostListener, Output, EventEmitter, OnInit, Input, OnChanges, SimpleChanges, Directive } from '@angular/core';
+import { ElementRef, HostListener, Output, EventEmitter, OnInit, Input, Directive, DoCheck } from '@angular/core';
 import * as Selection from 'd3-selection';
 import * as Shape from 'd3-shape';
 import * as Random from 'd3-random';
@@ -11,7 +11,7 @@ import { Param } from './../models/param.model';
 @Directive({
   selector: '[appCanvas]'
 })
-export class CanvasDirective implements OnInit, OnChanges {
+export class CanvasDirective implements OnInit, DoCheck {
   private canvas: any;
   private defs: any;
   private gradient: any;
@@ -24,7 +24,6 @@ export class CanvasDirective implements OnInit, OnChanges {
   @Input()
   public param: Param;
   public marginX: Param['margin']['x'];
-  
 
   @Output()
   private emitConfig: EventEmitter<Config>;
@@ -33,7 +32,7 @@ export class CanvasDirective implements OnInit, OnChanges {
   private onResize(event) {
     this.resetLines();
     this.resetPoints();
-    this.init();  
+    this.init();
   }
 
   constructor(
@@ -43,18 +42,14 @@ export class CanvasDirective implements OnInit, OnChanges {
     this.emitConfig = new EventEmitter();
   }
 
-  ngOnChanges(changes: SimpleChanges) {
-    console.log("ch ch ch chaaaangesss ",changes.param);
-  }
-
-  ngDoCheck(){
+  ngDoCheck() {
     this.paramAdjustment();
   }
 
-  paramAdjustment(){
+  paramAdjustment() {
     this.resetLines();
     this.resetPoints();
-    this.init(); 
+    this.init();
   }
 
   ngOnInit() {
@@ -94,7 +89,8 @@ export class CanvasDirective implements OnInit, OnChanges {
   }
 
   private resetPoints(): void {
-    Selection.selectAll('circle').remove();
+    Selection.selectAll('g#spread-points').remove();
+    Selection.selectAll('g.points').remove();
   }
 
   private drawPoints(points: Point[]) {
@@ -125,7 +121,7 @@ export class CanvasDirective implements OnInit, OnChanges {
 
   private expandPoints(points: Point[]) {
     const newPoints: Point[] = [];
-    
+
     const matrix = {
       min: {
         x: points.reduce((a, b) => a.x < b.x ? a : b).x,
@@ -135,8 +131,8 @@ export class CanvasDirective implements OnInit, OnChanges {
         x: points.reduce((a, b) => a.x > b.x ? a : b).x,
         y: points.reduce((a, b) => a.y > b.y ? a : b).y,
       }
-    }
-    
+    };
+
     points.splice(1, 0, {
       x: this.config.end.x,
       y: this.config.height - this.config.height * this.param.margin.y
@@ -154,14 +150,13 @@ export class CanvasDirective implements OnInit, OnChanges {
   }
 
   private get getExpandedPoints() {
-    
     const group = Selection.select('g.points');
     const points = [];
     const that = this;
 
     let point = null;
-    
-    if (group.size()<=1) {
+
+    if (group.size() <= 1) {
       return this.expandPoints([
         this.config.start,
         this.config.end
@@ -170,7 +165,7 @@ export class CanvasDirective implements OnInit, OnChanges {
 
     group.selectAll('circle').each(function() {
       point = Selection.select(this);
-        
+
       points.push({
         x: point.attr('cx'),
         y: point.attr('cy'),
@@ -180,9 +175,8 @@ export class CanvasDirective implements OnInit, OnChanges {
     return points;
   }
 
-  private generateRandomPoint(matrix) { 
-       
-    return { 
+  private generateRandomPoint(matrix) {
+    return {
       x: Random.randomUniform(matrix.min.x, matrix.max.x)(),
       y: Random.randomUniform(matrix.min.y, matrix.max.y)()
     };
@@ -264,7 +258,6 @@ export class CanvasDirective implements OnInit, OnChanges {
    * @param b
    */
   private Δ(a: Point, b: Point) {
-  
     return Math.pow(Math.pow(a.x - b.x, 2) + Math.pow(a.y - b.y, 2), 0.5);
   }
 
@@ -302,8 +295,8 @@ export class CanvasDirective implements OnInit, OnChanges {
    * Update Config Parameters and emit to parent component.
    */
   private updateConfig(): void {
-    const margin = this.canvas.clientWidth * this.param.margin.x;    
-    
+    const margin = this.canvas.clientWidth * this.param.margin.x;
+
     this.config = {
       width: this.canvas.clientWidth,
       height: this.canvas.clientHeight,
@@ -319,7 +312,7 @@ export class CanvasDirective implements OnInit, OnChanges {
       },
       drag: this.drag
     };
-    
+
     // Emit Canvas Config to parent Component.
     this.emitConfig.next(this.config);
   }
