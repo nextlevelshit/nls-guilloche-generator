@@ -95,41 +95,28 @@ export class CanvasDirective implements OnChanges {
 
   private render() {
     this.drawPoints(this.getExpandedPoints);
-    if (this.param.showGrid) {
-      this.resetGrid();
-      this.renderGrid(this.getExpandedPoints);
-    }
+    this.resetGrid();
+    this.renderGrid(this.getExpandedPoints);
     this.spreadLines(this.getExpandedPoints);
   }
 
   private resetPoints(): void {
     Selection.selectAll('g#spread-points').remove();
-    Selection.selectAll('g.points').remove();
+    Selection.selectAll('g#points').remove();
   }
 
   private drawPoints(points: Point[]) {
     const that = this;
-    const group = this.svg.append('g').attr('class', 'points');
+    const group = this.svg.append('g').attr('id', 'points');
 
     points.forEach(point => {
+      const fill = !this.param.showGrid ? 'none' : point.color ? point.color : 'lightgray';
+
       group.append('circle')
-        .attr('r', point.color ? 20 : 10)
+        .attr('r', 10)
         .attr('cx', point.x)
         .attr('cy', point.y)
-        .attr('fill', () => {
-          if (!this.param.showGrid) {
-            return 'none';
-          }
-          return point.color ? point.color : 'lightgray';
-        })
-        .attr('stroke-width', () => {
-          if (!this.param.showGrid) {
-            return 0;
-          }
-          return !point.color ? 2 : 0;
-        })
-        .attr('stroke', !point.color && !this.param.showGrid ? 'gray' : 'none')
-        .style('cursor', 'pointer');
+        .attr('fill', fill);
     });
   }
 
@@ -164,13 +151,11 @@ export class CanvasDirective implements OnChanges {
   }
 
   private get getExpandedPoints() {
-    const group = Selection.select('g.points');
+    const group = Selection.select('g#points');
     const points = [];
     const that = this;
 
-    let point = null;
-
-    if (group.size() <= 1) {
+    if (!group.selectAll('circle').size()) {
       return this.expandPoints([
         this.config.start,
         this.config.end
@@ -178,7 +163,7 @@ export class CanvasDirective implements OnChanges {
     }
 
     group.selectAll('circle').each(function() {
-      point = Selection.select(this);
+      const point = Selection.select(this);
 
       points.push({
         x: point.attr('cx'),
@@ -279,6 +264,10 @@ export class CanvasDirective implements OnChanges {
    * @param points
    */
   private renderGrid(points: Point[]) {
+    if (!this.param.showGrid) {
+      return;
+    }
+
     const startingPoints = [points.shift(), points.pop()];
     const group = this.svg.append('g').attr('id', 'grid');
 
@@ -287,7 +276,7 @@ export class CanvasDirective implements OnChanges {
         group.append('circle')
         .attr('cx', s.x)
         .attr('cy', s.y)
-        .attr('r', this.Δ(p, s))
+        .attr('r', this.Δ(s, p))
         .attr('stroke-width', 1)
         .attr('fill-opacity', 0)
         .attr('stroke', 'gainsboro');
@@ -298,7 +287,9 @@ export class CanvasDirective implements OnChanges {
   }
 
   private resetGrid() {
-    if (Selection.select('g#grid').size() >= 1) {
+    const group = Selection.select('g#grid');
+
+    if (!group.size() && this.param.showGrid) {
       Selection.selectAll('g#grid').remove();
     }
   }
