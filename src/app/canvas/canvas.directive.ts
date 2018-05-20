@@ -289,7 +289,7 @@ export class CanvasDirective implements OnChanges {
   private resetGrid() {
     const group = Selection.select('g#grid');
 
-    if (!group.size() && this.param.showGrid) {
+    if (group.size() && this.param.showGrid) {
       Selection.selectAll('g#grid').remove();
     }
   }
