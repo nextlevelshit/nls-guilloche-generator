@@ -1,8 +1,17 @@
-<div appCanvas class="canvas"  (emitConfig)="updateCanvasConfig($event)" [param]="canvasParam"></div>
+<div appCanvas class="canvas"
+(emitConfig)="updateCanvasConfig($event)"
+[paramStartingColor]="canvasParam.colors.start"
+[paramEndingColor]="canvasParam.colors.end"
+[paramPoints]="canvasParam.points"
+[paramMarginX]="canvasParam.margin.x"
+[paramMarginY]="canvasParam.margin.y"
+[paramSpread]="canvasParam.spread"
+[paramStrokeWidth]="canvasParam.stroke?.width"
+[paramShowGrid]="canvasParam.showGrid"></div>
 
-<ul *ngIf="canvasConfig">
+<ul>
   <li><b>Static Configuration</b></li>
-  <li><pre>{{canvasConfig | json}}</pre></li>
+  <li *ngIf="canvasConfig"><pre>{{canvasConfig | json}}</pre></li>
   <li><b>Changeable Parameters</b></li>
   <li><pre>{{canvasParam | json}}</pre></li>
 

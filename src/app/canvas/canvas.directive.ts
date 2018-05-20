@@ -1,4 +1,4 @@
-import { ElementRef, HostListener, Output, EventEmitter, OnInit, Input, Directive, DoCheck } from '@angular/core';
+import { ElementRef, HostListener, Output, EventEmitter,  Input, Directive, SimpleChanges, OnChanges } from '@angular/core';
 import * as Selection from 'd3-selection';
 import * as Shape from 'd3-shape';
 import * as Random from 'd3-random';
@@ -11,27 +11,28 @@ import { Param } from './../models/param.model';
 @Directive({
   selector: '[appCanvas]'
 })
-export class CanvasDirective implements OnInit, DoCheck {
+export class CanvasDirective implements OnChanges {
   private canvas: any;
   private defs: any;
   private gradient: any;
   private svg: any;
   private expandedPoints: Point[];
-  private drag: Point;
-  private dragging: any;
+  private param: Param;
   public config: Config;
 
-  @Input()
-  public param: Param;
-  public marginX: Param['margin']['x'];
+  @Input() private paramStartingColor: string;
+  @Input() private paramEndingColor: string;
+  @Input() private paramMarginX: number;
+  @Input() private paramMarginY: number;
+  @Input() private paramPoints: number;
+  @Input() private paramSpread: number;
+  @Input() private paramStrokeWidth?: number;
+  @Input() private paramShowGrid?: boolean;
 
-  @Output()
-  private emitConfig: EventEmitter<Config>;
+  @Output() private emitConfig: EventEmitter<Config>;
 
   @HostListener('window:resize', ['$event'])
   private onResize(event) {
-    this.resetLines();
-    this.resetPoints();
     this.init();
   }
 
@@ -42,24 +43,36 @@ export class CanvasDirective implements OnInit, DoCheck {
     this.emitConfig = new EventEmitter();
   }
 
-  ngDoCheck() {
-    this.paramAdjustment();
-  }
-
-  paramAdjustment() {
-    this.resetLines();
-    this.resetPoints();
-    this.init();
-  }
-
-  ngOnInit() {
+  ngOnChanges(changes: SimpleChanges) {
     this.init();
   }
 
   private init() {
+    this.resetLines();
+    this.resetPoints();
+    this.updateParamObject();
     this.updateConfig();
     this.initSvg();
     this.render();
+  }
+
+  private updateParamObject() {
+    this.param = {
+      colors: {
+        start: this.paramStartingColor,
+        end: this.paramEndingColor
+      },
+      points: this.paramPoints,
+      margin: {
+        x: this.paramMarginX,
+        y: this.paramMarginY,
+      },
+      spread: this.paramSpread,
+      stroke: {
+        width: this.paramStrokeWidth
+      },
+      showGrid: this.paramShowGrid
+    };
   }
 
   private initSvg() {
@@ -83,6 +96,7 @@ export class CanvasDirective implements OnInit, DoCheck {
   private render() {
     this.drawPoints(this.getExpandedPoints);
     if (this.param.showGrid) {
+      this.resetGrid();
       this.renderGrid(this.getExpandedPoints);
     }
     this.spreadLines(this.getExpandedPoints);
@@ -197,8 +211,6 @@ export class CanvasDirective implements OnInit, DoCheck {
       });
     }
 
-    console.warn(spreadPoints);
-
     spreadPoints.sort((a, b) => {
       return this.Δ(a, pointMiddle) - this.Δ(b, pointMiddle);
     });
@@ -268,13 +280,7 @@ export class CanvasDirective implements OnInit, DoCheck {
    */
   private renderGrid(points: Point[]) {
     const startingPoints = [points.shift(), points.pop()];
-    let group: any;
-
-    if (!Selection.select('g.grid').size()) {
-      group = this.svg.append('g').attr('class', 'grid');
-    } else {
-      group = Selection.select('g.grid');
-    }
+    const group = this.svg.append('g').attr('id', 'grid');
 
     points.forEach(p => {
       startingPoints.forEach(s => {
@@ -289,6 +295,12 @@ export class CanvasDirective implements OnInit, DoCheck {
     });
     // Pushing group layout to the bottom of the SVG.
     group.lower();
+  }
+
+  private resetGrid() {
+    if (Selection.select('g#grid').size() >= 1) {
+      Selection.selectAll('g#grid').remove();
+    }
   }
 
   /**
@@ -309,8 +321,7 @@ export class CanvasDirective implements OnInit, DoCheck {
         x: 0 + margin,
         y: this.canvas.clientHeight,
         color: this.param.colors.end
-      },
-      drag: this.drag
+      }
     };
 
     // Emit Canvas Config to parent Component.

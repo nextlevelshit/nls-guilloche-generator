@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 
 import { Param } from './models/param.model';
 import { Config } from './models/config.model';
@@ -11,7 +11,6 @@ import { Config } from './models/config.model';
 export class AppComponent {
   public canvasConfig: Config;
   public canvasParam: Param;
-  public test: number;
 
   constructor() {
     this.canvasParam = {
@@ -28,7 +27,7 @@ export class AppComponent {
         width: 0.2
       },
       spread: 80,
-      showGrid: false
+      showGrid: true
     };
   }
 
