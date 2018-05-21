@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 
 import { Param } from './models/param.model';
 import { Config } from './models/config.model';
@@ -24,10 +24,10 @@ export class AppComponent {
         y: 0.4
       },
       stroke: {
-        width: 0.2
+        width: 2
       },
-      spread: 80,
-      showGrid: true
+      spread: 20,
+      showGrid: false
     };
   }
 

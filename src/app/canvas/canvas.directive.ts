@@ -184,20 +184,23 @@ export class CanvasDirective implements OnChanges {
   private spreadLines(points: Point[]) {
     const indexMiddle = Math.floor(points.length * 0.5);
     const pointMiddle = points[indexMiddle];
-    const closestCenter = this.getClosestCenter(pointMiddle);
+    const closestCenter = this.getFarestCenter(pointMiddle);
     const radius = this.Δ(pointMiddle, closestCenter);
     const spreadPoints = [];
     const group = this.svg.append('g').attr('id', 'spread-points');
+    const pies = 80;
 
-    for (let i = 0; i < this.param.spread; i++) {
+    for (let i = 0; i < pies; i++) {
       spreadPoints.push({
-        x: radius * Math.cos(2 * i * Math.PI / this.param.spread) + closestCenter.x,
-        y: radius * Math.sin(2 * i * Math.PI / this.param.spread) + closestCenter.y,
+        x: radius * Math.cos(2 * i * Math.PI / pies) + closestCenter.x,
+        y: radius * Math.sin(2 * i * Math.PI / pies) + closestCenter.y,
       });
     }
 
     spreadPoints.sort((a, b) => {
       return this.Δ(a, pointMiddle) - this.Δ(b, pointMiddle);
+      // Good possibility to align orientation points outsite
+      // return this.Δ(b, pointMiddle) - this.Δ(a, pointMiddle);
     });
 
     spreadPoints.some((point, index) => {
@@ -213,18 +216,26 @@ export class CanvasDirective implements OnChanges {
 
       this.drawLine(points);
 
-      return index === 20;
+      return index === this.param.spread - 1;
     });
 
     group.lower();
   }
 
   private getClosestCenter(point: Point) {
-      if (this.Δ(point, this.config.start) < this.Δ(point, this.config.end)) {
-        return this.config.start;
-      } else {
-        return this.config.end;
-      }
+    if (this.Δ(point, this.config.start) < this.Δ(point, this.config.end)) {
+      return this.config.start;
+    } else {
+      return this.config.end;
+    }
+  }
+
+  private getFarestCenter(point: Point) {
+    if (this.Δ(point, this.config.start) > this.Δ(point, this.config.end)) {
+      return this.config.start;
+    } else {
+      return this.config.end;
+    }
   }
 
   /**
@@ -287,11 +298,7 @@ export class CanvasDirective implements OnChanges {
   }
 
   private resetGrid() {
-    const group = Selection.select('g#grid');
-
-    if (group.size() && this.param.showGrid) {
-      Selection.selectAll('g#grid').remove();
-    }
+    Selection.selectAll('g#grid').remove();
   }
 
   /**
@@ -314,7 +321,6 @@ export class CanvasDirective implements OnChanges {
         color: this.param.colors.end
       }
     };
-
     // Emit Canvas Config to parent Component.
     this.emitConfig.next(this.config);
   }
