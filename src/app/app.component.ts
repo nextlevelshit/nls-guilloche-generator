@@ -38,7 +38,8 @@ export class AppComponent implements OnInit {
       width: 10,
       height: -20,
       directionStart: 180,
-      directionEnd: 270
+      directionEnd: 270,
+      nodes: 1
     };
   }
 
@@ -48,7 +49,8 @@ export class AppComponent implements OnInit {
       width: 10,
       height: -20,
       directionStart: 180,
-      directionEnd: 270
+      directionEnd: 270,
+      nodes: 1
     }});
   }
 

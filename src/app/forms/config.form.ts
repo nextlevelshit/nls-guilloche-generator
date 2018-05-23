@@ -13,5 +13,8 @@ export let ConfigForm: FormGroup = fb.group({
     Validators.min(0),
     Validators.max(360)
   ])),
-  nodes: fb.control('', Validators.min(1))
+  nodes: fb.control('', Validators.compose([
+    Validators.min(1),
+    Validators.max(10)
+  ]))
 });

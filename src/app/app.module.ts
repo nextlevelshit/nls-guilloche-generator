@@ -7,6 +7,7 @@ import { CanvasDirective } from './directives/canvas.directive';
 import { GraphsComponent } from './components/graphs.component';
 // import { GuillocheComponent } from './components/guilloche.component';
 import { GuillocheDirective } from './directives/guilloche.directive';
+import { CanvasService } from './services/canvas.service';
 
 @NgModule({
   declarations: [
@@ -21,7 +22,9 @@ import { GuillocheDirective } from './directives/guilloche.directive';
     ReactiveFormsModule,
     FormsModule,
   ],
-  providers: [],
+  providers: [
+    CanvasService
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
