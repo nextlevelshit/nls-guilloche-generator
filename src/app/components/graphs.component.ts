@@ -1,10 +1,9 @@
-import { ViewChildren, QueryList, Component, AfterViewInit, ViewChild, Input, OnInit } from '@angular/core';
+import { ViewChildren, QueryList, Component, AfterViewInit, ViewChild, Input, OnInit, SimpleChanges, OnChanges } from '@angular/core';
 import * as Selection from 'd3-selection';
 import * as Shape from 'd3-shape';
 import * as Random from 'd3-random';
 import * as Drag from 'd3-drag';
 
-// import { GuillocheComponent } from './../components/guilloche.component';
 import { GuillocheDirective } from './../directives/guilloche.directive';
 import { Graph } from '../models/graph.model';
 
@@ -13,10 +12,8 @@ import { Graph } from '../models/graph.model';
   templateUrl: './graphs.component.html',
   styleUrls: ['./graphs.component.scss']
 })
-export class GraphsComponent implements AfterViewInit, OnInit {
+export class GraphsComponent implements AfterViewInit, OnInit, OnChanges {
 
-  // public width: number;
-  // public height: number;
   public graphs: Graph[];
   public svg: any;
 
@@ -27,22 +24,30 @@ export class GraphsComponent implements AfterViewInit, OnInit {
   @ViewChildren(GuillocheDirective) guillocheViewChildren: QueryList<GuillocheDirective>;
 
   ngOnInit() {
-    // this.width = 0;
-    // this.height = 0;
-    this.graphs = [...[{
-      id: 'first',
-      start: {coords: { x: 0, y: 0 }, direction: this.config.start.direction },
-      end: { coords: { x: 0, y: -10 }, direction: this.config.end.direction}
-    }, {
-      id: 'second',
-      start: {coords: { x: 0, y: 0 }, direction: this.config.end.direction },
-      end: { coords: { x: 0, y: -10 }, direction: this.config.start.direction}
-    }]];
+    this.updateGraphs();
+  }
+
+  ngOnChanges(changes: SimpleChanges) {
+    console.log('graph component (changes)', changes.config);
+
+    this.updateGraphs();
   }
 
   ngAfterViewInit() {
     this.svg = Selection.select(this.svgElementRef.nativeElement);
 
-    console.log('graph component', this.guillocheViewChildren.toArray());
+    console.log('graph component (after view)', this.guillocheViewChildren.toArray());
+  }
+
+  private updateGraphs(): void {
+    this.graphs = [...[{
+      id: 'first',
+      start: {coords: { x: 0, y: 0 }, direction: this.config.directionStart },
+      end: { coords: { x: 0, y: -10 }, direction: this.config.directionEnd}
+    }, {
+      id: 'second',
+      start: {coords: { x: 0, y: 0 }, direction: this.config.directionEnd },
+      end: { coords: { x: 0, y: -10 }, direction: this.config.directionStart}
+    }]];
   }
 }

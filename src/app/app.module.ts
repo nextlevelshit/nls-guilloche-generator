@@ -1,6 +1,6 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 
 import { AppComponent } from './app.component';
 import { CanvasDirective } from './directives/canvas.directive';
@@ -18,6 +18,7 @@ import { GuillocheDirective } from './directives/guilloche.directive';
   ],
   imports: [
     BrowserModule,
+    ReactiveFormsModule,
     FormsModule,
   ],
   providers: [],

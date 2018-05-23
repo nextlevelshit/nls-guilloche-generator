@@ -49,3 +49,43 @@
   </li>
 </ul>
 
+<aside>
+  <form [formGroup]="configForm" (ngSubmit)="updateGraphs()" novalidate>
+    <div class="form-group">
+      <label class="form-control-label">
+        Breite <small>(bspw. 42, -12, 3.2)</small>
+      </label>
+      <input type="number" class="form-control" formControlName="width">
+    </div>
+    <div class="form-group">
+      <label class="form-control-label">
+        Höhe <small>(bspw. 42, -12, 3.2)</small>
+      </label>
+      <input type="number" class="form-control" formControlName="height">
+    </div>
+    <div class="form-group">
+      <label class="form-control-label">
+        Anfangsvektor
+      </label>
+      <select class="form-control" formControlName="directionStart">
+        <option value="0">Oben</option>
+        <option value="90">Rechts</option>
+        <option value="180">Unten</option>
+        <option value="270">Links</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label class="form-control-label">
+        Endvektor
+      </label>
+      <select class="form-control" formControlName="directionEnd">
+        <option value="0">Oben</option>
+        <option value="90">Rechts</option>
+        <option value="180">Unten</option>
+        <option value="270">Links</option>
+      </select>
+    </div>
+    <button type="submit" class="btn btn-primary" [disabled]="configForm.invalid">Aktualisieren</button>
+  </form>
+</aside>
+

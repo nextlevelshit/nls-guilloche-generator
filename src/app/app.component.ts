@@ -1,17 +1,20 @@
+import { ConfigForm } from './forms/config.form';
 import { Component, OnInit } from '@angular/core';
 
 import { Param } from './models/param.model';
 import { Config } from './models/config.model';
+import { FormGroup } from '@angular/forms';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss']
 })
-export class AppComponent {
+export class AppComponent implements OnInit {
 
   public canvasParam: Param;
-  public config: any;
+  public config: any | null;
+  public configForm: FormGroup;
 
   constructor() {
     this.canvasParam = {
@@ -32,16 +35,24 @@ export class AppComponent {
     };
 
     this.config = {
-      start: {
-        direction: 0
-      },
-      end: {
-        direction: 270,
-        position: {
-          x: 16,
-          y: -9
-        }
-      }
+      width: 10,
+      height: -20,
+      directionStart: 180,
+      directionEnd: 270
     };
+  }
+
+  ngOnInit() {
+    this.configForm = ConfigForm;
+    this.configForm.reset({...{
+      width: 10,
+      height: -20,
+      directionStart: 180,
+      directionEnd: 270
+    }});
+  }
+
+  public updateGraphs() {
+    this.config = {...this.configForm.value};
   }
 }

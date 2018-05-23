@@ -1,5 +1,5 @@
 import { Graph } from './../models/graph.model';
-import { ElementRef, HostListener, Output, EventEmitter, Input, Directive, OnInit } from '@angular/core';
+import { ElementRef, HostListener, Output, EventEmitter, Input, Directive, OnInit, OnChanges, SimpleChanges } from '@angular/core';
 import * as Selection from 'd3-selection';
 import * as Shape from 'd3-shape';
 import * as Random from 'd3-random';
@@ -12,14 +12,14 @@ import { Param } from './../models/param.model';
 @Directive({
   selector: '[guilloche]'
 })
-export class GuillocheDirective implements OnInit {
+export class GuillocheDirective implements OnChanges {
 
   @Input() graph: Graph;
 
   constructor() {
   }
 
-  ngOnInit() {
-    console.log('guilloche directive', this.graph);
+  ngOnChanges(changes: SimpleChanges) {
+    console.log('guilloche directive (changes)', changes.graph);
   }
 }
