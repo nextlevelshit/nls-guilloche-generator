@@ -142,7 +142,7 @@ export class GraphsComponent implements AfterViewInit, OnChanges {
   }
 
   private get randomPoint() {
-    const overlap = env.guilloche.overlap;
+    const overlap = this.config.overlap;
     const x = {
       min: this.matrix.center.x - this.matrix.width * overlap,
       max: this.matrix.center.x + this.matrix.width * overlap

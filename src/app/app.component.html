@@ -13,7 +13,7 @@
 <aside class="col-sm-4 col-lg-3 col-xl-3">
   <form [formGroup]="configForm" (ngSubmit)="updateGraphs()" novalidate>
     <div class="pb-5">
-      <h5>Seitenverhältnis</h5>
+      <h5>Grundfläche</h5>
       <hr>
       <div class="form-group">
         <label class="form-control-label">
@@ -29,14 +29,20 @@
       </div>
       <div class="form-group">
         <label class="form-control-label">
-          Linienstärke
+          Skalierung
         </label>
-        <input type="number" class="form-control" formControlName="stroke" min="0.1" max="10" step="0.1">
+        <input type="number" class="form-control" formControlName="scale" min="0" max="1" step="0.01">
       </div>
     </div>
     <div class="pb-5">
-      <h5>Vektoren</h5>
+      <h5>Vektorfläche</h5>
       <hr>
+      <div class="form-group">
+        <label class="form-control-label">
+          Skalierung
+        </label>
+        <input type="number" class="form-control" formControlName="overlap">
+      </div>
       <ng-container formGroupName="vectors">
         <div class="form-group">
           <label class="form-control-label">
@@ -60,29 +66,30 @@
             <option value="1.5">Links</option>
           </select>
         </div>
+
         <div class="form-group">
           <label class="form-control-label">
-            Vektordehnung
+            Dehnung
           </label>
           <input type="number" class="form-control" formControlName="range" min="0" max="1" step="0.1">
         </div>
       </ng-container>
     </div>
-    <h5 class="mt-2">Ausdehnung</h5>
+    <h5 class="mt-2">Graph</h5>
     <!-- <hr>
     <small>Anzahl der Schwingungen mittels Knotenpunkten bestimmen und die Skalierung auf der Leinwand einstellen.</small> -->
     <hr>
-    <div class="form-group">
-      <label class="form-control-label">
-        Skalierung
-      </label>
-      <input type="number" class="form-control" formControlName="scale" min="0" max="1" step="0.01">
-    </div>
     <div class="form-group mb-4">
       <label class="form-control-label">
         Knotenpunkte
       </label>
       <input type="number" class="form-control" formControlName="nodes" min="1" max="10">
+    </div>
+    <div class="form-group">
+      <label class="form-control-label">
+        Linienstärke
+      </label>
+      <input type="number" class="form-control" formControlName="stroke" min="0.1" max="10" step="0.1">
     </div>
     <div class="dropdown-divider mb-4"></div>
     <button type="submit" class="btn btn-lg btn-primary btn-block" [disabled]="configForm.invalid">Aktualisieren</button>
