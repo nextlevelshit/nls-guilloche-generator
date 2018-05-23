@@ -57,34 +57,56 @@ export class GraphsComponent implements AfterViewInit, OnChanges {
   private updateGraphs(): void {
     const matrix = this.matrix;
 
-    this.graphs = [...[{
+    this.graphs = [...[this.adjustGraph('start'), this.adjustGraph('end')]];
+  }
+
+  private adjustGraph(from: string) {
+    const matrix = this.matrix;
+    const to = this.flipflop(from);
+
+    return {
       start: {
-        coords: { x: matrix.start.x, y: matrix.start.y },
+        coords: { x: matrix[from].x, y: matrix[from].y },
         direction: this.config.directionStart,
-        color: env.guilloche.colors.start
+        color: env.guilloche.colors[from]
       }, end: {
-        coords: { x: matrix.end.x, y: matrix.end.y },
+        coords: { x: matrix[to].x, y: matrix[to].y },
         direction: this.config.directionEnd,
-        color: env.guilloche.colors.end
+        color: env.guilloche.colors[to]
       },
-      stroke: this.config.stroke
-    }, {
-      start: {
-        coords: { x: matrix.end.x, y: matrix.end.y },
-        direction: this.config.directionEnd,
-        color: env.guilloche.colors.start
-      }, end: {
-        coords: { x: matrix.start.x, y: matrix.start.y },
-        direction: this.config.directionStart,
-        color: env.guilloche.colors.end
-      },
-      stroke: this.config.stroke
-    }]];
+      stroke: this.config.stroke,
+      nodes: []
+    };
+
+    // {
+    //   start: {
+    //     coords: { x: matrix.end.x, y: matrix.end.y },
+    //     direction: this.config.directionEnd,
+    //     color: env.guilloche.colors.start
+    //   }, end: {
+    //     coords: { x: matrix.start.x, y: matrix.start.y },
+    //     direction: this.config.directionStart,
+    //     color: env.guilloche.colors.end
+    //   },
+    //   stroke: this.config.stroke,
+    //   nodes: []
+    // }
+  }
+
+  private flipflop(direction: string) {
+    return (direction === 'start') ? 'end' : 'start';
   }
 
   private updateCanvas(): void {
     this.canvas = this.svgElementRef.nativeElement;
     this.canvasService.set(this.canvas);
+  }
+
+  private centerPoint(width, height): Point {
+    return {
+      x: width * 0.5,
+      y: height * 0.5
+    };
   }
 
   private get matrix() {
@@ -104,13 +126,6 @@ export class GraphsComponent implements AfterViewInit, OnChanges {
         x: totalCenter.x + baseCenter.x,
         y: totalCenter.y - baseCenter.y
       }
-    };
-  }
-
-  private centerPoint(width, height): Point {
-    return {
-      x: width * 0.5,
-      y: height * 0.5
     };
   }
 }

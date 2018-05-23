@@ -17,6 +17,7 @@ export class GuillocheDirective implements OnChanges {
 
   private canvas: any;
   private group: any;
+  private gradientId: any;
 
   @Input() graph: Graph;
 
@@ -26,6 +27,7 @@ export class GuillocheDirective implements OnChanges {
   ) {
     this.group = Selection.select(el.nativeElement);
     this.canvas = Selection.select(this.canvasService.get);
+    this.gradientId = 'linear';
   }
 
   ngOnChanges(changes: SimpleChanges) {
@@ -36,6 +38,16 @@ export class GuillocheDirective implements OnChanges {
   private drawGraph(): void {
     console.log('guilloche directive(drawGraph)', this.graph);
 
+    const defs = this.group.append('defs');
+    const grad = defs.append('linearGradient')
+      .attr('id', this.gradientId);
+    grad.append('stop')
+      .attr('stop-color', this.graph.start.color)
+      .attr('offset', '0%');
+    grad.append('stop')
+      .attr('stop-color', this.graph.end.color)
+      .attr('offset', '100%');
+
     this.group.append('path')
       .attr('d', Shape.line()
         .x(p => p.x)
@@ -44,7 +56,7 @@ export class GuillocheDirective implements OnChanges {
           this.graph.start.coords,
           this.graph.end.coords
         ]))
-      .attr('stroke', 'url(#gradient)')
+      .attr('stroke', `url(#${this.gradientId})`)
       .attr('stroke-width', this.graph.stroke)
       .attr('fill', 'none');
 
