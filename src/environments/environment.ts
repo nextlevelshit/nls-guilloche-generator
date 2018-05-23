@@ -11,11 +11,11 @@ export const environment = {
     }
   },
   formDefaults: {
-    width: 10,
-    height: 10,
-    directionStart: 180,
-    directionEnd: 270,
-    nodes: 1,
+    width: 9,
+    height: 16,
+    directionStart: 0,
+    directionEnd: 180,
+    nodes: 3,
     scale: 0.3
   }
 };
