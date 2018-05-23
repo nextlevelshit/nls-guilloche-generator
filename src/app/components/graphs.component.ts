@@ -65,23 +65,27 @@ export class GraphsComponent implements AfterViewInit, OnChanges {
     const to = this.flipflop(from);
     const startPoint = { x: this.matrix[from].x, y: this.matrix[from].y };
     const endPoint = { x: this.matrix[to].x, y: this.matrix[to].y };
+    const expandedPoints = [];
 
-    console.error(from, '->', to);
+    for (let i = 0; i < this.config.nodes; i++) {
+      expandedPoints.push(this.randomPoint);
+    }
 
     return {
       id: `${from}-to-${to}`,
       start: {
         coords: startPoint,
         direction: this.config.vectors[from],
-        color: env.guilloche.colors.start
+        color: env.guilloche.colors[from]
       }, end: {
         coords: endPoint,
         direction: this.config.vectors[to],
-        color: env.guilloche.colors.end
+        color: env.guilloche.colors[to]
       },
       stroke: this.config.stroke,
       nodes: [
         this.vectorPoint(startPoint, this.config.vectors[from]),
+        ...expandedPoints,
         this.vectorPoint(endPoint, this.config.vectors[to])
       ]
     };
@@ -123,18 +127,36 @@ export class GraphsComponent implements AfterViewInit, OnChanges {
         y: totalCenter.y - baseCenter.y
       },
       width: baseWidthScaled,
-      height: baseHeightScaled
+      height: baseHeightScaled,
+      center: totalCenter
     };
   }
 
   private vectorPoint(point: Point, direction: number) {
     const range = this.Δ(this.matrix.start, this.matrix.end) * this.config.vectors.range;
 
-    console.log('graphs component(vectorPoint)', point, direction);
-
     return {
       x: range * Math.sin(Math.PI * direction) + point.x,
       y: range * Math.cos(Math.PI * direction) + point.y
+    };
+  }
+
+  private get randomPoint() {
+    const overlap = env.guilloche.overlap;
+    const x = {
+      min: this.matrix.center.x - this.matrix.width * overlap,
+      max: this.matrix.center.x + this.matrix.width * overlap
+    };
+    const y = {
+      min: this.matrix.center.y - this.matrix.height * overlap,
+      max: this.matrix.center.y + this.matrix.height * overlap
+    };
+
+    console.log(this.matrix.center);
+
+    return {
+      x: Random.randomUniform(x.min, x.max)(),
+      y: Random.randomUniform(y.min, y.max)()
     };
   }
 

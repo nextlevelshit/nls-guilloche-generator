@@ -8,7 +8,8 @@ export const environment = {
     colors: {
       start: '#cc0045',
       end: '#0067cc'
-    }
+    },
+    overlap: 1.4
   },
   controls: {
     wheelStep: 0.01

@@ -16,27 +16,29 @@ export class AppComponent implements OnInit {
   public canvasParam: Param;
   public config: any | null;
   public configForm: FormGroup;
+  public scaleOnWheel: boolean;
 
   @HostListener('mousewheel', ['$event'])
   private onMousewheel(event) {
-    const delta = Math.sign(event.deltaY);
-    const step = env.controls.wheelStep;
-
     this.config = {...this.configForm.value};
 
-    if (delta > 0) {
-      if (this.config.scale === 1 - step) {
-        return;
-      }
-      this.config.scale += step;
-    } else {
-      if (this.config.scale === step) {
-        return;
-      }
-      this.config.scale -= step;
-    }
+    if (this.scaleOnWheel) {
+      const delta = Math.sign(event.deltaY);
+      const step = env.controls.wheelStep;
 
-    this.config.scale = Math.round(this.config.scale / step) * step;
+      if (delta > 0) {
+        if (this.config.scale === 1 - step) {
+          return;
+        }
+        this.config.scale += step;
+      } else {
+        if (this.config.scale === step) {
+          return;
+        }
+        this.config.scale -= step;
+      }
+      this.config.scale = Math.round(this.config.scale / step) * step;
+    }
     this.configForm.reset({...this.config});
     this.updateGraphs();
   }
