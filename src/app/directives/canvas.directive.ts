@@ -7,6 +7,7 @@ import * as Drag from 'd3-drag';
 import { Config } from './../models/config.model';
 import { Point } from './../models/point.model';
 import { Param } from './../models/param.model';
+import { GuillocheDirective } from './guilloche.directive';
 
 @Directive({
   selector: '[appCanvas]'
@@ -40,7 +41,6 @@ export class CanvasDirective implements OnChanges {
     private el: ElementRef
   ) {
     this.canvas = el.nativeElement;
-    this.emitConfig = new EventEmitter();
   }
 
   ngOnChanges(changes: SimpleChanges) {
@@ -321,7 +321,5 @@ export class CanvasDirective implements OnChanges {
         color: this.param.colors.end
       }
     };
-    // Emit Canvas Config to parent Component.
-    this.emitConfig.next(this.config);
   }
 }

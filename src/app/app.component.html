@@ -1,5 +1,4 @@
 <div appCanvas class="canvas"
-(emitConfig)="updateCanvasConfig($event)"
 [paramStartingColor]="canvasParam.colors.start"
 [paramEndingColor]="canvasParam.colors.end"
 [paramPoints]="canvasParam.points"
@@ -9,10 +8,9 @@
 [paramStrokeWidth]="canvasParam.stroke?.width"
 [paramShowGrid]="canvasParam.showGrid"></div>
 
-<ul>
-  <li><b>Static Configuration</b></li>
-  <li *ngIf="canvasConfig"><pre>{{canvasConfig | json}}</pre></li>
+<app-graphs [config]="config"></app-graphs>
 
+<ul>
   <li>
     <label>
       <div>Points</div>

@@ -1,9 +1,14 @@
-import { Point } from './point.model';
-
 export interface Config {
   width: number;
   height: number;
-  start: Point;
-  end: Point;
-  drag?: Point;
+  start: {
+    x: number;
+    y: number;
+    color: string;
+  };
+  end: {
+    x: number;
+    y: number;
+    color: string;
+  };
 }

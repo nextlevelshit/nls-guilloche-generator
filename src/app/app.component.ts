@@ -9,8 +9,9 @@ import { Config } from './models/config.model';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
-  public canvasConfig: Config;
+
   public canvasParam: Param;
+  public config: any;
 
   constructor() {
     this.canvasParam = {
@@ -29,9 +30,18 @@ export class AppComponent {
       spread: 20,
       showGrid: false
     };
-  }
 
-  public updateCanvasConfig(config): void {
-    this.canvasConfig = config;
+    this.config = {
+      start: {
+        direction: 0
+      },
+      end: {
+        direction: 270,
+        position: {
+          x: 16,
+          y: -9
+        }
+      }
+    };
   }
 }
