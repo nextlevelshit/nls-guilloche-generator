@@ -1,5 +1,5 @@
 import { ConfigForm } from './forms/config.form';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, HostListener } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 
 import { environment as env } from '../environments/environment';
@@ -16,6 +16,30 @@ export class AppComponent implements OnInit {
   public canvasParam: Param;
   public config: any | null;
   public configForm: FormGroup;
+
+  @HostListener('mousewheel', ['$event'])
+  private onWheelUp(event) {
+    const delta = Math.sign(event.deltaY);
+    const step = 0.01;
+
+    if (delta > 0) {
+      if (this.config.scale === 1 - step) {
+        return;
+      }
+      this.config.scale += step;
+    } else {
+      if (this.config.scale === step) {
+        return;
+      }
+      this.config.scale -= step;
+    }
+
+    this.config.scale = Math.round(this.config.scale * 100) / 100;
+
+    this.configForm.reset({...this.config});
+    this.updateGraphs();
+  }
+
 
   constructor() {
     this.canvasParam = {
