@@ -16,6 +16,7 @@ export const environment = {
     directionStart: 0,
     directionEnd: 180,
     nodes: 3,
+    stroke: 1,
     scale: 0.3
   }
 };

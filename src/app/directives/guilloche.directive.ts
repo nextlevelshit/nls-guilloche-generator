@@ -36,6 +36,18 @@ export class GuillocheDirective implements OnChanges {
   private drawGraph(): void {
     console.log('guilloche directive(drawGraph)', this.graph);
 
+    this.group.append('path')
+      .attr('d', Shape.line()
+        .x(p => p.x)
+        .y(p => p.y)
+        .curve(Shape.curveBasis)([
+          this.graph.start.coords,
+          this.graph.end.coords
+        ]))
+      .attr('stroke', 'url(#gradient)')
+      .attr('stroke-width', this.graph.stroke)
+      .attr('fill', 'none');
+
     this.group.append('circle')
       .attr('cx', this.graph.start.coords.x)
       .attr('cy', this.graph.start.coords.y)

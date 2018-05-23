@@ -72,4 +72,8 @@ export class AppComponent implements OnInit {
   public updateGraphs() {
     this.config = {...this.configForm.value};
   }
+
+  public exportSvg() {
+    alert('Feature coming');
+  }
 }

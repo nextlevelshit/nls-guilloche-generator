@@ -56,7 +56,6 @@ export class GraphsComponent implements AfterViewInit, OnChanges {
 
   private updateGraphs(): void {
     const matrix = this.matrix;
-    console.log(matrix);
 
     this.graphs = [...[{
       start: {
@@ -67,7 +66,8 @@ export class GraphsComponent implements AfterViewInit, OnChanges {
         coords: { x: matrix.end.x, y: matrix.end.y },
         direction: this.config.directionEnd,
         color: env.guilloche.colors.end
-      }
+      },
+      stroke: this.config.stroke
     }, {
       start: {
         coords: { x: matrix.end.x, y: matrix.end.y },
@@ -77,7 +77,8 @@ export class GraphsComponent implements AfterViewInit, OnChanges {
         coords: { x: matrix.start.x, y: matrix.start.y },
         direction: this.config.directionStart,
         color: env.guilloche.colors.end
-      }
+      },
+      stroke: this.config.stroke
     }]];
   }
 
