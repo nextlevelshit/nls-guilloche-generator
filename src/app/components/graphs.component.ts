@@ -20,6 +20,7 @@ export class GraphsComponent implements AfterViewInit, OnChanges {
 
   public graphs: Graph[];
   public canvas: any | null;
+  public matrix: any | null;
 
   @Input() config: any;
 
@@ -51,50 +52,43 @@ export class GraphsComponent implements AfterViewInit, OnChanges {
 
   private init() {
     this.updateCanvas();
+    this.updateMatrix();
     this.updateGraphs();
   }
 
   private updateGraphs(): void {
-    const matrix = this.matrix;
-
-    this.graphs = [...[this.adjustGraph('start'), this.adjustGraph('end')]];
+    this.graphs = [this.adjustGraph('start'), this.adjustGraph('end')];
+    console.log('graphs component (updateGraphs):', this.graphs);
   }
 
   private adjustGraph(from: string) {
-    const matrix = this.matrix;
     const to = this.flipflop(from);
+    const startPoint = { x: this.matrix[from].x, y: this.matrix[from].y };
+    const endPoint = { x: this.matrix[to].x, y: this.matrix[to].y };
+
+    console.error(from, '->', to);
 
     return {
+      id: `${from}-to-${to}`,
       start: {
-        coords: { x: matrix[from].x, y: matrix[from].y },
-        direction: this.config.directionStart,
-        color: env.guilloche.colors[from]
+        coords: startPoint,
+        direction: this.config.vectors[from],
+        color: env.guilloche.colors.start
       }, end: {
-        coords: { x: matrix[to].x, y: matrix[to].y },
-        direction: this.config.directionEnd,
-        color: env.guilloche.colors[to]
+        coords: endPoint,
+        direction: this.config.vectors[to],
+        color: env.guilloche.colors.end
       },
       stroke: this.config.stroke,
-      nodes: []
+      nodes: [
+        this.vectorPoint(startPoint, this.config.vectors[from]),
+        this.vectorPoint(endPoint, this.config.vectors[to])
+      ]
     };
-
-    // {
-    //   start: {
-    //     coords: { x: matrix.end.x, y: matrix.end.y },
-    //     direction: this.config.directionEnd,
-    //     color: env.guilloche.colors.start
-    //   }, end: {
-    //     coords: { x: matrix.start.x, y: matrix.start.y },
-    //     direction: this.config.directionStart,
-    //     color: env.guilloche.colors.end
-    //   },
-    //   stroke: this.config.stroke,
-    //   nodes: []
-    // }
   }
 
-  private flipflop(direction: string) {
-    return (direction === 'start') ? 'end' : 'start';
+  private flipflop(x: string) {
+    return (x === 'start') ? 'end' : 'start';
   }
 
   private updateCanvas(): void {
@@ -109,15 +103,17 @@ export class GraphsComponent implements AfterViewInit, OnChanges {
     };
   }
 
-  private get matrix() {
+  private updateMatrix() {
     const totalArea = Math.abs(this.canvas.clientWidth * this.canvas.clientHeight);
     const totalCenter = this.centerPoint(this.canvas.clientWidth, this.canvas.clientHeight);
 
     const baseArea = Math.abs(this.config.width * this.config.height);
     const baseScale = Math.pow(totalArea / baseArea * this.config.scale, 0.5);
-    const baseCenter = this.centerPoint( baseScale * this.config.width, baseScale * this.config.height);
+    const baseWidthScaled = baseScale * this.config.width;
+    const baseHeightScaled = baseScale * this.config.height;
+    const baseCenter = this.centerPoint(baseWidthScaled, baseHeightScaled);
 
-    return {
+    this.matrix = {
       start: {
         x: totalCenter.x - baseCenter.x,
         y: totalCenter.y + baseCenter.y
@@ -125,7 +121,29 @@ export class GraphsComponent implements AfterViewInit, OnChanges {
       end: {
         x: totalCenter.x + baseCenter.x,
         y: totalCenter.y - baseCenter.y
-      }
+      },
+      width: baseWidthScaled,
+      height: baseHeightScaled
     };
+  }
+
+  private vectorPoint(point: Point, direction: number) {
+    const range = this.Δ(this.matrix.start, this.matrix.end) * this.config.vectors.range;
+
+    console.log('graphs component(vectorPoint)', point, direction);
+
+    return {
+      x: range * Math.sin(Math.PI * direction) + point.x,
+      y: range * Math.cos(Math.PI * direction) + point.y
+    };
+  }
+
+  /**
+   * Calculate distance between to points with coordinates.
+   * @param a
+   * @param b
+   */
+  private Δ(a: Point, b: Point) {
+    return Math.pow(Math.pow(a.x - b.x, 2) + Math.pow(a.y - b.y, 2), 0.5);
   }
 }

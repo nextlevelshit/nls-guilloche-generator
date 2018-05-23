@@ -18,9 +18,9 @@ export class AppComponent implements OnInit {
   public configForm: FormGroup;
 
   @HostListener('mousewheel', ['$event'])
-  private onWheelUp(event) {
+  private onMousewheel(event) {
     const delta = Math.sign(event.deltaY);
-    const step = 0.01;
+    const step = env.controls.wheelStep;
 
     this.config = {...this.configForm.value};
 
@@ -36,12 +36,10 @@ export class AppComponent implements OnInit {
       this.config.scale -= step;
     }
 
-    this.config.scale = Math.round(this.config.scale * 100) / 100;
-
+    this.config.scale = Math.round(this.config.scale / step) * step;
     this.configForm.reset({...this.config});
     this.updateGraphs();
   }
-
 
   constructor() {
     this.canvasParam = {
@@ -67,6 +65,10 @@ export class AppComponent implements OnInit {
 
   ngOnInit() {
     this.configForm.reset({...this.config});
+
+    // this.configForm.valueChanges.subscribe(val => {
+    //   console.log('form changes(appComponent)', this.config);
+    // });
   }
 
   public updateGraphs() {

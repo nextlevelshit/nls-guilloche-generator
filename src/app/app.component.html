@@ -10,87 +10,68 @@
 
 <app-graphs [config]="config"></app-graphs>
 
-<ul *ngIf="false">
-  <li>
-    <label>
-      <div>Points</div>
-      <input type="number" name="points" [(ngModel)]="canvasParam.points" max="10" min="0" step="1">
-    </label>
-  </li>
-  <li>
-    <label>
-      <div>Margin X</div>
-      <input type="number" name="marginX" [(ngModel)]="canvasParam.margin.x" max="1" min="0" step="0.1">
-    </label>
-  </li>
-  <li>
-    <label>
-      <div>Margin Y</div>
-      <input type="number" name="marginY" [(ngModel)]="canvasParam.margin.y" max="1" min="0" step="0.1">
-    </label>
-  </li>
-  <li>
-    <label>
-      <div>Stroke Width</div>
-      <input type="number" name="strokeWidth" [(ngModel)]="canvasParam.stroke.width" max="10" min="0" step="0.1">
-    </label>
-  </li>
-  <li>
-    <label>
-      <div>Spread lines</div>
-      <input type="number" name="spread" [(ngModel)]="canvasParam.spread" max="20" min="5" step="1">
-    </label>
-  </li>
-  <li>
-    <label>
-      <div>Show Grid?</div>
-      <input type="checkbox" name="showGrid" [(ngModel)]="canvasParam.showGrid">
-    </label>
-  </li>
-</ul>
-
-<aside>
+<aside class="col-sm-4 col-lg-3 col-xl-3">
   <form [formGroup]="configForm" (ngSubmit)="updateGraphs()" novalidate>
-    <div class="form-group">
-      <label class="form-control-label">
-        Breite <small>(bspw. 42, -12, 3.2)</small>
-      </label>
-      <input type="number" class="form-control" formControlName="width">
+    <div class="pb-5">
+      <h5>Seitenverhältnis</h5>
+      <hr>
+      <div class="form-group">
+        <label class="form-control-label">
+          Breite
+        </label>
+        <input type="number" class="form-control" formControlName="width">
+      </div>
+      <div class="form-group">
+        <label class="form-control-label">
+          Höhe
+        </label>
+        <input type="number" class="form-control" formControlName="height">
+      </div>
+      <div class="form-group">
+        <label class="form-control-label">
+          Linienstärke
+        </label>
+        <input type="number" class="form-control" formControlName="stroke" min="0.1" max="10" step="0.1">
+      </div>
     </div>
-    <div class="form-group">
-      <label class="form-control-label">
-        Höhe <small>(bspw. 42, -12, 3.2)</small>
-      </label>
-      <input type="number" class="form-control" formControlName="height">
+    <div class="pb-5">
+      <h5>Vektoren</h5>
+      <hr>
+      <ng-container formGroupName="vectors">
+        <div class="form-group">
+          <label class="form-control-label">
+            Anfangsvektor
+          </label>
+          <select class="form-control" formControlName="start">
+            <option value="1">Oben</option>
+            <option value="0.5">Rechts</option>
+            <option value="0">Unten</option>
+            <option value="1.5">Links</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-control-label">
+            Endvektor
+          </label>
+          <select class="form-control" formControlName="end">
+            <option value="1">Oben</option>
+            <option value="0.5">Rechts</option>
+            <option value="0">Unten</option>
+            <option value="1.5">Links</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-control-label">
+            Vektordehnung
+          </label>
+          <input type="number" class="form-control" formControlName="range" min="0" max="1" step="0.1">
+        </div>
+      </ng-container>
     </div>
-    <div class="form-group">
-      <label class="form-control-label">
-        Duktus <small>(Strichstärke)</small>
-      </label>
-      <input type="number" class="form-control" formControlName="stroke" min="0.1" max="10" step="0.1">
-    </div>
-    <div class="form-group">
-      <label class="form-control-label">
-        Anfangsvektor
-      </label>
-      <select class="form-control" formControlName="directionStart">
-        <option value="0">Oben</option>
-        <option value="90">Rechts</option>
-        <option value="180">Unten</option>
-        <option value="270">Links</option>
-      </select>
-    </div>
-    <div class="form-group">
-      <label class="form-control-label">
-        Endvektor
-      </label>
-      <select class="form-control" formControlName="directionEnd">
-        <option value="0">Oben</option>
-        <option value="90">Rechts</option>
-        <option value="180">Unten</option>
-        <option value="270">Links</option>
-      </select>
-    </div>
+    <h5 class="mt-2">Ausdehnung</h5>
+    <!-- <hr>
+    <small>Anzahl der Schwingungen mittels Knotenpunkten bestimmen und die Skalierung auf der Leinwand einstellen.</small> -->
+    <hr>
     <div class="form-group">
       <label class="form-control-label">
         Skalierung

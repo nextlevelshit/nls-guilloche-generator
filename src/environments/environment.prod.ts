@@ -6,11 +6,17 @@ export const environment = {
       end: '#5eb1bd'
     }
   },
+  controls: {
+    wheelStep: 0.01
+  },
   formDefaults: {
     width: 9,
     height: 16,
-    directionStart: 0,
-    directionEnd: 180,
+    vectors: {
+      start: 1,
+      end: 0,
+      range: 0.3
+    },
     nodes: 3,
     stroke: 1,
     scale: 0.3
