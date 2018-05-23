@@ -22,6 +22,8 @@ export class AppComponent implements OnInit {
     const delta = Math.sign(event.deltaY);
     const step = 0.01;
 
+    this.config = {...this.configForm.value};
+
     if (delta > 0) {
       if (this.config.scale === 1 - step) {
         return;
