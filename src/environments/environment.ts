@@ -5,7 +5,18 @@
 export const environment = {
   production: false,
   guilloche: {
-    colors: ['#cc0045', '#0067cc']
+    colors: {
+      start: '#cc0045',
+      end: '#0067cc'
+    },
+    scale: 0.3
+  },
+  formDefaults: {
+    width: 10,
+    height: -20,
+    directionStart: 180,
+    directionEnd: 270,
+    nodes: 1
   }
 };
 

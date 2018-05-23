@@ -16,25 +16,40 @@ import { CanvasService } from './../services/canvas.service';
 export class GuillocheDirective implements OnChanges {
 
   private canvas: any;
+  private group: any;
 
   @Input() graph: Graph;
 
   constructor(
-    private canvasService: CanvasService
+    private canvasService: CanvasService,
+    private el: ElementRef
   ) {
+    this.group = Selection.select(el.nativeElement);
+    this.canvas = Selection.select(this.canvasService.get);
   }
 
   ngOnChanges(changes: SimpleChanges) {
     console.log('guilloche directive (changes)', changes.graph.currentValue);
-    this.selectCanvas();
     this.drawGraph();
   }
 
   private drawGraph(): void {
-    console.log('guilloche directive(drawGraph)', this.graph, this.canvas);
-  }
+    console.log('guilloche directive(drawGraph)', this.graph);
 
-  private selectCanvas(): void {
-    this.canvas = Selection.select(this.canvasService.get);
+    this.group.append('circle')
+      .attr('cx', this.graph.start.coords.x)
+      .attr('cy', this.graph.start.coords.y)
+      .attr('r', 20)
+      .attr('stroke-width', 1)
+      .attr('fill-opacity', 0)
+      .attr('stroke', this.graph.start.color);
+
+    this.group.append('circle')
+      .attr('cx', this.graph.end.coords.x)
+      .attr('cy', this.graph.end.coords.y)
+      .attr('r', 10)
+      .attr('stroke-width', 1)
+      .attr('fill-opacity', 0)
+      .attr('stroke', this.graph.end.color);
   }
 }

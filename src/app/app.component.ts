@@ -1,9 +1,10 @@
 import { ConfigForm } from './forms/config.form';
 import { Component, OnInit } from '@angular/core';
+import { FormGroup } from '@angular/forms';
 
+import { environment as env } from '../environments/environment';
 import { Param } from './models/param.model';
 import { Config } from './models/config.model';
-import { FormGroup } from '@angular/forms';
 
 @Component({
   selector: 'app-root',
@@ -34,24 +35,12 @@ export class AppComponent implements OnInit {
       showGrid: false
     };
 
-    this.config = {
-      width: 10,
-      height: -20,
-      directionStart: 180,
-      directionEnd: 270,
-      nodes: 1
-    };
+    this.config = env.formDefaults;
+    this.configForm = ConfigForm;
   }
 
   ngOnInit() {
-    this.configForm = ConfigForm;
-    this.configForm.reset({...{
-      width: 10,
-      height: -20,
-      directionStart: 180,
-      directionEnd: 270,
-      nodes: 1
-    }});
+    this.configForm.reset({...this.config});
   }
 
   public updateGraphs() {

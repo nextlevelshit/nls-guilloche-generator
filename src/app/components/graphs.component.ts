@@ -1,9 +1,10 @@
-import { ViewChildren, QueryList, Component, AfterViewInit, ViewChild, Input, SimpleChanges, OnChanges } from '@angular/core';
+import { ViewChildren, QueryList, Component, AfterViewInit, ViewChild, Input, SimpleChanges, OnChanges, HostListener } from '@angular/core';
 import * as Selection from 'd3-selection';
 import * as Shape from 'd3-shape';
 import * as Random from 'd3-random';
 import * as Drag from 'd3-drag';
 
+import { environment as env } from '../../environments/environment';
 import { GuillocheDirective } from './../directives/guilloche.directive';
 import { CanvasService } from './../services/canvas.service';
 import { Graph } from '../models/graph.model';
@@ -25,6 +26,11 @@ export class GraphsComponent implements AfterViewInit, OnChanges {
   @ViewChild(GuillocheDirective) guillocheViewChild: GuillocheDirective;
   @ViewChildren(GuillocheDirective) guillocheViewChildren: QueryList<GuillocheDirective>;
 
+  @HostListener('window:resize', ['$event'])
+  private onResize(event) {
+    this.init();
+  }
+
   constructor(
     private canvasService: CanvasService
   ) {
@@ -32,27 +38,82 @@ export class GraphsComponent implements AfterViewInit, OnChanges {
 
   ngOnChanges(changes: SimpleChanges) {
     console.log('graph component (changes:config)', changes.config.currentValue);
-    this.updateCanvas();
-    this.updateGraphs();
+    this.init();
   }
 
+  /**
+   * @todo Will deprecate if there won't be any use for this
+   */
   ngAfterViewInit() {
     console.log('graph component (afterView:children)', this.guillocheViewChildren.toArray());
   }
 
+  private init() {
+    this.updateCanvas();
+    this.updateGraphs();
+  }
+
   private updateGraphs(): void {
+    const matrix = this.matrix;
+    console.log(matrix);
+
     this.graphs = [...[{
-      id: 'first',
-      start: {coords: { x: 0, y: 0 }, direction: this.config.directionStart},
-      end: { coords: { x: 0, y: -10 }, direction: this.config.directionEnd}
+      start: {
+        coords: { x: matrix.start.x, y: matrix.start.y },
+        direction: this.config.directionStart,
+        color: env.guilloche.colors.start
+      }, end: {
+        coords: { x: matrix.end.x, y: matrix.end.y },
+        direction: this.config.directionEnd,
+        color: env.guilloche.colors.end
+      }
     }, {
-      id: 'second',
-      start: {coords: { x: 0, y: 0 }, direction: this.config.directionEnd },
-      end: { coords: { x: 0, y: -10 }, direction: this.config.directionStart}
+      start: {
+        coords: { x: matrix.end.x, y: matrix.end.y },
+        direction: this.config.directionEnd,
+        color: env.guilloche.colors.start
+      }, end: {
+        coords: { x: matrix.start.x, y: matrix.start.y },
+        direction: this.config.directionStart,
+        color: env.guilloche.colors.end
+      }
     }]];
   }
 
   private updateCanvas(): void {
-    this.canvasService.set(this.svgElementRef.nativeElement);
+    this.canvas = this.svgElementRef.nativeElement;
+    this.canvasService.set(this.canvas);
+  }
+
+  private get matrix() {
+    const totalWidth = this.canvas.clientWidth;
+    const totalHeight = this.canvas.clientHeight;
+    const totalArea = Math.abs(totalWidth * totalHeight);
+    const totalCenter = {
+      x: totalWidth * 0.5,
+      y: totalHeight * 0.5
+    };
+
+    const baseWidth = this.config.width;
+    const baseHeight = this.config.height;
+    const baseArea = Math.abs(this.config.width * this.config.height);
+    const baseScale = Math.pow(totalArea / baseArea * env.guilloche.scale, 0.5);
+    const baseScaledWidth = baseScale * baseWidth;
+    const baseScaledHeight = baseScale * baseHeight;
+    const baseCenter = {
+      x: baseScaledWidth * 0.5,
+      y: baseScaledHeight * 0.5
+    };
+
+    return {
+      start: {
+        x: totalCenter.x - baseCenter.x,
+        y: totalCenter.y + baseCenter.y
+      },
+      end: {
+        x: totalCenter.x + baseCenter.x,
+        y: totalCenter.y - baseCenter.y
+      }
+    };
   }
 }
