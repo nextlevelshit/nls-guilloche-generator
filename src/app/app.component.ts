@@ -44,33 +44,12 @@ export class AppComponent implements OnInit {
   }
 
   constructor() {
-    this.canvasParam = {
-      colors: {
-        start: '#cc0045',
-        end: '#0067cc'
-      },
-      points: 3,
-      margin: {
-        x: 0.2,
-        y: 0.4
-      },
-      stroke: {
-        width: 2
-      },
-      spread: 20,
-      showGrid: false
-    };
-
     this.config = env.formDefaults;
     this.configForm = ConfigForm;
   }
 
   ngOnInit() {
     this.configForm.reset({...this.config});
-
-    // this.configForm.valueChanges.subscribe(val => {
-    //   console.log('form changes(appComponent)', this.config);
-    // });
   }
 
   public updateGraphs() {

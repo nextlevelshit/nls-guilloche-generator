@@ -102,6 +102,7 @@ export class GuillocheDirective implements OnChanges {
     const indexMiddle = Math.floor(points.length * 0.5);
     const pointMiddle = points[indexMiddle];
     const closestCenter = this.getFarestCenter(pointMiddle);
+    // const closestCenter = this.getClosestCenter(pointMiddle);
     const radius = this.Δ(pointMiddle, closestCenter);
     const spreadPoints = [];
     const group = this.canvas.append('g').attr('id', 'spread-points');
@@ -115,9 +116,9 @@ export class GuillocheDirective implements OnChanges {
     }
 
     spreadPoints.sort((a, b) => {
-      return this.Δ(a, pointMiddle) - this.Δ(b, pointMiddle);
+      // return this.Δ(a, pointMiddle) - this.Δ(b, pointMiddle);
       // Good possibility to align orientation points outsite
-      // return this.Δ(b, pointMiddle) - this.Δ(a, pointMiddle);
+      return this.Δ(b, pointMiddle) - this.Δ(a, pointMiddle);
     });
 
     spreadPoints.some((point, index) => {
