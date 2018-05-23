@@ -3,7 +3,7 @@
 // The list of file replacements can be found in `angular.json`.
 
 export const environment = {
-  production: false,
+  production: true,
   guilloche: {
     colors: {
       start: '#cc0045',
@@ -24,7 +24,8 @@ export const environment = {
     nodes: 3,
     stroke: 1,
     scale: 0.1,
-    overlap: 1.4
+    overlap: 1.4,
+    spread: 4
   }
 };
 

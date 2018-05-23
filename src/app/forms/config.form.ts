@@ -32,4 +32,5 @@ export let ConfigForm: FormGroup = fb.group({
     Validators.max(10)
   ])),
   overlap: fb.control('', Validators.min(0.1)),
+  spread: fb.control('', Validators.min(0)),
 });

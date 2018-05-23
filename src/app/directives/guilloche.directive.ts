@@ -21,6 +21,8 @@ export class GuillocheDirective implements OnChanges {
   private gradientId: any;
 
   @Input() graph: Graph;
+  @Input() matrix: any;
+  @Input() config: any;
 
   constructor(
     private canvasService: CanvasService,
@@ -31,9 +33,13 @@ export class GuillocheDirective implements OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges) {
-    console.log('guilloche directive (changes)', changes.graph.currentValue);
+    const points = [this.graph.start.coords, ...this.graph.nodes, this.graph.end.coords];
+
     this.defineGradient();
-    this.drawGraph();
+    // this.drawGraph(points);
+    this.spreadLines(points);
+
+    console.log('guilloche directive (changes)', changes.graph.currentValue);
   }
 
   private defineGradient(): void {
@@ -50,8 +56,7 @@ export class GuillocheDirective implements OnChanges {
       .attr('offset', '100%');
   }
 
-  private drawGraph(): void {
-    const points = [this.graph.start.coords, ...this.graph.nodes, this.graph.end.coords];
+  private drawGraph(points: Point[]): void {
 
     this.group.append('path')
       .attr('d', Shape.line()
@@ -91,5 +96,63 @@ export class GuillocheDirective implements OnChanges {
     }
 
     console.log('guilloche directive(drawGraph)', this.graph);
+  }
+
+  private spreadLines(points: Point[]) {
+    const indexMiddle = Math.floor(points.length * 0.5);
+    const pointMiddle = points[indexMiddle];
+    const closestCenter = this.getFarestCenter(pointMiddle);
+    const radius = this.Δ(pointMiddle, closestCenter);
+    const spreadPoints = [];
+    const group = this.canvas.append('g').attr('id', 'spread-points');
+    const pies = 80;
+
+    for (let i = 0; i < pies; i++) {
+      spreadPoints.push({
+        x: radius * Math.cos(2 * i * Math.PI / pies) + closestCenter.x,
+        y: radius * Math.sin(2 * i * Math.PI / pies) + closestCenter.y,
+      });
+    }
+
+    spreadPoints.sort((a, b) => {
+      return this.Δ(a, pointMiddle) - this.Δ(b, pointMiddle);
+      // Good possibility to align orientation points outsite
+      // return this.Δ(b, pointMiddle) - this.Δ(a, pointMiddle);
+    });
+
+    spreadPoints.some((point, index) => {
+      points[indexMiddle] = point;
+
+      this.drawGraph(points);
+
+      return index === this.config.spread - 1;
+    });
+
+    group.lower();
+  }
+
+  private getClosestCenter(point: Point) {
+    if (this.Δ(point, this.matrix.start) < this.Δ(point, this.matrix.end)) {
+      return this.matrix.start;
+    } else {
+      return this.matrix.end;
+    }
+  }
+
+  private getFarestCenter(point: Point) {
+    if (this.Δ(point, this.matrix.start) > this.Δ(point, this.matrix.end)) {
+      return this.matrix.start;
+    } else {
+      return this.matrix.end;
+    }
+  }
+
+  /**
+   * Calculate distance between to points with coordinates.
+   * @param a
+   * @param b
+   */
+  private Δ(a: Point, b: Point) {
+    return Math.pow(Math.pow(a.x - b.x, 2) + Math.pow(a.y - b.y, 2), 0.5);
   }
 }

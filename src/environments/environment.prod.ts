@@ -20,6 +20,7 @@ export const environment = {
     nodes: 2,
     stroke: 1,
     scale: 0.3,
-    overlap: 3
+    overlap: 3,
+    spread: 4
   }
 };
