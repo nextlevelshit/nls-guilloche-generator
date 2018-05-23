@@ -8,15 +8,15 @@ export const environment = {
     colors: {
       start: '#cc0045',
       end: '#0067cc'
-    },
-    scale: 0.3
+    }
   },
   formDefaults: {
     width: 10,
-    height: -20,
+    height: 10,
     directionStart: 180,
     directionEnd: 270,
-    nodes: 1
+    nodes: 1,
+    scale: 0.3
   }
 };
 

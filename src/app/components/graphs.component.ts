@@ -9,6 +9,7 @@ import { GuillocheDirective } from './../directives/guilloche.directive';
 import { CanvasService } from './../services/canvas.service';
 import { Graph } from '../models/graph.model';
 import { Config } from './../models/config.model';
+import { Point } from '../models/point.model';
 
 @Component({
   selector: 'app-graphs',
@@ -86,24 +87,12 @@ export class GraphsComponent implements AfterViewInit, OnChanges {
   }
 
   private get matrix() {
-    const totalWidth = this.canvas.clientWidth;
-    const totalHeight = this.canvas.clientHeight;
-    const totalArea = Math.abs(totalWidth * totalHeight);
-    const totalCenter = {
-      x: totalWidth * 0.5,
-      y: totalHeight * 0.5
-    };
+    const totalArea = Math.abs(this.canvas.clientWidth * this.canvas.clientHeight);
+    const totalCenter = this.centerPoint(this.canvas.clientWidth, this.canvas.clientHeight);
 
-    const baseWidth = this.config.width;
-    const baseHeight = this.config.height;
     const baseArea = Math.abs(this.config.width * this.config.height);
-    const baseScale = Math.pow(totalArea / baseArea * env.guilloche.scale, 0.5);
-    const baseScaledWidth = baseScale * baseWidth;
-    const baseScaledHeight = baseScale * baseHeight;
-    const baseCenter = {
-      x: baseScaledWidth * 0.5,
-      y: baseScaledHeight * 0.5
-    };
+    const baseScale = Math.pow(totalArea / baseArea * this.config.scale, 0.5);
+    const baseCenter = this.centerPoint( baseScale * this.config.width, baseScale * this.config.height);
 
     return {
       start: {
@@ -114,6 +103,13 @@ export class GraphsComponent implements AfterViewInit, OnChanges {
         x: totalCenter.x + baseCenter.x,
         y: totalCenter.y - baseCenter.y
       }
+    };
+  }
+
+  private centerPoint(width, height): Point {
+    return {
+      x: width * 0.5,
+      y: height * 0.5
     };
   }
 }
