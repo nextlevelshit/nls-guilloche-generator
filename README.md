@@ -1,6 +1,6 @@
 # Automated guilloche graph generator
 
-![d3-guilloche](https://user-images.githubusercontent.com/10194510/40121518-0dfd8eba-5922-11e8-8109-d5cc75cad172.png)
+![d3-guilloche](https://user-images.githubusercontent.com/10194510/40454963-20fbf46a-5eeb-11e8-863f-e8c619d8cda0.png)
 
 ## Development server
 
