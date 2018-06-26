@@ -1,4 +1,19 @@
-import { Graph } from './../models/graph.model';
+/**
+ * Copyright (C) 2018 Michael Czechowski <mail@dailysh.it>
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; version 2.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for
+ * more details.
+ *
+ * You should have received a copy of the GNU General Public License along with
+ * this program; if not, write to the Free Software Foundation, Inc., 51
+ * Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ */
+
 import { ElementRef, HostListener, Output, EventEmitter, Input, Directive, OnInit, OnChanges, SimpleChanges } from '@angular/core';
 import * as Selection from 'd3-selection';
 import * as Shape from 'd3-shape';
@@ -7,6 +22,7 @@ import * as Drag from 'd3-drag';
 
 import { environment as env } from './../../environments/environment';
 import { Config } from './../models/config.model';
+import { Graph } from './../models/graph.model';
 import { Point } from './../models/point.model';
 import { Param } from './../models/param.model';
 import { CanvasService } from './../services/canvas.service';
@@ -57,7 +73,6 @@ export class GuillocheDirective implements OnChanges {
   }
 
   private drawGraph(points: Point[]): void {
-
     this.group.append('path')
       .attr('d', Shape.line()
         .x(p => p.x)

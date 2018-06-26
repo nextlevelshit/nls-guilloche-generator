@@ -1,6 +1,32 @@
 {
-  "name": "nls-ng6-d3js-guilloche",
-  "version": "0.0.0",
+  "name": "nls-guilloche",
+  "version": "0.1.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/nextlevelshit/nls-ng6-d3js-guilloche"
+  },
+  "licenses": [
+    {
+      "type": "GPL-2.0-only",
+      "url": "https://github.com/nextlevelshit/nls-ng6-d3js-guilloche/LICENSE.md"
+    }
+  ],
+  "author": {
+    "name": "Michael Czechowski",
+    "email": "mail@dailysh.it",
+    "url": "https://dailysh.it"
+  },
+  "main": "dist/main.js",
+  "maintainers": [
+    {
+      "name": "Erik Kimsey"
+    },
+    {
+      "name": "Michael Czechowski",
+      "email": "mail@dailysh.it",
+      "url": "https://dailysh.it"
+    }
+  ],
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
@@ -9,7 +35,7 @@
     "lint": "ng lint",
     "e2e": "ng e2e"
   },
-  "private": true,
+  "private": false,
   "dependencies": {
     "@angular/animations": "^6.0.0",
     "@angular/common": "^6.0.0",
