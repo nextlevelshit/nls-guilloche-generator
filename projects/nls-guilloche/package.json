@@ -1,0 +1,33 @@
+{
+  "name": "nls-guilloche",
+  "version": "0.2.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/nextlevelshit/nls-ng6-d3js-guilloche"
+  },
+  "licenses": [
+    {
+      "type": "GPL-2.0-only",
+      "url": "https://github.com/nextlevelshit/nls-ng6-d3js-guilloche/LICENSE.md"
+    }
+  ],
+  "author": {
+    "name": "Michael Czechowski",
+    "email": "mail@dailysh.it",
+    "url": "https://dailysh.it"
+  },
+  "maintainers": [
+    {
+      "name": "Erik Kimsey"
+    },
+    {
+      "name": "Michael Czechowski",
+      "email": "mail@dailysh.it",
+      "url": "https://dailysh.it"
+    }
+  ],
+  "peerDependencies": {
+    "@angular/common": "^6.0.0-rc.0 || ^6.0.0",
+    "@angular/core": "^6.0.0-rc.0 || ^6.0.0"
+  }
+}

@@ -1,14 +1,5 @@
-.canvas {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  top: 0;
-  left: 0;
-  overflow: hidden;
-  opacity: 0.2;
-}
 /**
- * Copyright (C) 2018 Michael Czechowski
+ * Copyright (C) 2018 Michael Czechowski <mail@dailysh.it>
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
  * Software Foundation; version 2.
@@ -22,6 +13,15 @@
  * this program; if not, write to the Free Software Foundation, Inc., 51
  * Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
+.canvas {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  overflow: hidden;
+  opacity: 0.2;
+}
 
 ul {
   display: flex;

@@ -120,6 +120,46 @@
           }
         }
       }
+    },
+    "nls-guilloche": {
+      "root": "projects/nls-guilloche",
+      "sourceRoot": "projects/nls-guilloche/src",
+      "projectType": "library",
+      "prefix": "lib",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-ng-packagr:build",
+          "options": {
+            "tsConfig": "projects/nls-guilloche/tsconfig.lib.json",
+            "project": "projects/nls-guilloche/ng-package.json"
+          },
+          "configurations": {
+            "production": {
+              "project": "projects/nls-guilloche/ng-package.prod.json"
+            }
+          }
+        },
+        "test": {
+          "builder": "@angular-devkit/build-angular:karma",
+          "options": {
+            "main": "projects/nls-guilloche/src/test.ts",
+            "tsConfig": "projects/nls-guilloche/tsconfig.spec.json",
+            "karmaConfig": "projects/nls-guilloche/karma.conf.js"
+          }
+        },
+        "lint": {
+          "builder": "@angular-devkit/build-angular:tslint",
+          "options": {
+            "tsConfig": [
+              "projects/nls-guilloche/tsconfig.lib.json",
+              "projects/nls-guilloche/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**"
+            ]
+          }
+        }
+      }
     }
   },
   "defaultProject": "nls-ng6-d3js-guilloche"
