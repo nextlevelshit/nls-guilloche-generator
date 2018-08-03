@@ -98,6 +98,7 @@ export class GraphsComponent implements AfterViewInit, OnChanges {
         direction: this.config.vectors[to],
         color: env.guilloche.colors[to]
       },
+      space: this.config.space,
       stroke: this.config.stroke,
       nodes: [
         this.vectorPoint(startPoint, this.config.vectors[from]),

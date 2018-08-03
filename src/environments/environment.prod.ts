@@ -18,8 +18,8 @@ export const environment = {
   production: true,
   guilloche: {
     colors: {
-      start: '#f16363',
-      end: '#5eb1bd'
+      start: '#F8485E',
+      end: '#5CC0C7'
     }
   },
   controls: {
@@ -37,6 +37,7 @@ export const environment = {
     stroke: 1,
     scale: 0.3,
     overlap: 3,
-    spread: 4
+    spread: 4,
+    space: 6
   }
 };

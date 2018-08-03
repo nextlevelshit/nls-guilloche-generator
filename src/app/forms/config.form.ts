@@ -47,6 +47,10 @@ export let ConfigForm: FormGroup = fb.group({
     Validators.min(0.1),
     Validators.max(10)
   ])),
+  space: fb.control('', Validators.compose([
+    Validators.min(0),
+    Validators.max(10)
+  ])),
   overlap: fb.control('', Validators.min(0.1)),
   spread: fb.control('', Validators.min(0)),
 });

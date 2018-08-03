@@ -25,6 +25,7 @@ export interface Param {
     y: number
   };
   spread: number;
+  space: number;
   stroke?: {
     width: number;
   };

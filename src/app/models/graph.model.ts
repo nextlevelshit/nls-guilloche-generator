@@ -28,6 +28,7 @@ export interface Graph {
     direction: number; // degree between 0 and 360
     color: string; // can be set in enviroment
   };
+  space: number; // space between lines
   stroke: number; // stroke width
   nodes?: Point[]; // orientation points
 }
