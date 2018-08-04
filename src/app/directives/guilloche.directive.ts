@@ -34,7 +34,6 @@ export class GuillocheDirective implements OnChanges {
 
   private canvas: any;
   private group: any;
-  private gradientId: any;
 
   @Input() graph: Graph;
   @Input() matrix: any;
@@ -51,24 +50,9 @@ export class GuillocheDirective implements OnChanges {
   ngOnChanges(changes: SimpleChanges) {
     const points = [this.graph.start.point, ...this.graph.nodes, this.graph.end.point];
 
-    this.defineGradient();
     this.spreadLines(points);
 
     console.log('guilloche directive (changes)', changes.graph.currentValue);
-  }
-
-  private defineGradient(): void {
-    this.gradientId = `gradient-${this.graph.id}`;
-
-    const defs = this.group.append('defs');
-    const grad = defs.append('linearGradient')
-      .attr('id', this.gradientId);
-    grad.append('stop')
-      .attr('stop-color', this.graph.start.color)
-      .attr('offset', '0%');
-    grad.append('stop')
-      .attr('stop-color', this.graph.end.color)
-      .attr('offset', '100%');
   }
 
   private drawGraph(points: Point[]): void {
@@ -77,7 +61,7 @@ export class GuillocheDirective implements OnChanges {
         .x(p => p.x)
         .y(p => p.y)
         .curve(Shape.curveBasis)(points))
-      .attr('stroke', `url(#${this.gradientId})`)
+      .attr('stroke', this.graph.color)
       .attr('stroke-width', this.graph.stroke)
       .attr('fill', 'none');
 
@@ -154,7 +138,7 @@ export class GuillocheDirective implements OnChanges {
       .attr('r', 20)
       .attr('stroke-width', 1)
       .attr('fill-opacity', 0)
-      .attr('stroke', this.graph.start.color);
+      .attr('stroke', this.graph.color);
 
     this.group.append('circle')
       .attr('cx', this.graph.end.point.x)
@@ -162,7 +146,7 @@ export class GuillocheDirective implements OnChanges {
       .attr('r', 10)
       .attr('stroke-width', 1)
       .attr('fill-opacity', 0)
-      .attr('stroke', this.graph.end.color);
+      .attr('stroke', this.graph  .color);
 
     this.graph.nodes.forEach(point => {
       this.group.append('circle')

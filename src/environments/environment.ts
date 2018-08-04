@@ -18,8 +18,8 @@ export const environment = {
   production: false,
   guilloche: {
     colors: {
-      start: '#cc0045',
-      end: '#0067cc'
+      primary: '#cb0c4d',
+      secondary: '#10c1e8'
     }
   },
   formDefaults: {

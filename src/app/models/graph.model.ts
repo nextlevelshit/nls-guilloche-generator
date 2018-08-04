@@ -18,15 +18,14 @@ import { Point } from './point.model';
 
 export interface Graph {
   id: string;
+  color: string; // can be set in enviroment
   start: {
     point: Point;
     vector: number; // degree between 0 and 360
-    color: string // can be set in enviroment
   };
   end: {
     point: Point;
     vector: number; // degree between 0 and 360
-    color: string; // can be set in enviroment
   };
   stroke: number; // stroke width
   nodes?: Point[]; // orientation points

@@ -76,27 +76,25 @@ export class GraphsComponent implements AfterViewInit, OnChanges {
   private updateGraphs(): void {
     const curves = [
       {
+        color: env.guilloche.colors.primary,
         start: {
           point: this.matrix['start'],
-          vector: this.config.vectors.start,
-          color: env.guilloche.colors.start
+          vector: this.config.vectors.start
         },
         end: {
           point: this.matrix['end'],
-          vector: this.config.vectors.end,
-          color: env.guilloche.colors.end
+          vector: this.config.vectors.end
         }
       },
       {
+        color: env.guilloche.colors.secondary,
         start: {
           point: this.matrix['end'],
-          vector: this.config.vectors.end,
-          color: env.guilloche.colors.end
+          vector: this.config.vectors.end
         },
         end: {
           point: this.matrix['start'],
-          vector: this.config.vectors.start,
-          color: env.guilloche.colors.start
+          vector: this.config.vectors.start
         }
       }
     ];
