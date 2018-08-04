@@ -90,12 +90,12 @@ export class GraphsComponent implements AfterViewInit, OnChanges {
       {
         start: {
           point: this.matrix['end'],
-          vector: this.config.vectors.start,
+          vector: this.config.vectors.end,
           color: env.guilloche.colors.end
         },
         end: {
           point: this.matrix['start'],
-          vector: this.config.vectors.end,
+          vector: this.config.vectors.start,
           color: env.guilloche.colors.start
         }
       }
