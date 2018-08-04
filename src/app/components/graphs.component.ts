@@ -106,30 +106,25 @@ export class GraphsComponent implements AfterViewInit, OnChanges {
   }
 
   private adjustGraph(curve) {
-    const expandedPoints = [];
-
-    for (let i = 0; i < this.config.nodes; i++) {
-      expandedPoints.push(this.randomPoint);
-    }
-
-    return {
+    return Object.assign(curve, {
       id: `start-to-end`,
-      start: {
-        coords: curve.start.point,
-        direction: curve.start.vector,
-        color: curve.start.color
-      }, end: {
-        coords: curve.end.point,
-        direction: curve.end.vector,
-        color: curve.end.color
-      },
       stroke: this.config.stroke,
       nodes: [
-        this.vectorPoint(curve.start.point, curve.start.vector),
-        ...expandedPoints,
-        this.vectorPoint(curve.end.point, curve.end.vector)
+        this.genVectorPoint(curve.start.point, curve.start.vector),
+        ...this.genRandomPoints(this.config.nodes),
+        this.genVectorPoint(curve.end.point, curve.end.vector)
       ]
-    };
+    });
+  }
+
+  private genRandomPoints(num: number) {
+    const generatedPoints = [];
+
+    for (let i = 0; i < this.config.nodes; i++) {
+      generatedPoints.push(this.randomPoint);
+    }
+
+    return generatedPoints;
   }
 
   private flipflop(x: string) {
@@ -173,12 +168,12 @@ export class GraphsComponent implements AfterViewInit, OnChanges {
     };
   }
 
-  private vectorPoint(point: Point, direction: number) {
+  private genVectorPoint(point: Point, vector: number) {
     const range = this.Δ(this.matrix.start, this.matrix.end) * this.config.vectors.range;
 
     return {
-      x: range * Math.sin(Math.PI * direction) + point.x,
-      y: range * Math.cos(Math.PI * direction) + point.y
+      x: range * Math.sin(Math.PI * vector) + point.x,
+      y: range * Math.cos(Math.PI * vector) + point.y
     };
   }
 
@@ -212,7 +207,7 @@ export class GraphsComponent implements AfterViewInit, OnChanges {
 
 
 
-  private *shiftPoint(point: Point, direction) {
+  private *shiftPoint(point: Point, vector) {
     const genShiftX = this.shiftNumber(this.config.space, point.x);
     const genShiftY = this.shiftNumber(this.config.space, point.y);
 

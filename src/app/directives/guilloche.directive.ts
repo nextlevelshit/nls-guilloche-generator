@@ -49,7 +49,7 @@ export class GuillocheDirective implements OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges) {
-    const points = [this.graph.start.coords, ...this.graph.nodes, this.graph.end.coords];
+    const points = [this.graph.start.point, ...this.graph.nodes, this.graph.end.point];
 
     this.defineGradient();
     this.spreadLines(points);
@@ -149,16 +149,16 @@ export class GuillocheDirective implements OnChanges {
 
   private showGrid() {
     this.group.append('circle')
-      .attr('cx', this.graph.start.coords.x)
-      .attr('cy', this.graph.start.coords.y)
+      .attr('cx', this.graph.start.point.x)
+      .attr('cy', this.graph.start.point.y)
       .attr('r', 20)
       .attr('stroke-width', 1)
       .attr('fill-opacity', 0)
       .attr('stroke', this.graph.start.color);
 
     this.group.append('circle')
-      .attr('cx', this.graph.end.coords.x)
-      .attr('cy', this.graph.end.coords.y)
+      .attr('cx', this.graph.end.point.x)
+      .attr('cy', this.graph.end.point.y)
       .attr('r', 10)
       .attr('stroke-width', 1)
       .attr('fill-opacity', 0)
