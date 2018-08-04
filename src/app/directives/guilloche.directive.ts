@@ -52,7 +52,6 @@ export class GuillocheDirective implements OnChanges {
     const points = [this.graph.start.coords, ...this.graph.nodes, this.graph.end.coords];
 
     this.defineGradient();
-    // this.drawGraph(points);
     this.spreadLines(points);
 
     console.log('guilloche directive (changes)', changes.graph.currentValue);
@@ -83,31 +82,7 @@ export class GuillocheDirective implements OnChanges {
       .attr('fill', 'none');
 
     if (!env.production) {
-      this.group.append('circle')
-        .attr('cx', this.graph.start.coords.x)
-        .attr('cy', this.graph.start.coords.y)
-        .attr('r', 20)
-        .attr('stroke-width', 1)
-        .attr('fill-opacity', 0)
-        .attr('stroke', this.graph.start.color);
-
-      this.group.append('circle')
-        .attr('cx', this.graph.end.coords.x)
-        .attr('cy', this.graph.end.coords.y)
-        .attr('r', 10)
-        .attr('stroke-width', 1)
-        .attr('fill-opacity', 0)
-        .attr('stroke', this.graph.end.color);
-
-      this.graph.nodes.forEach(point => {
-        this.group.append('circle')
-          .attr('cx', point.x)
-          .attr('cy', point.y)
-          .attr('r', 5)
-          .attr('stroke-width', 1)
-          .attr('fill-opacity', 0)
-          .attr('stroke', 'darkgray');
-      });
+      this.showGrid();
     }
 
     console.log('guilloche directive(drawGraph)', this.graph);
@@ -170,5 +145,33 @@ export class GuillocheDirective implements OnChanges {
    */
   private Δ(a: Point, b: Point) {
     return Math.pow(Math.pow(a.x - b.x, 2) + Math.pow(a.y - b.y, 2), 0.5);
+  }
+
+  private showGrid() {
+    this.group.append('circle')
+      .attr('cx', this.graph.start.coords.x)
+      .attr('cy', this.graph.start.coords.y)
+      .attr('r', 20)
+      .attr('stroke-width', 1)
+      .attr('fill-opacity', 0)
+      .attr('stroke', this.graph.start.color);
+
+    this.group.append('circle')
+      .attr('cx', this.graph.end.coords.x)
+      .attr('cy', this.graph.end.coords.y)
+      .attr('r', 10)
+      .attr('stroke-width', 1)
+      .attr('fill-opacity', 0)
+      .attr('stroke', this.graph.end.color);
+
+    this.graph.nodes.forEach(point => {
+      this.group.append('circle')
+        .attr('cx', point.x)
+        .attr('cy', point.y)
+        .attr('r', 5)
+        .attr('stroke-width', 1)
+        .attr('fill-opacity', 0)
+        .attr('stroke', 'darkgray');
+    });
   }
 }

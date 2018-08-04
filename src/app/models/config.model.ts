@@ -27,4 +27,5 @@ export interface Config {
     y: number;
     color: string;
   };
+  space: number;
 }

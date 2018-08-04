@@ -24,7 +24,6 @@ import { environment as env } from '../../environments/environment';
 import { GuillocheDirective } from './../directives/guilloche.directive';
 import { CanvasService } from './../services/canvas.service';
 import { Graph } from '../models/graph.model';
-import { Config } from './../models/config.model';
 import { Point } from '../models/point.model';
 
 @Component({
@@ -37,6 +36,8 @@ export class GraphsComponent implements AfterViewInit, OnChanges {
   public graphs: Graph[];
   public canvas: any | null;
   public matrix: any | null;
+
+  private genShiftPoint: any | null;
 
   @Input() config: any;
 
@@ -73,14 +74,38 @@ export class GraphsComponent implements AfterViewInit, OnChanges {
   }
 
   private updateGraphs(): void {
-    this.graphs = [this.adjustGraph('start'), this.adjustGraph('end')];
+    const curves = [
+      {
+        start: {
+          point: this.matrix['start'],
+          vector: this.config.vectors.start,
+          color: env.guilloche.colors.start
+        },
+        end: {
+          point: this.matrix['end'],
+          vector: this.config.vectors.end,
+          color: env.guilloche.colors.end
+        }
+      },
+      {
+        start: {
+          point: this.matrix['end'],
+          vector: this.config.vectors.start,
+          color: env.guilloche.colors.end
+        },
+        end: {
+          point: this.matrix['start'],
+          vector: this.config.vectors.end,
+          color: env.guilloche.colors.start
+        }
+      }
+    ];
+
+    this.graphs = [this.adjustGraph(curves[0]), this.adjustGraph(curves[1])];
     console.log('graphs component (updateGraphs):', this.graphs);
   }
 
-  private adjustGraph(from: string) {
-    const to = this.flipflop(from);
-    const startPoint = { x: this.matrix[from].x, y: this.matrix[from].y };
-    const endPoint = { x: this.matrix[to].x, y: this.matrix[to].y };
+  private adjustGraph(curve) {
     const expandedPoints = [];
 
     for (let i = 0; i < this.config.nodes; i++) {
@@ -88,22 +113,21 @@ export class GraphsComponent implements AfterViewInit, OnChanges {
     }
 
     return {
-      id: `${from}-to-${to}`,
+      id: `start-to-end`,
       start: {
-        coords: startPoint,
-        direction: this.config.vectors[from],
-        color: env.guilloche.colors[from]
+        coords: curve.start.point,
+        direction: curve.start.vector,
+        color: curve.start.color
       }, end: {
-        coords: endPoint,
-        direction: this.config.vectors[to],
-        color: env.guilloche.colors[to]
+        coords: curve.end.point,
+        direction: curve.end.vector,
+        color: curve.end.color
       },
-      space: this.config.space,
       stroke: this.config.stroke,
       nodes: [
-        this.vectorPoint(startPoint, this.config.vectors[from]),
+        this.vectorPoint(curve.start.point, curve.start.vector),
         ...expandedPoints,
-        this.vectorPoint(endPoint, this.config.vectors[to])
+        this.vectorPoint(curve.end.point, curve.end.vector)
       ]
     };
   }
@@ -184,5 +208,36 @@ export class GraphsComponent implements AfterViewInit, OnChanges {
    */
   private Δ(a: Point, b: Point) {
     return Math.pow(Math.pow(a.x - b.x, 2) + Math.pow(a.y - b.y, 2), 0.5);
+  }
+
+
+
+  private *shiftPoint(point: Point, direction) {
+    const genShiftX = this.shiftNumber(this.config.space, point.x);
+    const genShiftY = this.shiftNumber(this.config.space, point.y);
+
+    return {
+      x: 0,
+      y: 0
+    };
+  }
+
+  private *shiftNumber(num: number, space: number) {
+    let current = num;
+    let index = 0;
+    const sign = this.flipSign();
+
+    while (true) {
+      yield current = sign.next().value * index * space + current;
+      index++;
+    }
+  }
+
+  private *flipSign() {
+    let sign = 1;
+
+    while (true) {
+      yield sign = sign * (-1);
+    }
   }
 }
