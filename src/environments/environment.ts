@@ -22,22 +22,19 @@ export const environment = {
       end: '#0067cc'
     }
   },
-  controls: {
-    wheelStep: 0.01
-  },
   formDefaults: {
-    width: 9,
-    height: 16,
+    width: 16,
+    height: 10,
     vectors: {
       start: 1,
       end: 0,
-      range: 0.3
+      range: 0.16
     },
-    nodes: 3,
+    nodes: 4,
     stroke: 1,
     scale: 0.1,
     overlap: 1.4,
-    spread: 4,
+    spread: 8,
     space: 6
   }
 };
