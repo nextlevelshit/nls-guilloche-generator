@@ -26,6 +26,7 @@ export const environment = {
     width: 10,
     height: 16,
     scale: 0.1,
+    overlap: 0.8,
     vectors: {
       start: 1,
       end: 0,
@@ -33,7 +34,6 @@ export const environment = {
     },
     nodes: 2,
     stroke: 1,
-    overlap: 1.4,
     spread: 8,
     space: 6
   }

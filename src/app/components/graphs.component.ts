@@ -74,38 +74,28 @@ export class GraphsComponent implements AfterViewInit, OnChanges {
   }
 
   private updateGraphs(): void {
-    const curves = [
+    const genShiftStart = this.shiftPoint(this.matrix.start, this.config.vectors.start);
+    const genShiftEnd = this.shiftPoint(this.matrix.end, this.config.vectors.end);
+
+    const curveList = [
       {
         color: env.guilloche.colors.primary,
-        start: {
-          point: this.matrix['start'],
-          vector: this.config.vectors.start
-        },
-        end: {
-          point: this.matrix['end'],
-          vector: this.config.vectors.end
-        }
+        start: genShiftStart.next().value,
+        end: genShiftEnd.next().value
       },
       {
         color: env.guilloche.colors.secondary,
-        start: {
-          point: this.matrix['end'],
-          vector: this.config.vectors.end
-        },
-        end: {
-          point: this.matrix['start'],
-          vector: this.config.vectors.start
-        }
+        start: genShiftEnd.next().value,
+        end: genShiftStart.next().value
       }
     ];
 
-    this.graphs = [this.adjustGraph(curves[0]), this.adjustGraph(curves[1])];
+    this.graphs = curveList.map(curve => this.adjustGraph(curve));
     console.log('graphs component (updateGraphs):', this.graphs);
   }
 
   private adjustGraph(curve) {
     return Object.assign(curve, {
-      id: `start-to-end`,
       stroke: this.config.stroke,
       nodes: [
         this.genVectorPoint(curve.start.point, curve.start.vector),
@@ -186,8 +176,6 @@ export class GraphsComponent implements AfterViewInit, OnChanges {
       max: this.matrix.center.y + this.matrix.height * overlap
     };
 
-    console.log(this.matrix.center);
-
     return {
       x: Random.randomUniform(x.min, x.max)(),
       y: Random.randomUniform(y.min, y.max)()
@@ -203,20 +191,23 @@ export class GraphsComponent implements AfterViewInit, OnChanges {
     return Math.pow(Math.pow(a.x - b.x, 2) + Math.pow(a.y - b.y, 2), 0.5);
   }
 
-
-
   private *shiftPoint(point: Point, vector) {
-    const genShiftX = this.shiftNumber(this.config.space, point.x);
-    const genShiftY = this.shiftNumber(this.config.space, point.y);
+    const genShiftX = this.shiftNumber(this.config.space, vector);
+    const genShiftY = this.shiftNumber(this.config.space, vector);
 
-    return {
-      x: 0,
-      y: 0
-    };
+    while (true) {
+      yield {
+        point: {
+          x: Math.cos(Math.PI * vector) * genShiftX.next().value + point.x,
+          y: Math.sin(Math.PI * vector) * genShiftY.next().value + point.y,
+        },
+        vector: vector
+      };
+    }
   }
 
-  private *shiftNumber(num: number, space: number) {
-    let current = num;
+  private *shiftNumber(space: number, vector: number) {
+    let current = 0;
     let index = 0;
     const sign = this.flipSign();
 

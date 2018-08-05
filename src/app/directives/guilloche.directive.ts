@@ -130,28 +130,12 @@ export class GuillocheDirective implements OnChanges {
   }
 
   private showGrid() {
-    this.group.append('circle')
-      .attr('cx', this.graph.start.point.x)
-      .attr('cy', this.graph.start.point.y)
-      .attr('r', 20)
-      .attr('stroke-width', 1)
-      .attr('fill-opacity', 0)
-      .attr('stroke', this.graph.color);
-
-    this.group.append('circle')
-      .attr('cx', this.graph.end.point.x)
-      .attr('cy', this.graph.end.point.y)
-      .attr('r', 10)
-      .attr('stroke-width', 1)
-      .attr('fill-opacity', 0)
-      .attr('stroke', this.graph  .color);
-
     this.graph.nodes.forEach(point => {
       this.group.append('circle')
         .attr('cx', point.x)
         .attr('cy', point.y)
-        .attr('r', 5)
-        .attr('stroke-width', 1)
+        .attr('r', 3)
+        .attr('stroke-width', 0.1)
         .attr('fill-opacity', 0)
         .attr('stroke', 'darkgray');
     });
