@@ -14,7 +14,7 @@
  * Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
-import { ViewChildren, QueryList, Component, AfterViewInit, ViewChild, Input, SimpleChanges, OnChanges, HostListener } from '@angular/core';
+import { ViewChildren, QueryList, Component, ViewChild, Input, SimpleChanges, OnChanges, HostListener } from '@angular/core';
 import * as Selection from 'd3-selection';
 import * as Shape from 'd3-shape';
 import * as Random from 'd3-random';
@@ -31,7 +31,7 @@ import { Point } from '../models/point.model';
   templateUrl: './graphs.component.html',
   styleUrls: ['./graphs.component.scss']
 })
-export class GraphsComponent implements AfterViewInit, OnChanges {
+export class GraphsComponent implements OnChanges {
 
   public graphs: Graph[];
   public canvas: any | null;
@@ -56,15 +56,7 @@ export class GraphsComponent implements AfterViewInit, OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges) {
-    console.log('graph component (changes:config)', changes.config.currentValue);
     this.init();
-  }
-
-  /**
-   * @todo Will deprecate if there won't be any use for this
-   */
-  ngAfterViewInit() {
-    console.log('graph component (afterView:children)', this.guillocheViewChildren.toArray());
   }
 
   private init() {
@@ -91,7 +83,6 @@ export class GraphsComponent implements AfterViewInit, OnChanges {
     ];
 
     this.graphs = curveList.map(curve => this.adjustGraph(curve));
-    console.log('graphs component (updateGraphs):', this.graphs);
   }
 
   private adjustGraph(curve) {

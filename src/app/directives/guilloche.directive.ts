@@ -48,11 +48,12 @@ export class GuillocheDirective implements OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges) {
-    const points = [this.graph.start.point, ...this.graph.nodes, this.graph.end.point];
-
+    const points = [
+      this.graph.start.point,
+      ...this.graph.nodes,
+      this.graph.end.point
+    ];
     this.spreadLines(points);
-
-    console.log('guilloche directive (changes)', changes.graph.currentValue);
   }
 
   private drawGraph(points: Point[]): void {
@@ -68,8 +69,6 @@ export class GuillocheDirective implements OnChanges {
     if (!env.production) {
       this.showGrid();
     }
-
-    console.log('guilloche directive(drawGraph)', this.graph);
   }
 
   private spreadLines(points: Point[]) {
