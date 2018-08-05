@@ -23,16 +23,16 @@ export const environment = {
     }
   },
   formDefaults: {
-    width: 16,
-    height: 10,
+    width: 10,
+    height: 16,
+    scale: 0.1,
     vectors: {
       start: 1,
       end: 0,
-      range: 0.16
+      range: 0.4,
     },
-    nodes: 4,
+    nodes: 2,
     stroke: 1,
-    scale: 0.1,
     overlap: 1.4,
     spread: 8,
     space: 6
