@@ -68,9 +68,7 @@ export class GraphsComponent implements OnChanges {
   }
 
   public prepareGuillocheExport(guillocheElement) {
-    const item = this.genLoadedAllGraphs.next().value;
-    console.log(item);
-    if (item) {
+    if (this.genLoadedAllGraphs.next().value) {
       this.svgChange.emit(this.svgElementRef);
     }
   }
