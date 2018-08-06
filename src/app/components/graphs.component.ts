@@ -41,15 +41,8 @@ export class GraphsComponent implements OnChanges {
   private genLoadedAllGraphs: any | null;
 
   @Input() config: any;
-
-  @ViewChild('svg') svgElementRef;
-
   @Output() svgChange = new EventEmitter();
-
-  @HostListener('window:resize', ['$event'])
-  private onResize(event) {
-    this.init();
-  }
+  @ViewChild('svg') svgElementRef;
 
   constructor(
     private canvasService: CanvasService
