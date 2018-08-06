@@ -23,6 +23,7 @@ import * as Drag from 'd3-drag';
 import { environment as env } from '../../environments/environment';
 import { GuillocheDirective } from './../directives/guilloche.directive';
 import { CanvasService } from './../services/canvas.service';
+import { HistoryService } from './../services/history.service';
 import { Graph } from '../models/graph.model';
 import { Point } from '../models/point.model';
 
@@ -42,10 +43,12 @@ export class GraphsComponent implements OnChanges {
 
   @Input() config: any;
   @Output() svgChange = new EventEmitter();
+  @Output() graphChange = new EventEmitter();
   @ViewChild('svg') svgElementRef;
 
   constructor(
-    private canvasService: CanvasService
+    private canvasService: CanvasService,
+    private historyService: HistoryService
   ) {
     this.genLoadedAllGraphs = this.countLoadedGraphs();
   }
@@ -58,6 +61,8 @@ export class GraphsComponent implements OnChanges {
     this.updateCanvas();
     this.updateMatrix();
     this.updateGraphs();
+
+    this.historyService.save(this.graphs, this.config);
   }
 
   public prepareGuillocheExport(guillocheElement) {

@@ -22,6 +22,7 @@ import { AppComponent } from './app.component';
 import { GraphsComponent } from './components/graphs.component';
 import { GuillocheDirective } from './directives/guilloche.directive';
 import { CanvasService } from './services/canvas.service';
+import { HistoryService } from './services/history.service';
 
 @NgModule({
   declarations: [
@@ -35,7 +36,8 @@ import { CanvasService } from './services/canvas.service';
     FormsModule,
   ],
   providers: [
-    CanvasService
+    CanvasService,
+    HistoryService
   ],
   bootstrap: [AppComponent]
 })

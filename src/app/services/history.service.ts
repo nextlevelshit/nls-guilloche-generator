@@ -13,35 +13,34 @@
  * this program; if not, write to the Free Software Foundation, Inc., 51
  * Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
-.canvas {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  top: 0;
-  left: 0;
-  overflow: hidden;
-  opacity: 0.2;
-}
 
-.list-group-item {
-  cursor: pointer;
-}
+import { Inject, Injectable, Optional, ViewChild } from '@angular/core';
+import * as Selection from 'd3-selection';
 
-aside {
-  display: flex;
-  flex-direction: column;
-  position: absolute;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: auto;
-  // justify-content: center;
-  padding: 0;
-  margin: 0;
-  background: rgba(251, 252, 253, 0.9);
+import { Graph } from '../models/graph.model';
 
-  .aside-inner {
-    overflow: auto;
-    padding: 3rem;
+@Injectable()
+export class HistoryService {
+
+  public history: any[];
+
+  constructor() {
+    this.history = [];
   }
+
+  public save(graphs: Graph[], config) {
+    this.history.push({
+      date: new Date(),
+      graphs: graphs,
+      config: config
+    });
+
+    console.log(config);
+  }
+
+  public list() {
+    return this.history;
+  }
+
 }
+
