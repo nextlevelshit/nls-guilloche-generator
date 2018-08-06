@@ -39,6 +39,8 @@ export class GuillocheDirective implements OnChanges {
   @Input() matrix: any;
   @Input() config: any;
 
+  @Output() guillocheChange = new EventEmitter();
+
   constructor(
     private canvasService: CanvasService,
     private el: ElementRef
@@ -54,6 +56,11 @@ export class GuillocheDirective implements OnChanges {
       this.graph.end.point
     ];
     this.spreadLines(points);
+    this.guillocheChanged();
+  }
+
+  public guillocheChanged() {
+    this.guillocheChange.emit(this.el.nativeElement);
   }
 
   private drawGraph(points: Point[]): void {
@@ -77,7 +84,6 @@ export class GuillocheDirective implements OnChanges {
     const closestCenter = this.getClosestCenter(pointMiddle);
     const radius = this.Δ(pointMiddle, closestCenter);
     const spreadPoints = [];
-    const group = this.canvas.append('g').attr('id', 'spread-points');
     const pies = 80;
 
     for (let i = 0; i < pies; i++) {
@@ -100,7 +106,6 @@ export class GuillocheDirective implements OnChanges {
       return index === this.config.spread - 1;
     });
 
-    group.lower();
   }
 
   private getClosestCenter(point: Point) {

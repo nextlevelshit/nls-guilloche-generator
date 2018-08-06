@@ -17,6 +17,7 @@
 import { ConfigForm } from './forms/config.form';
 import { Component, OnInit, HostListener } from '@angular/core';
 import { FormGroup } from '@angular/forms';
+import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 
 import { environment as env } from '../environments/environment';
 import { Param } from './models/param.model';
@@ -32,9 +33,9 @@ export class AppComponent implements OnInit {
   public canvasParam: Param;
   public config: any | null;
   public configForm: FormGroup;
-  public scaleOnWheel: boolean;
+  public url: any;
 
-  constructor() {
+  constructor(private sanitizer: DomSanitizer) {
     this.config = env.formDefaults;
     this.configForm = ConfigForm;
   }
@@ -47,7 +48,21 @@ export class AppComponent implements OnInit {
     this.config = {...this.configForm.value};
   }
 
+  public prepareSvgExport(svg) {
+    const blob = new Blob(
+      [svg.nativeElement.outerHTML],
+      {type: 'image/svg+xml;charset=utf-8'}
+    );
+    this.url = URL.createObjectURL(blob);
+  }
+
   public exportSvg() {
-    alert('Feature coming');
+    const link = document.createElement('a');
+
+    link.href = this.url;
+    link.download = 'guilloche.svg';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
   }
 }

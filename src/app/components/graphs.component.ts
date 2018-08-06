@@ -14,7 +14,7 @@
  * Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
-import { ViewChildren, QueryList, Component, ViewChild, Input, SimpleChanges, OnChanges, HostListener } from '@angular/core';
+import { ViewChild, QueryList, Component, Input, Output, SimpleChanges, OnChanges, HostListener, EventEmitter } from '@angular/core';
 import * as Selection from 'd3-selection';
 import * as Shape from 'd3-shape';
 import * as Random from 'd3-random';
@@ -38,12 +38,13 @@ export class GraphsComponent implements OnChanges {
   public matrix: any | null;
 
   private genShiftPoint: any | null;
+  private genLoadedAllGraphs: any | null;
 
   @Input() config: any;
 
   @ViewChild('svg') svgElementRef;
-  @ViewChild(GuillocheDirective) guillocheViewChild: GuillocheDirective;
-  @ViewChildren(GuillocheDirective) guillocheViewChildren: QueryList<GuillocheDirective>;
+
+  @Output() svgChange = new EventEmitter();
 
   @HostListener('window:resize', ['$event'])
   private onResize(event) {
@@ -53,6 +54,7 @@ export class GraphsComponent implements OnChanges {
   constructor(
     private canvasService: CanvasService
   ) {
+    this.genLoadedAllGraphs = this.countLoadedGraphs();
   }
 
   ngOnChanges(changes: SimpleChanges) {
@@ -63,6 +65,28 @@ export class GraphsComponent implements OnChanges {
     this.updateCanvas();
     this.updateMatrix();
     this.updateGraphs();
+  }
+
+  public prepareGuillocheExport(guillocheElement) {
+    const item = this.genLoadedAllGraphs.next().value;
+    console.log(item);
+    if (item) {
+      this.svgChange.emit(this.svgElementRef);
+    }
+  }
+
+  private *countLoadedGraphs() {
+    let cycles = 1;
+
+    while (true) {
+      if (cycles < this.graphs.length) {
+        yield false;
+        cycles++;
+      } else {
+        yield true;
+        cycles = 1;
+      }
+    }
   }
 
   private updateGraphs(): void {

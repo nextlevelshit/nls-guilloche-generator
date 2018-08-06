@@ -1,102 +1,104 @@
-<app-graphs [config]="config"></app-graphs>
+<app-graphs [config]="config" (svgChange)="prepareSvgExport($event)"></app-graphs>
 
 <aside class="col-sm-4 col-lg-3 col-xl-3">
-  <form [formGroup]="configForm" (ngSubmit)="updateGraphs()" novalidate>
-    <div class="pb-5">
-      <h5>Grundfläche</h5>
-      <hr>
-      <div class="form-group">
-        <label class="form-control-label">
-          Breite
-        </label>
-        <input type="number" class="form-control" formControlName="width">
-      </div>
-      <div class="form-group">
-        <label class="form-control-label">
-          Höhe
-        </label>
-        <input type="number" class="form-control" formControlName="height">
-      </div>
-      <div class="form-group">
-        <label class="form-control-label">
-          Skalierung
-        </label>
-        <input type="number" class="form-control" formControlName="scale" min="0" max="1" step="0.01">
-      </div>
-    </div>
-    <div class="pb-5">
-      <h5>Vektorfläche</h5>
-      <hr/>
-      <div class="form-group">
-        <label class="form-control-label">
-          Skalierung
-        </label>
-        <input type="number" class="form-control" formControlName="overlap" min="0" max="30" step="0.1">
-      </div>
-      <ng-container formGroupName="vectors">
+  <div class="aside-inner">
+    <form [formGroup]="configForm" (ngSubmit)="updateGraphs()" novalidate>
+      <div class="pb-5">
+        <h5>Grundfläche</h5>
+        <hr>
         <div class="form-group">
           <label class="form-control-label">
-            Anfangsvektor
+            Breite
           </label>
-          <select class="form-control" formControlName="start">
-            <option value="1">Oben</option>
-            <option value="0.5">Rechts</option>
-            <option value="0">Unten</option>
-            <option value="1.5">Links</option>
-          </select>
+          <input type="number" class="form-control" formControlName="width">
         </div>
         <div class="form-group">
           <label class="form-control-label">
-            Endvektor
+            Höhe
           </label>
-          <select class="form-control" formControlName="end">
-            <option value="1">Oben</option>
-            <option value="0.5">Rechts</option>
-            <option value="0">Unten</option>
-            <option value="1.5">Links</option>
-          </select>
+          <input type="number" class="form-control" formControlName="height">
         </div>
+        <div class="form-group">
+          <label class="form-control-label">
+            Skalierung
+          </label>
+          <input type="number" class="form-control" formControlName="scale" min="0" max="1" step="0.01">
+        </div>
+      </div>
+      <div class="pb-5">
+        <h5>Vektorfläche</h5>
+        <hr/>
+        <div class="form-group">
+          <label class="form-control-label">
+            Skalierung
+          </label>
+          <input type="number" class="form-control" formControlName="overlap" min="0" max="30" step="0.1">
+        </div>
+        <ng-container formGroupName="vectors">
+          <div class="form-group">
+            <label class="form-control-label">
+              Anfangsvektor
+            </label>
+            <select class="form-control" formControlName="start">
+              <option value="1">Oben</option>
+              <option value="0.5">Rechts</option>
+              <option value="0">Unten</option>
+              <option value="1.5">Links</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-control-label">
+              Endvektor
+            </label>
+            <select class="form-control" formControlName="end">
+              <option value="1">Oben</option>
+              <option value="0.5">Rechts</option>
+              <option value="0">Unten</option>
+              <option value="1.5">Links</option>
+            </select>
+          </div>
 
-        <div class="form-group">
-          <label class="form-control-label">
-            Dehnung
-          </label>
-          <input type="number" class="form-control" formControlName="range" min="0" max="1" step="0.1">
-        </div>
-      </ng-container>
-    </div>
-    <h5 class="mt-2">Graph</h5>
-    <!-- <hr>
-    <small>Anzahl der Schwingungen mittels Knotenpunkten bestimmen und die Skalierung auf der Leinwand einstellen.</small> -->
-    <hr>
-    <div class="form-group mb-4">
-      <label class="form-control-label">
-        Knotenpunkte
-      </label>
-      <input type="number" class="form-control" formControlName="nodes" min="1" max="10">
-    </div>
-    <div class="form-group">
-      <label class="form-control-label">
-        Linienstärke
-      </label>
-      <input type="number" class="form-control" formControlName="stroke" min="0.1" max="10" step="0.1">
-    </div>
-    <div class="form-group mb-4">
-      <label class="form-control-label">
-        Linienabstand
-      </label>
-      <input type="number" class="form-control" formControlName="space" min="0" max="10" step="0.1">
-    </div>
-    <div class="form-group mb-4">
-      <label class="form-control-label">
-        Aufspleißen
-      </label>
-      <input type="number" class="form-control" formControlName="spread" min="0" max="40">
-    </div>
-    <div class="dropdown-divider mb-4"></div>
-    <button type="submit" class="btn btn-lg btn-primary btn-block" [disabled]="configForm.invalid">Aktualisieren</button>
+          <div class="form-group">
+            <label class="form-control-label">
+              Dehnung
+            </label>
+            <input type="number" class="form-control" formControlName="range" min="0" max="1" step="0.1">
+          </div>
+        </ng-container>
+      </div>
+      <h5 class="mt-2">Graph</h5>
+      <!-- <hr>
+      <small>Anzahl der Schwingungen mittels Knotenpunkten bestimmen und die Skalierung auf der Leinwand einstellen.</small> -->
+      <hr>
+      <div class="form-group mb-4">
+        <label class="form-control-label">
+          Knotenpunkte
+        </label>
+        <input type="number" class="form-control" formControlName="nodes" min="1" max="10">
+      </div>
+      <div class="form-group">
+        <label class="form-control-label">
+          Linienstärke
+        </label>
+        <input type="number" class="form-control" formControlName="stroke" min="0.1" max="10" step="0.1">
+      </div>
+      <div class="form-group mb-4">
+        <label class="form-control-label">
+          Linienabstand
+        </label>
+        <input type="number" class="form-control" formControlName="space" min="0" max="10" step="0.1">
+      </div>
+      <div class="form-group mb-4">
+        <label class="form-control-label">
+          Aufspleißen
+        </label>
+        <input type="number" class="form-control" formControlName="spread" min="0" max="40">
+      </div>
+      <div class="dropdown-divider mb-4"></div>
+      <button type="submit" class="btn btn-lg btn-primary btn-block" [disabled]="configForm.invalid">Aktualisieren</button>
+    </form>
     <div class="dropdown-divider"></div>
-    <!-- <button (click)="exportSvg()" class="btn btn-secondary btn-block" [disabled]="configForm.invalid">Download</button> -->
-  </form>
+    <button class="btn btn-secondary btn-block" (click)="exportSvg()">Download</button>
+  </div>
 </aside>
 
