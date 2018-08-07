@@ -14,7 +14,7 @@
  * Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
-import { ViewChild, QueryList, Component, Input, Output, SimpleChanges, OnChanges, HostListener, EventEmitter, OnInit } from '@angular/core';
+import { ViewChild, Component, Input, Output, SimpleChanges, OnChanges, EventEmitter, OnInit } from '@angular/core';
 import { Observable, interval, Subscription } from 'rxjs';
 import * as Selection from 'd3-selection';
 import * as Shape from 'd3-shape';
