@@ -14,16 +14,19 @@
  * Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
-import { ViewChild, QueryList, Component, Input, Output, SimpleChanges, OnChanges, HostListener, EventEmitter } from '@angular/core';
+import { ViewChild, QueryList, Component, Input, Output, SimpleChanges, OnChanges, HostListener, EventEmitter, OnInit } from '@angular/core';
+import { Observable, interval, Subscription } from 'rxjs';
 import * as Selection from 'd3-selection';
 import * as Shape from 'd3-shape';
 import * as Random from 'd3-random';
 import * as Drag from 'd3-drag';
 
 import { environment as env } from '../../environments/environment';
-import { GuillocheDirective } from './../directives/guilloche.directive';
 import { CanvasService } from './../services/canvas.service';
 import { HistoryService } from './../services/history.service';
+import { AnimationService } from '../services/animation.service';
+import { ArithmeticService } from '../services/arithmetic.service';
+import { GuillocheDirective } from './../directives/guilloche.directive';
 import { Graph } from '../models/graph.model';
 import { Point } from '../models/point.model';
 
@@ -32,7 +35,7 @@ import { Point } from '../models/point.model';
   templateUrl: './graphs.component.html',
   styleUrls: ['./graphs.component.scss']
 })
-export class GraphsComponent implements OnChanges {
+export class GraphsComponent implements OnChanges, OnInit {
 
   public canvas: any | null;
   public matrix: any | null;
@@ -41,34 +44,60 @@ export class GraphsComponent implements OnChanges {
   private genShiftPoint: any | null;
   private genLoadedAllGraphs: any | null;
   private hash: string;
+  private animation: Observable<Graph[]>;
+  private timer: Observable<number>;
+  private animationSteps: Subscription;
 
   @Input() config: any;
   @Input() restoredHistory: any;
+  @Input() animationActive: boolean;
   @Output() svgChange = new EventEmitter();
   @Output() graphChange = new EventEmitter();
   @ViewChild('svg') svgElementRef;
 
   constructor(
     private canvasService: CanvasService,
-    private historyService: HistoryService
+    private historyService: HistoryService,
+    private animationService: AnimationService,
+    private arithmetics: ArithmeticService
   ) {
     this.genLoadedAllGraphs = this.countLoadedGraphs();
+    this.timer = interval(500);
+  }
+
+  ngOnInit() {
+    this.updateGraphs();
   }
 
   ngOnChanges(changes: SimpleChanges) {
     this.updateCanvas();
     this.updateMatrix();
 
-    if (changes.restoredHistory) {
-      if (changes.restoredHistory.currentValue) {
-        if (this.restoredHistory.hash !== this.hash) {
-          this.graphs = this.restoredHistory.graphs;
-          this.hash = this.restoredHistory.hash;
+    if (changes.config && !changes.config.firstChange) {
+      this.updateGraphs();
+      return;
+    }
+
+    if (this.restoredHistory && this.restoredHistory.hash !== this.hash) {
+      this.graphs = this.restoredHistory.graphs;
+      this.hash = this.restoredHistory.hash;
+    }
+
+    if (changes.animationActive) {
+      if (this.animationActive) {
+        this.animationSteps = this.timer.subscribe(n => {
+          console.log('Animation step', n);
+          this.graphs = this.animationService.animate(this.graphs);
+          // this.graphs = this.graphs;
+          this.hash = this.historyService.hash(this.graphs);
+          this.saveHistory();
+        });
+      } else {
+        if (this.animationSteps) {
+          this.animationSteps.unsubscribe();
         }
-        return;
       }
     }
-    this.updateGraphs();
   }
 
   private saveHistory() {
@@ -112,7 +141,7 @@ export class GraphsComponent implements OnChanges {
     const generatedPoints = [];
 
     for (let i = 0; i < this.config.nodes; i++) {
-      generatedPoints.push(this.randomPoint);
+      generatedPoints.push(this.arithmetics.randomPoint(this.matrix, this.config.overlap));
     }
 
     return generatedPoints;
@@ -127,22 +156,15 @@ export class GraphsComponent implements OnChanges {
     this.canvasService.set(this.canvas);
   }
 
-  private centerPoint(width, height): Point {
-    return {
-      x: width * 0.5,
-      y: height * 0.5
-    };
-  }
-
   private updateMatrix() {
     const totalArea = Math.abs(this.canvas.clientWidth * this.canvas.clientHeight);
-    const totalCenter = this.centerPoint(this.canvas.clientWidth, this.canvas.clientHeight);
+    const totalCenter = this.arithmetics.centerPoint(this.canvas.clientWidth, this.canvas.clientHeight);
 
     const baseArea = Math.abs(this.config.width * this.config.height);
     const baseScale = Math.pow(totalArea / baseArea * this.config.scale, 0.5);
     const baseWidthScaled = baseScale * this.config.width;
     const baseHeightScaled = baseScale * this.config.height;
-    const baseCenter = this.centerPoint(baseWidthScaled, baseHeightScaled);
+    const baseCenter = this.arithmetics.centerPoint(baseWidthScaled, baseHeightScaled);
 
     this.matrix = {
       start: {
@@ -160,38 +182,12 @@ export class GraphsComponent implements OnChanges {
   }
 
   private genVectorPoint(point: Point, vector: number) {
-    const range = this.Δ(this.matrix.start, this.matrix.end) * this.config.vectors.range;
+    const range = this.arithmetics.Δ(this.matrix.start, this.matrix.end) * this.config.vectors.range;
 
     return {
       x: range * Math.sin(Math.PI * vector) + point.x,
       y: range * Math.cos(Math.PI * vector) + point.y
     };
-  }
-
-  private get randomPoint() {
-    const overlap = this.config.overlap;
-    const x = {
-      min: this.matrix.center.x - this.matrix.width * overlap,
-      max: this.matrix.center.x + this.matrix.width * overlap
-    };
-    const y = {
-      min: this.matrix.center.y - this.matrix.height * overlap,
-      max: this.matrix.center.y + this.matrix.height * overlap
-    };
-
-    return {
-      x: Random.randomUniform(x.min, x.max)(),
-      y: Random.randomUniform(y.min, y.max)()
-    };
-  }
-
-  /**
-   * Calculate distance between to points with coordinates.
-   * @param a
-   * @param b
-   */
-  private Δ(a: Point, b: Point) {
-    return Math.pow(Math.pow(a.x - b.x, 2) + Math.pow(a.y - b.y, 2), 0.5);
   }
 
   private *shiftPoint(point: Point, vector) {

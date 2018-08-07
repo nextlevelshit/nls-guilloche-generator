@@ -25,6 +25,7 @@ import { GuillocheDirective } from './directives/guilloche.directive';
 import { CanvasService } from './services/canvas.service';
 import { HistoryService } from './services/history.service';
 import { AnimationService } from './services/animation.service';
+import { ArithmeticService } from './services/arithmetic.service';
 
 @NgModule({
   declarations: [
@@ -41,7 +42,8 @@ import { AnimationService } from './services/animation.service';
   providers: [
     CanvasService,
     HistoryService,
-    AnimationService
+    AnimationService,
+    ArithmeticService,
   ],
   bootstrap: [AppComponent]
 })

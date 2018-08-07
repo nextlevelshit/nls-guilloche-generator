@@ -1,3 +1,4 @@
+import { AnimationService } from './services/animation.service';
 /**
  * Copyright (C) 2018 Michael Czechowski <mail@dailysh.it>
  * This program is free software; you can redistribute it and/or modify it

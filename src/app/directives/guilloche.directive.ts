@@ -26,6 +26,7 @@ import { Graph } from './../models/graph.model';
 import { Point } from './../models/point.model';
 import { Param } from './../models/param.model';
 import { CanvasService } from './../services/canvas.service';
+import { ArithmeticService } from './../services/arithmetic.service';
 
 @Directive({
   selector: '[guilloche]'
@@ -43,7 +44,8 @@ export class GuillocheDirective implements OnChanges {
 
   constructor(
     private canvasService: CanvasService,
-    private el: ElementRef
+    private el: ElementRef,
+    private arithmetics: ArithmeticService
   ) {
     this.group = Selection.select(el.nativeElement);
     this.canvas = Selection.select(this.canvasService.get);
@@ -81,8 +83,8 @@ export class GuillocheDirective implements OnChanges {
   private spreadLines(points: Point[]) {
     const indexMiddle = Math.floor(points.length * 0.5);
     const pointMiddle = points[indexMiddle];
-    const closestCenter = this.getClosestCenter(pointMiddle);
-    const radius = this.Δ(pointMiddle, closestCenter);
+    const closestCenter = this.arithmetics.getClosestCenter(pointMiddle, this.matrix);
+    const radius = this.arithmetics.Δ(pointMiddle, closestCenter);
     const spreadPoints = [];
     const pies = 80;
 
@@ -95,7 +97,7 @@ export class GuillocheDirective implements OnChanges {
 
     spreadPoints.sort((a, b) => {
       // Good possibility to align orientation points outsite
-      return this.Δ(b, pointMiddle) - this.Δ(a, pointMiddle);
+      return this.arithmetics.Δ(b, pointMiddle) - this.arithmetics.Δ(a, pointMiddle);
     });
 
     spreadPoints.some((point, index) => {
@@ -106,31 +108,6 @@ export class GuillocheDirective implements OnChanges {
       return index === this.config.spread - 1;
     });
 
-  }
-
-  private getClosestCenter(point: Point) {
-    if (this.Δ(point, this.matrix.start) < this.Δ(point, this.matrix.end)) {
-      return this.matrix.start;
-    } else {
-      return this.matrix.end;
-    }
-  }
-
-  private getFarestCenter(point: Point) {
-    if (this.Δ(point, this.matrix.start) > this.Δ(point, this.matrix.end)) {
-      return this.matrix.start;
-    } else {
-      return this.matrix.end;
-    }
-  }
-
-  /**
-   * Calculate distance between to points with coordinates.
-   * @param a
-   * @param b
-   */
-  private Δ(a: Point, b: Point) {
-    return Math.pow(Math.pow(a.x - b.x, 2) + Math.pow(a.y - b.y, 2), 0.5);
   }
 
   private showGrid() {

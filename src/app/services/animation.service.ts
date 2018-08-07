@@ -15,6 +15,7 @@
  */
 
 import { Inject, Injectable, Optional, ViewChild } from '@angular/core';
+import { interval, Observable } from 'rxjs';
 import * as Selection from 'd3-selection';
 
 import { Graph } from '../models/graph.model';
@@ -26,8 +27,11 @@ export class AnimationService {
   public speed: number;
   public range: number;
   public genAnimation: any;
+  private timer: Observable<number>;
+  private subscribtion: any;
 
   constructor() {
+    this.timer = interval(500);
     this.resetAnimation();
   }
 
@@ -35,22 +39,32 @@ export class AnimationService {
     this.genAnimation = this.animateNextStep();
   }
 
-  private animateNextStep() {
+  private *animateNextStep() {
     while (this.graphs) {
-      return true;
+      yield this.graphs = this.graphs.map(graph => {
+        console.log(graph);
+        return graph;
+      });
     }
   }
 
-  public init(initialGraphs: Graph[]) {
+  // public start(initialGraphs: Graph[]): Observable<Graph[]> {
+  //   // this.graphs = initialGraphs.map(graph => {
+  //   //   console.log(graph);
+  //   //   return graph;
+  //   // });
+
+  //   // return this.timer.subscribe(n => this.graphs);
+  // }
+
+  // public animate(): Graph[] {
+  //   return this.genAnimation.next().value;
+  // }
+
+  public animate(initialGraphs: Graph[]) {
     this.graphs = initialGraphs;
-  }
 
-  public animate(): Graph[] {
     return this.genAnimation.next().value;
-  }
-
-  public stop() {
-    this.graphs = null;
   }
 }
 
