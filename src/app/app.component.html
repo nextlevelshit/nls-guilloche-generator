@@ -94,8 +94,18 @@
         </label>
         <input type="number" class="form-control" formControlName="spread" min="0" max="40">
       </div>
+      <div class="form-group d-flex flex-colmn justify-content-between align-items-center mb-4">
+        <label class="form-control-label">
+          Animation
+        </label>
+        <div class="btn-group" role="group" aria-label="Basic example">
+          <button type="button" class="btn" (click)="animationActive = true" [ngClass]="{'btn-outline-primary': !animationActive, 'btn-primary': animationActive}">An</button>
+          <button type="button" class="btn" (click)="animationActive = false" [ngClass]="{'btn-outline-primary': animationActive, 'btn-primary': !animationActive}">Aus</button>
+        </div>
+      </div>
       <div class="dropdown-divider mb-4"></div>
       <button type="submit" class="btn btn-lg btn-primary btn-block" [disabled]="configForm.invalid">Aktualisieren</button>
+      <div class="dropdown-divider mt-4"></div>
     </form>
 
     <div class="row mt-4">
@@ -122,8 +132,8 @@
             </span>
           </div>
           <div>
-              {{ item.date | amTimeAgo }}
-            </div>
+            {{ item.date | amTimeAgo }}
+          </div>
         </div>
       </a>
     </div>

@@ -43,6 +43,7 @@ export class AppComponent implements OnInit {
   public list: any[];
   public showList: boolean;
   public restoredHistory: any;
+  public animationActive: boolean;
 
   constructor(
     private canvasService: CanvasService,
@@ -54,6 +55,7 @@ export class AppComponent implements OnInit {
     this.configForm = ConfigForm;
     this.list = [];
     this.showList = true;
+    this.animationActive = false;
   }
 
   ngOnInit() {

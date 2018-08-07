@@ -24,6 +24,7 @@ import { GraphsComponent } from './components/graphs.component';
 import { GuillocheDirective } from './directives/guilloche.directive';
 import { CanvasService } from './services/canvas.service';
 import { HistoryService } from './services/history.service';
+import { AnimationService } from './services/animation.service';
 
 @NgModule({
   declarations: [
@@ -39,7 +40,8 @@ import { HistoryService } from './services/history.service';
   ],
   providers: [
     CanvasService,
-    HistoryService
+    HistoryService,
+    AnimationService
   ],
   bootstrap: [AppComponent]
 })
