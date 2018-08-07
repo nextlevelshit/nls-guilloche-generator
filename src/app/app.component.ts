@@ -24,6 +24,7 @@ import { Param } from './models/param.model';
 import { Config } from './models/config.model';
 import { CanvasService } from './services/canvas.service';
 import { HistoryService } from './services/history.service';
+import { Graph } from './models/graph.model';
 
 @Component({
   selector: 'app-root',
@@ -38,6 +39,7 @@ export class AppComponent implements OnInit {
   public url: any;
   public list: any[];
   public showList: boolean;
+  public restoredHistory: any;
 
   constructor(
     private canvasService: CanvasService,
@@ -46,12 +48,13 @@ export class AppComponent implements OnInit {
     this.config = env.formDefaults;
     this.configForm = ConfigForm;
     this.list = [];
-    this.showList = false;
+    this.showList = true;
   }
 
   ngOnInit() {
     this.configForm.reset({...this.config});
     this.list = this.historyService.list();
+    // console.log(this.graphs);
   }
 
   public updateGraphs() {
@@ -85,7 +88,8 @@ export class AppComponent implements OnInit {
     this.showList = !this.showList;
   }
 
-  public restoreGraph(item) {
-    console.log(item);
+  public restoreGraph(history) {
+    this.configForm.reset({...history.config});
+    this.restoredHistory = history;
   }
 }

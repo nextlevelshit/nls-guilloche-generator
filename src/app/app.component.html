@@ -1,4 +1,4 @@
-<app-graphs [config]="config" (svgChange)="prepareSvgExport($event)"></app-graphs>
+<app-graphs [config]="config" [restoredHistory]="restoredHistory" (svgChange)="prepareSvgExport($event)"></app-graphs>
 
 <aside class="col-sm-4 col-lg-3 col-xl-3">
   <div class="aside-inner">
@@ -98,25 +98,35 @@
       <button type="submit" class="btn btn-lg btn-primary btn-block" [disabled]="configForm.invalid">Aktualisieren</button>
     </form>
 
-    <div class="dropdown-divider"></div>
+    <div class="row mt-4">
+      <div class="col-sm">
+        <button class="btn btn-secondary btn-block" (click)="exportSvg()">Download</button>
+      </div>
+      <div class="col-sm mt-xs-2 mt-sm-2 mt-md-0">
+        <button class="btn btn-secondary btn-block" (click)="toggleList()">
+          Chronik <span class="badge badge-light badge-pill">{{ list.length }}</span>
+        </button>
+      </div>
+    </div>
 
-    <button class="btn btn-secondary btn-block" (click)="exportSvg()">Download</button>
-
-    <div class="dropdown-divider"></div>
-
-    <button class="btn btn-secondary btn-block" (click)="toggleList()">Chronik <span class="badge badge-light">{{ list.length }}</span></button>
-
-    <ul *ngIf="showList" class="list-group list-group-flush mt-4">
-      <li *ngFor="let item of list" class="list-group-item d-flex justify-content-between align-items-center" (click)="restoreGraph(item)">
-        {{ item.date | date:'dd.MM.y · HH:mm:ss' }} Uhr
-        <span class="badge badge-primary badge-pill">
-          {{ item.config.nodes }} Knoten
-        </span>
-        <span class="badge badge-primary badge-pill">
-          {{ item.config.spread }} Linien
-        </span>
-      </li>
-    </ul>
+    <div *ngIf="showList" class="list-group mt-4">
+      <a href="#" *ngFor="let item of list.reverse(); let i = index" class="list-group-item d-flex flex-row " (click)="restoreGraph(item)">
+        <span class="text-muted pr-3">#{{ list.length - i }}</span>
+        <div class="d-flex flex-column">
+          <div>
+            {{ item.date | date:'HH:mm:ss' }} Uhr
+          </div>
+          <div class="">
+            <span class="badge badge-primary  mr-2">
+              {{ item.config.nodes }} Knoten
+            </span>
+            <span class="badge badge-primary">
+              {{ item.config.spread }} Linien
+            </span>
+          </div>
+        </div>
+      </a>
+    </div>
   </div>
 </aside>
 

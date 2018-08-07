@@ -32,14 +32,21 @@ export class HistoryService {
     this.history.push({
       date: new Date(),
       graphs: graphs,
-      config: config
+      config: config,
+      hash: this.hash(graphs)
     });
+  }
 
-    console.log(config);
+  public hash(graphs) {
+    return btoa(JSON.stringify([graphs]));
   }
 
   public list() {
     return this.history;
+  }
+
+  public restore(graphs: Graph[]) {
+    console.log(graphs);
   }
 
 }
