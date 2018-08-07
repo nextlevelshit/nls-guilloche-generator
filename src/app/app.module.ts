@@ -17,11 +17,13 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
+import { MomentModule } from 'ngx-moment';
 
 import { AppComponent } from './app.component';
 import { GraphsComponent } from './components/graphs.component';
 import { GuillocheDirective } from './directives/guilloche.directive';
 import { CanvasService } from './services/canvas.service';
+import { HistoryService } from './services/history.service';
 
 @NgModule({
   declarations: [
@@ -33,10 +35,12 @@ import { CanvasService } from './services/canvas.service';
     BrowserModule,
     ReactiveFormsModule,
     FormsModule,
+    MomentModule,
   ],
   providers: [
-    CanvasService
+    CanvasService,
+    HistoryService
   ],
   bootstrap: [AppComponent]
 })
-export class AppModule { }
+export class AppModule {}

@@ -23,6 +23,7 @@ import * as Drag from 'd3-drag';
 import { environment as env } from '../../environments/environment';
 import { GuillocheDirective } from './../directives/guilloche.directive';
 import { CanvasService } from './../services/canvas.service';
+import { HistoryService } from './../services/history.service';
 import { Graph } from '../models/graph.model';
 import { Point } from '../models/point.model';
 
@@ -33,60 +34,45 @@ import { Point } from '../models/point.model';
 })
 export class GraphsComponent implements OnChanges {
 
-  public graphs: Graph[];
   public canvas: any | null;
   public matrix: any | null;
+  public graphs: Graph[];
 
   private genShiftPoint: any | null;
   private genLoadedAllGraphs: any | null;
+  private hash: string;
 
   @Input() config: any;
-
+  @Input() restoredHistory: any;
+  @Output() svgChange = new EventEmitter();
+  @Output() graphChange = new EventEmitter();
   @ViewChild('svg') svgElementRef;
 
-  @Output() svgChange = new EventEmitter();
-
-  @HostListener('window:resize', ['$event'])
-  private onResize(event) {
-    this.init();
-  }
-
   constructor(
-    private canvasService: CanvasService
+    private canvasService: CanvasService,
+    private historyService: HistoryService
   ) {
     this.genLoadedAllGraphs = this.countLoadedGraphs();
   }
 
   ngOnChanges(changes: SimpleChanges) {
-    this.init();
-  }
-
-  private init() {
     this.updateCanvas();
     this.updateMatrix();
+
+    if (changes.restoredHistory) {
+      if (changes.restoredHistory.currentValue) {
+        if (this.restoredHistory.hash !== this.hash) {
+          this.graphs = this.restoredHistory.graphs;
+          this.hash = this.restoredHistory.hash;
+        }
+        return;
+      }
+    }
     this.updateGraphs();
   }
 
-  public prepareGuillocheExport(guillocheElement) {
-    const item = this.genLoadedAllGraphs.next().value;
-    console.log(item);
-    if (item) {
-      this.svgChange.emit(this.svgElementRef);
-    }
-  }
-
-  private *countLoadedGraphs() {
-    let cycles = 1;
-
-    while (true) {
-      if (cycles < this.graphs.length) {
-        yield false;
-        cycles++;
-      } else {
-        yield true;
-        cycles = 1;
-      }
-    }
+  private saveHistory() {
+    this.historyService.save(this.graphs, this.config);
   }
 
   private updateGraphs(): void {
@@ -107,6 +93,8 @@ export class GraphsComponent implements OnChanges {
     ];
 
     this.graphs = curveList.map(curve => this.adjustGraph(curve));
+    this.hash = this.historyService.hash(this.graphs);
+    this.saveHistory();
   }
 
   private adjustGraph(curve) {
@@ -237,6 +225,26 @@ export class GraphsComponent implements OnChanges {
 
     while (true) {
       yield sign = sign * (-1);
+    }
+  }
+
+  public prepareGuillocheExport(guillocheElement) {
+    if (this.genLoadedAllGraphs.next().value) {
+      this.svgChange.emit(this.svgElementRef);
+    }
+  }
+
+  private *countLoadedGraphs() {
+    let cycles = 1;
+
+    while (true) {
+      if (cycles < this.graphs.length) {
+        yield false;
+        cycles++;
+      } else {
+        yield true;
+        cycles = 1;
+      }
     }
   }
 }
