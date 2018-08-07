@@ -26,15 +26,15 @@ export const environment = {
     width: 10,
     height: 16,
     scale: 0.1,
-    overlap: 0.8,
+    overlap: 1.2,
     vectors: {
       start: 1,
       end: 0,
       range: 0.4,
     },
-    nodes: 2,
+    nodes: 4,
     stroke: 1,
-    spread: 8,
-    space: 6
+    spread: 12,
+    space: 5
   }
 };
