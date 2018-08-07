@@ -110,7 +110,7 @@
     </div>
 
     <div *ngIf="showList" class="list-group mt-4">
-      <a href="#" *ngFor="let item of list.reverse(); let i = index" class="list-group-item d-flex flex-row " (click)="restoreGraph(item)">
+      <a href="#" *ngFor="let item of list.slice().reverse(); let i = index" class="list-group-item d-flex flex-row" (click)="restoreGraph(item)">
         <span class="text-muted pr-3">#{{ list.length - i }}</span>
         <div class="d-flex flex-column">
           <div class="">
