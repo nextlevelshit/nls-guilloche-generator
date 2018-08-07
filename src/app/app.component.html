@@ -113,9 +113,6 @@
       <a href="#" *ngFor="let item of list.reverse(); let i = index" class="list-group-item d-flex flex-row " (click)="restoreGraph(item)">
         <span class="text-muted pr-3">#{{ list.length - i }}</span>
         <div class="d-flex flex-column">
-          <div>
-            {{ item.date | date:'HH:mm:ss' }} Uhr
-          </div>
           <div class="">
             <span class="badge badge-primary  mr-2">
               {{ item.config.nodes }} Knoten
@@ -124,6 +121,9 @@
               {{ item.config.spread }} Linien
             </span>
           </div>
+          <div>
+              {{ item.date | amTimeAgo }}
+            </div>
         </div>
       </a>
     </div>

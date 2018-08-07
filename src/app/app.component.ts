@@ -18,6 +18,9 @@ import { ConfigForm } from './forms/config.form';
 import { Component, OnInit, HostListener } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
+// import { Moment } from 'moment';
+import * as moment from 'moment';
+import 'moment/min/locales';
 
 import { environment as env } from '../environments/environment';
 import { Param } from './models/param.model';
@@ -43,8 +46,10 @@ export class AppComponent implements OnInit {
 
   constructor(
     private canvasService: CanvasService,
-    private historyService: HistoryService
+    private historyService: HistoryService,
   ) {
+    moment.locale('de');
+
     this.config = env.formDefaults;
     this.configForm = ConfigForm;
     this.list = [];

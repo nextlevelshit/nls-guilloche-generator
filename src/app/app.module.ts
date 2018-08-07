@@ -17,6 +17,7 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
+import { MomentModule } from 'ngx-moment';
 
 import { AppComponent } from './app.component';
 import { GraphsComponent } from './components/graphs.component';
@@ -34,6 +35,7 @@ import { HistoryService } from './services/history.service';
     BrowserModule,
     ReactiveFormsModule,
     FormsModule,
+    MomentModule,
   ],
   providers: [
     CanvasService,
@@ -41,4 +43,4 @@ import { HistoryService } from './services/history.service';
   ],
   bootstrap: [AppComponent]
 })
-export class AppModule { }
+export class AppModule {}
