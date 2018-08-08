@@ -14,15 +14,19 @@
  * Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
-import { Inject, Injectable, Optional, ViewChild } from '@angular/core';
+import { Inject, Injectable, Renderer2, RendererFactory2 } from '@angular/core';
 import * as Selection from 'd3-selection';
 
 @Injectable()
 export class CanvasService {
+  private renderer: Renderer2;
 
   public canvas: any;
 
-  constructor() {
+  constructor(
+    private rendererFactory: RendererFactory2
+  ) {
+    this.renderer = rendererFactory.createRenderer(null, null);
   }
 
   public get get() {
@@ -31,5 +35,20 @@ export class CanvasService {
 
   public set(el) {
     this.canvas = el;
+  }
+
+  public adjustToWindow() {
+    if (this.canvas) {
+      this.renderer.setStyle(
+        this.canvas,
+        'width',
+        window.innerWidth
+      );
+      this.renderer.setStyle(
+        this.canvas,
+        'height',
+        window.innerHeight
+      );
+    }
   }
 }

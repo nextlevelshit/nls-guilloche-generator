@@ -14,7 +14,7 @@
  * Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
-import { ElementRef, HostListener, Output, EventEmitter, Input, Directive, OnInit, OnChanges, SimpleChanges } from '@angular/core';
+import { ElementRef, HostListener, Output, EventEmitter, Input, Directive, OnChanges, SimpleChanges } from '@angular/core';
 import * as Selection from 'd3-selection';
 import * as Shape from 'd3-shape';
 import * as Random from 'd3-random';
@@ -52,6 +52,8 @@ export class GuillocheDirective implements OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges) {
+    // console.log(this.graph);
+
     const points = [
       this.graph.start.point,
       ...this.graph.nodes,

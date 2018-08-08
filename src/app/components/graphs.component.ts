@@ -14,7 +14,7 @@
  * Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
-import { ViewChild, Component, Input, Output, SimpleChanges, OnChanges, EventEmitter, OnInit } from '@angular/core';
+import { ViewChild, Component, Input, Output, SimpleChanges, OnChanges, EventEmitter, OnInit, HostListener } from '@angular/core';
 import { Observable, interval, Subscription } from 'rxjs';
 import * as Selection from 'd3-selection';
 import * as Shape from 'd3-shape';
@@ -40,13 +40,15 @@ export class GraphsComponent implements OnChanges, OnInit {
   public canvas: any | null;
   public matrix: any | null;
   public graphs: Graph[];
+  public windowHeight: number | null;
+  public windowWidth: number | null;
 
   private genShiftPoint: any | null;
   private genLoadedAllGraphs: any | null;
   private hash: string;
   private animation: Observable<Graph[]>;
   private timer: Observable<number>;
-  private animationSteps: Subscription;
+  private animationSteps: any;
 
   @Input() config: any;
   @Input() restoredHistory: any;
@@ -54,6 +56,11 @@ export class GraphsComponent implements OnChanges, OnInit {
   @Output() svgChange = new EventEmitter();
   @Output() graphChange = new EventEmitter();
   @ViewChild('svg') svgElementRef;
+
+  @HostListener('window:resize', ['$event'])
+  onResize(event) {
+    this.canvasService.adjustToWindow();
+  }
 
   constructor(
     private canvasService: CanvasService,
@@ -74,6 +81,7 @@ export class GraphsComponent implements OnChanges, OnInit {
     this.updateMatrix();
 
     if (changes.config && !changes.config.firstChange) {
+      // Config changes must not trigger any other events
       this.updateGraphs();
       return;
     }
@@ -85,22 +93,20 @@ export class GraphsComponent implements OnChanges, OnInit {
 
     if (changes.animationActive) {
       if (this.animationActive) {
-        this.animationSteps = this.timer.subscribe(n => {
-          console.log('Animation step', n);
-          this.graphs = this.animationService.animate(this.graphs);
-          // this.graphs = this.graphs;
-          this.hash = this.historyService.hash(this.graphs);
-          this.saveHistory();
-        });
+        this.animationSteps = setInterval(() => this.animateGraph(), 50);
       } else {
         if (this.animationSteps) {
-          this.animationSteps.unsubscribe();
+          clearInterval(this.animationSteps);
         }
       }
     }
   }
+  private animateGraph() {
+    this.graphs = this.animationService.animate(this.graphs);
+  }
 
   private saveHistory() {
+    this.hash = this.historyService.hash(this.graphs);
     this.historyService.save(this.graphs, this.config);
   }
 
@@ -154,6 +160,7 @@ export class GraphsComponent implements OnChanges, OnInit {
   private updateCanvas(): void {
     this.canvas = this.svgElementRef.nativeElement;
     this.canvasService.set(this.canvas);
+    this.canvasService.adjustToWindow();
   }
 
   private updateMatrix() {

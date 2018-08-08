@@ -38,16 +38,11 @@ export class HistoryService {
   }
 
   public hash(graphs) {
-    return btoa(JSON.stringify([graphs]));
+    return btoa(JSON.stringify(graphs));
   }
 
   public list() {
     return this.history;
   }
-
-  public restore(graphs: Graph[]) {
-    console.log(graphs);
-  }
-
 }
 

@@ -19,6 +19,8 @@ import { interval, Observable } from 'rxjs';
 import * as Selection from 'd3-selection';
 
 import { Graph } from '../models/graph.model';
+import { ArithmeticService } from './arithmetic.service';
+import { HistoryService } from './history.service';
 
 @Injectable()
 export class AnimationService {
@@ -26,45 +28,32 @@ export class AnimationService {
   public graphs: Graph[];
   public speed: number;
   public range: number;
-  public genAnimation: any;
-  private timer: Observable<number>;
-  private subscribtion: any;
+  // public genAnimation: any;
+  // private timer: Observable<number>;
+  // private subscribtion: any;
 
-  constructor() {
-    this.timer = interval(500);
-    this.resetAnimation();
+  constructor(
+    private arithmetics: ArithmeticService,
+    private historyService: HistoryService,
+  ) {
   }
-
-  private resetAnimation() {
-    this.genAnimation = this.animateNextStep();
-  }
-
-  private *animateNextStep() {
-    while (this.graphs) {
-      yield this.graphs = this.graphs.map(graph => {
-        console.log(graph);
-        return graph;
-      });
-    }
-  }
-
-  // public start(initialGraphs: Graph[]): Observable<Graph[]> {
-  //   // this.graphs = initialGraphs.map(graph => {
-  //   //   console.log(graph);
-  //   //   return graph;
-  //   // });
-
-  //   // return this.timer.subscribe(n => this.graphs);
-  // }
-
-  // public animate(): Graph[] {
-  //   return this.genAnimation.next().value;
-  // }
 
   public animate(initialGraphs: Graph[]) {
-    this.graphs = initialGraphs;
+    const newGraphs = initialGraphs.slice();
 
-    return this.genAnimation.next().value;
+    return newGraphs.map(graph => {
+
+      const newGraph = Object.assign({}, graph);
+      const indexMiddle = Math.floor(newGraph.nodes.length * 0.5);
+      const pointMiddle = newGraph.nodes[indexMiddle];
+
+      newGraph.nodes.splice(indexMiddle, 1, {
+        x: pointMiddle.x - 1,
+        y: pointMiddle.y + 1,
+      });
+
+      return newGraph;
+    });
   }
 }
 
