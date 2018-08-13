@@ -25,16 +25,19 @@ export const environment = {
   formDefaults: {
     width: 10,
     height: 16,
-    scale: 0.1,
+    scale: 0.4,
+    overlap: 0.6,
     vectors: {
       start: 1,
       end: 0,
       range: 0.4,
+      spacing: 10
     },
-    nodes: 2,
+    nodes: 4,
     stroke: 1,
-    overlap: 1.4,
-    spread: 8,
-    space: 6
+    spread: {
+      amount: 10,
+      spacing: 10
+    }
   }
 };
