@@ -27,5 +27,11 @@ export interface Config {
     y: number;
     color: string;
   };
-  space: number;
+  vectors: {
+    spacing: number
+  };
+  spread: {
+    amount: number;
+    spacing: number
+  };
 }

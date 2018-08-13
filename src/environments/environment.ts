@@ -16,26 +16,29 @@
 
 export const environment = {
   production: false,
-  grid: false,
+  grid: true,
   guilloche: {
     colors: {
-      primary: '#cb0c4d',
-      secondary: '#10c1e8'
+      primary: '#950952',
+      secondary: '#189B8E'
     }
   },
   formDefaults: {
     width: 10,
     height: 16,
-    scale: 0.1,
-    overlap: 1.2,
+    scale: 0.4,
+    overlap: 0.6,
     vectors: {
       start: 1,
       end: 0,
-      range: 0.4
+      range: 0.4,
+      spacing: 7
     },
-    nodes: 4,
-    stroke: 1,
-    spread: 12,
-    space: 10
+    nodes: 5,
+    stroke: 0.7,
+    spread: {
+      amount: 36,
+      spacing: 32
+    }
   }
 };

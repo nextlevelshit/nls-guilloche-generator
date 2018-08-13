@@ -36,7 +36,6 @@ export class GraphService {
   }
 
   public set(newGraphs: Graph[]) {
-    // console.log('GraphService:set', newGraphs);
     this.graphs = newGraphs;
   }
 

@@ -31,7 +31,7 @@ import { CanvasService } from './../services/canvas.service';
 import { MathService } from './../services/math.service';
 import { GraphService } from '../services/graph.service';
 import { AnimationService } from './../services/animation.service';
-import { spread } from 'q';
+// import { spread } from 'q';
 
 @Directive({
   selector: '[guilloche]'
@@ -88,7 +88,7 @@ export class GuillocheDirective implements OnChanges, OnInit {
     if (this.graphService.isAnimated) {
       console.log('is animated');
       // this.graphService.startAnimation();
-      this.animationInterval = setInterval(() => this.animateGraph(), 60);
+      this.animationInterval = setInterval(() => this.animateGraph(), this.config.spread.spacing);
     } else {
       if (this.animationInterval) {
         console.log('not animated');
@@ -109,7 +109,6 @@ export class GuillocheDirective implements OnChanges, OnInit {
   private animateGraph() {
     this.group.selectAll('*').remove();
     this.graph = this.animationService.animate(this.graph);
-    // this.saveGraph();
     const points = [
       this.graph.start.point,
       ...this.graph.nodes,
@@ -141,40 +140,12 @@ export class GuillocheDirective implements OnChanges, OnInit {
     const shiftedMedians = [];
     const medianPoint = this.math.centerOfCurve(points);
     const medianIndex = this.math.medianIndex(points);
-    const genshiftedMedians = this.graphService.spreadOrthogonal(medianPoint, 20);
+    const genshiftedMedians = this.graphService.spreadOrthogonal(medianPoint, this.config.spread.spacing);
 
-    for (let i = 0; i < this.config.spread; i++) {
+    for (let i = 0; i < this.config.spread.amount; i++) {
       shiftedMedians.push(genshiftedMedians.next().value);
     }
 
-    // const indexMiddle = Math.floor(points.length * 0.5);
-    // const pointMiddle = points[indexMiddle];
-    // const closestCenter = this.math.getClosestCenter(pointMiddle, this.matrix);
-    // const radius = this.math.Δ(pointMiddle, closestCenter);
-    // const shiftedMedians = [];
-    // const pies = 200;
-
-    // for (let i = 0; i < pies; i++) {
-      //   shiftedMedians.push({
-        //     x: radius * Math.cos(2 * i * Math.PI / pies) + closestCenter.x,
-        //     y: radius * Math.sin(2 * i * Math.PI / pies) + closestCenter.y,
-        //   });
-        // }
-
-        // shiftedMedians.sort((a, b) => {
-          //   // Good possibility to align orientation points outsite
-          //   return this.math.Δ(b, pointMiddle) - this.math.Δ(a, pointMiddle);
-          // });
-
-          // console.log(shiftedMedians);
-
-          // shiftedMedians.some((point, index) => {
-            //   points[indexMiddle] = point;
-
-            //   this.drawGraph(points);
-
-            //   return index === this.config.spread - 1;
-            // });
     if (env.grid) {
       [medianPoint, ...shiftedMedians].forEach((point, index) => {
         this.group.append('circle')
@@ -191,19 +162,11 @@ export class GuillocheDirective implements OnChanges, OnInit {
       shiftedGraph.splice(medianIndex, 1, median);
       this.drawGraph(shiftedGraph);
     });
-
-    // this.drawGraph(points);
   }
-
-  // private animateRange(n: number) {
-  //   return Ease.scaleLinear().range([n, n + 100]);
-  // }
 
   private showGrid() {
     this.graph.nodes.forEach((point, index) => {
       const circle = this.group.append('g');
-      // const xRange = this.animateRange(point.x);
-      // const yRange = this.animateRange(point.y);
 
       circle.append('circle')
         .attr('cx', point.x)

@@ -64,7 +64,6 @@ export class AppComponent implements OnInit {
   ngOnInit() {
     this.configForm.reset({...this.config});
     this.list = this.historyService.list();
-    // console.log(this.graphs);
   }
 
   public updateGraphs() {
@@ -82,11 +81,6 @@ export class AppComponent implements OnInit {
 
   public exportSvg() {
     const link = document.createElement('a');
-    // const blob = new Blob(
-    //   [this.canvasService.get],
-    //   {type: 'image/svg+xml;charset=utf-8'}
-    // );
-    // link.href = URL.createObjectURL(blob);
     link.href = this.url;
     link.download = 'guilloche.svg';
     document.body.appendChild(link);

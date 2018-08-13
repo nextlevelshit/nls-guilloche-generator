@@ -191,8 +191,8 @@ export class GraphsComponent implements OnChanges, OnInit {
   }
 
   private *shiftPoint(point: Point, vector) {
-    const genShiftX = this.shiftNumber(this.config.space, vector);
-    const genShiftY = this.shiftNumber(this.config.space, vector);
+    const genShiftX = this.shiftNumber(this.config.vectors.spacing, vector);
+    const genShiftY = this.shiftNumber(this.config.vectors.spacing, vector);
 
     while (true) {
       yield {

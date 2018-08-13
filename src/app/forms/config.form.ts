@@ -33,7 +33,11 @@ export let ConfigForm: FormGroup = fb.group({
     range: fb.control('', Validators.compose([
       Validators.min(0),
       Validators.max(1)
-    ]))
+    ])),
+    spacing: fb.control('', Validators.compose([
+      Validators.min(0),
+      Validators.max(20)
+    ])),
   }),
   nodes: fb.control('', Validators.compose([
     Validators.min(1),
@@ -47,10 +51,12 @@ export let ConfigForm: FormGroup = fb.group({
     Validators.min(0.1),
     Validators.max(10)
   ])),
-  space: fb.control('', Validators.compose([
-    Validators.min(0),
-    Validators.max(10)
-  ])),
   overlap: fb.control('', Validators.min(0.1)),
-  spread: fb.control('', Validators.min(0)),
+  spread: fb.group({
+    amount: fb.control('', Validators.min(0)),
+    spacing: fb.control('', Validators.compose([
+      Validators.min(0),
+      Validators.max(50)
+    ])),
+  })
 });
