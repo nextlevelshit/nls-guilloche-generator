@@ -14,7 +14,7 @@
  * Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
-import { ElementRef, HostListener, Output, EventEmitter, Input, Directive, OnChanges, OnInit, SimpleChanges } from '@angular/core';
+import { ElementRef, HostListener, Output, EventEmitter, Input, Directive, OnChanges, SimpleChanges } from '@angular/core';
 import * as Selection from 'd3-selection';
 import * as Shape from 'd3-shape';
 import * as Random from 'd3-random';
@@ -36,13 +36,13 @@ import { AnimationService } from './../services/animation.service';
 @Directive({
   selector: '[guilloche]'
 })
-export class GuillocheDirective implements OnChanges, OnInit {
+export class GuillocheDirective implements OnChanges {
 
   private canvas: any;
   private group: any;
+  private bounce: any | null;
+  private initialNodes: any;
   private animationInterval: any;
-  private x: any;
-  private y: any;
 
   @Input() graph: Graph;
   @Input() matrix: any;
@@ -62,78 +62,42 @@ export class GuillocheDirective implements OnChanges, OnInit {
     this.canvas = Selection.select(this.canvasService.get);
   }
 
-  ngOnInit() {
-    // console.log('guilloche:init');
-    // Timer.timer(function(elapsed) {
-    //   let t = (elapsed % 3000) / 3000;
-    //   console.log(t);
-    //   // dot1.attr("cx", x(t)).attr("cy", y(ease(t)));
-    //   // dot2.attr("cy", y(ease(t)));
-    // });
-
-    // console.log(Ease.easeLinear(0.5));
-    // const t = Timer.timer(function(elapsed) {
-    //   if (elapsed > 200) {
-    //     t.stop();
-    //   }
-    // }, 1000);
-  }
-
   ngOnChanges(changes: SimpleChanges) {
     // @todo modify graph here instead of in graphs.component.ts
     this.group.selectAll('*').remove();
 
-    // console.log('guilloche:changes', changes);
-
     if (this.graphService.isAnimated) {
-      console.log('is animated');
-      // this.graphService.startAnimation();
-      this.animationInterval = setInterval(() => this.animateGraph(), this.config.spread.spacing);
+      this.bounce = this.math.bounce(0, 600, 3);
+      this.initialNodes = this.graph.nodes.slice();
+      this.animationInterval = setInterval(() => this.animateGraph(), 100);
     } else {
       if (this.animationInterval) {
-        console.log('not animated');
-        // this.graphService.stopAnimation();
+        this.bounce = null;
         clearInterval(this.animationInterval);
       }
     }
 
-    const points = [
+    this.guillocheChanged();
+    this.spreadLines([
       this.graph.start.point,
       ...this.graph.nodes,
       this.graph.end.point
-    ];
-    this.spreadLines(points);
-    this.guillocheChanged();
+    ]);
   }
 
   private animateGraph() {
+    const medianIndex = this.math.medianIndex(this.initialNodes);
+    const medianPoint = this.math.medianOfCurve(this.initialNodes);
+    const bouncedMedian = this.graphService.shiftPoint(medianPoint, medianPoint.ascent, this.bounce.next().value);
+
+    this.graph.nodes.splice(medianIndex, 1, bouncedMedian);
     this.group.selectAll('*').remove();
-    this.graph = this.animationService.animate(this.graph);
-    const points = [
+    this.spreadLines([
       this.graph.start.point,
       ...this.graph.nodes,
-      this.graph.end.point
-    ];
-    this.spreadLines(points);
-  }
-
-  public guillocheChanged() {
-    this.guillocheChange.emit(this.el.nativeElement);
-  }
-
-  private drawGraph(points: Point[]): void {
-    this.group.append('path')
-      .attr('d', Shape.line()
-        .x(p => p.x)
-        .y(p => p.y)
-        .curve(Shape.curveBasis)(points))
-      .attr('stroke', this.graph.color)
-      .attr('stroke-width', this.graph.stroke)
-      .attr('fill', 'none');
-
-    if (env.grid) {
-      this.showGrid();
-    }
+      this.graph.end.point,
+    ]);
+    this.debugBounce(bouncedMedian);
   }
 
   private spreadLines(points: Point[]) {
@@ -146,7 +110,7 @@ export class GuillocheDirective implements OnChanges, OnInit {
       shiftedMedians.push(genshiftedMedians.next().value);
     }
 
-    if (env.grid) {
+    if (env.debug) {
       [medianPoint, ...shiftedMedians].forEach((point, index) => {
         this.group.append('circle')
           .attr('cx', point.x)
@@ -164,7 +128,26 @@ export class GuillocheDirective implements OnChanges, OnInit {
     });
   }
 
-  private showGrid() {
+  private drawGraph(points: Point[]): void {
+    this.group.append('path')
+      .attr('d', Shape.line()
+        .x(p => p.x)
+        .y(p => p.y)
+        .curve(Shape.curveBasis)(points))
+      .attr('stroke', this.graph.color)
+      .attr('stroke-width', this.graph.stroke)
+      .attr('fill', 'none');
+
+    if (env.debug) {
+      this.debugGraph();
+    }
+  }
+
+  public guillocheChanged() {
+    this.guillocheChange.emit(this.el.nativeElement);
+  }
+
+  private debugGraph() {
     this.graph.nodes.forEach((point, index) => {
       const circle = this.group.append('g');
 
@@ -183,5 +166,16 @@ export class GuillocheDirective implements OnChanges, OnInit {
         .attr('fill', this.graph.color)
         .text(index);
     });
+  }
+
+  private debugBounce(point: Point): void {
+    if (env.debug) {
+      this.group.append('circle')
+        .attr('cx', point.x)
+        .attr('cy', point.y)
+        .attr('r', 2)
+        .attr('fill-opacity', 0.4)
+        .attr('fill', 'darkgray');
+    }
   }
 }

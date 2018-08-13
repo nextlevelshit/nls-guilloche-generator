@@ -88,6 +88,16 @@ export class MathService {
     return Object.assign(this.centerOfPoints(p1, p2), { ascent: radians });
   }
 
+  public medianOfCurve(curve: Point[]) {
+    const genMedian = this.medianPoint(curve);
+    const p1 = genMedian.next().value;
+    const p2 = genMedian.next().value;
+    const p3 = genMedian.next().value;
+    const radians = this.angleRadians(p2, p3);
+
+    return Object.assign(p1, { ascent: radians });
+  }
+
   public angleRadians(p1: Point, p2: Point) {
     return Math.atan2(p2.y - p1.y, p2.x - p1.x);
   }
@@ -109,6 +119,33 @@ export class MathService {
       yield list[index];
 
       list.splice(index, 1);
+    }
+  }
+
+  /**
+   * Generator for sine bounce
+   *
+   * @param start 0 indicates to initiate with positive numbers, 1 indicates to
+   * start with negative numbers first
+   * @param amplitude default to 1 indicates the amplitude in positive as well
+   * in negative range
+   * @param decimals amount of decimal places
+   */
+
+  public *bounce(
+    start: number = 0,
+    amplitude: number = 1,
+    decimals: number = 1
+  ) {
+    const power = Math.pow(10, decimals);
+    const step = 1 / (power);
+    let index = start;
+
+    while (true) {
+      const radians = Math.PI * step * index;
+      yield Math.round((Math.sin(radians) * amplitude) * power) / power;
+
+      index++;
     }
   }
 

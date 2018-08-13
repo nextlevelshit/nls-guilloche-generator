@@ -16,6 +16,7 @@
 
 export const environment = {
   production: true,
+  grid: false,
   guilloche: {
     colors: {
       primary: '#F8485E',
