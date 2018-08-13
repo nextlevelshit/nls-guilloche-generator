@@ -16,6 +16,7 @@
 
 export const environment = {
   production: false,
+  grid: false,
   guilloche: {
     colors: {
       primary: '#cb0c4d',
@@ -30,11 +31,11 @@ export const environment = {
     vectors: {
       start: 1,
       end: 0,
-      range: 0.4,
+      range: 0.4
     },
     nodes: 4,
     stroke: 1,
     spread: 12,
-    space: 5
+    space: 10
   }
 };

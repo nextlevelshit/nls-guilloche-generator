@@ -25,10 +25,11 @@ import { environment as env } from '../../environments/environment';
 import { CanvasService } from './../services/canvas.service';
 import { HistoryService } from './../services/history.service';
 import { AnimationService } from '../services/animation.service';
-import { ArithmeticService } from '../services/arithmetic.service';
+import { MathService } from '../services/math.service';
 import { GuillocheDirective } from './../directives/guilloche.directive';
 import { Graph } from '../models/graph.model';
 import { Point } from '../models/point.model';
+import { GraphService } from '../services/graph.service';
 
 @Component({
   selector: 'app-graphs',
@@ -48,7 +49,6 @@ export class GraphsComponent implements OnChanges, OnInit {
   private hash: string;
   private animation: Observable<Graph[]>;
   private timer: Observable<number>;
-  private animationSteps: any;
 
   @Input() config: any;
   @Input() restoredHistory: any;
@@ -66,7 +66,8 @@ export class GraphsComponent implements OnChanges, OnInit {
     private canvasService: CanvasService,
     private historyService: HistoryService,
     private animationService: AnimationService,
-    private arithmetics: ArithmeticService
+    private math: MathService,
+    private graphService: GraphService
   ) {
     this.genLoadedAllGraphs = this.countLoadedGraphs();
     this.timer = interval(500);
@@ -90,24 +91,15 @@ export class GraphsComponent implements OnChanges, OnInit {
       this.graphs = this.restoredHistory.graphs;
       this.hash = this.restoredHistory.hash;
     }
-
-    if (changes.animationActive) {
-      if (this.animationActive) {
-        this.animationSteps = setInterval(() => this.animateGraph(), 50);
-      } else {
-        if (this.animationSteps) {
-          clearInterval(this.animationSteps);
-        }
-      }
-    }
-  }
-  private animateGraph() {
-    this.graphs = this.animationService.animate(this.graphs);
   }
 
   private saveHistory() {
     this.hash = this.historyService.hash(this.graphs);
     this.historyService.save(this.graphs, this.config);
+  }
+
+  private saveGraph() {
+    this.graphService.set(this.graphs);
   }
 
   private updateGraphs(): void {
@@ -130,6 +122,7 @@ export class GraphsComponent implements OnChanges, OnInit {
     this.graphs = curveList.map(curve => this.adjustGraph(curve));
     this.hash = this.historyService.hash(this.graphs);
     this.saveHistory();
+    this.saveGraph();
   }
 
   private adjustGraph(curve) {
@@ -147,7 +140,7 @@ export class GraphsComponent implements OnChanges, OnInit {
     const generatedPoints = [];
 
     for (let i = 0; i < this.config.nodes; i++) {
-      generatedPoints.push(this.arithmetics.randomPoint(this.matrix, this.config.overlap));
+      generatedPoints.push(this.math.randomPoint(this.matrix, this.config.overlap));
     }
 
     return generatedPoints;
@@ -165,13 +158,13 @@ export class GraphsComponent implements OnChanges, OnInit {
 
   private updateMatrix() {
     const totalArea = Math.abs(this.canvas.clientWidth * this.canvas.clientHeight);
-    const totalCenter = this.arithmetics.centerPoint(this.canvas.clientWidth, this.canvas.clientHeight);
+    const totalCenter = this.math.centerOfArea(this.canvas.clientWidth, this.canvas.clientHeight);
 
     const baseArea = Math.abs(this.config.width * this.config.height);
     const baseScale = Math.pow(totalArea / baseArea * this.config.scale, 0.5);
     const baseWidthScaled = baseScale * this.config.width;
     const baseHeightScaled = baseScale * this.config.height;
-    const baseCenter = this.arithmetics.centerPoint(baseWidthScaled, baseHeightScaled);
+    const baseCenter = this.math.centerOfArea(baseWidthScaled, baseHeightScaled);
 
     this.matrix = {
       start: {
@@ -189,7 +182,7 @@ export class GraphsComponent implements OnChanges, OnInit {
   }
 
   private genVectorPoint(point: Point, vector: number) {
-    const range = this.arithmetics.Δ(this.matrix.start, this.matrix.end) * this.config.vectors.range;
+    const range = this.math.Δ(this.matrix.start, this.matrix.end) * this.config.vectors.range;
 
     return {
       x: range * Math.sin(Math.PI * vector) + point.x,
@@ -215,19 +208,11 @@ export class GraphsComponent implements OnChanges, OnInit {
   private *shiftNumber(space: number, vector: number) {
     let current = 0;
     let index = 0;
-    const sign = this.flipSign();
+    const sign = this.math.flipSign();
 
     while (true) {
       yield current = sign.next().value * index * space + current;
       index++;
-    }
-  }
-
-  private *flipSign() {
-    let sign = 1;
-
-    while (true) {
-      yield sign = sign * (-1);
     }
   }
 

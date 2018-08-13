@@ -14,11 +14,13 @@
  * Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
-import { ElementRef, HostListener, Output, EventEmitter, Input, Directive, OnChanges, SimpleChanges } from '@angular/core';
+import { ElementRef, HostListener, Output, EventEmitter, Input, Directive, OnChanges, OnInit, SimpleChanges } from '@angular/core';
 import * as Selection from 'd3-selection';
 import * as Shape from 'd3-shape';
 import * as Random from 'd3-random';
 import * as Drag from 'd3-drag';
+import * as Ease from 'd3-ease';
+import * as Timer from 'd3-timer';
 
 import { environment as env } from './../../environments/environment';
 import { Config } from './../models/config.model';
@@ -26,33 +28,74 @@ import { Graph } from './../models/graph.model';
 import { Point } from './../models/point.model';
 import { Param } from './../models/param.model';
 import { CanvasService } from './../services/canvas.service';
-import { ArithmeticService } from './../services/arithmetic.service';
+import { MathService } from './../services/math.service';
+import { GraphService } from '../services/graph.service';
+import { AnimationService } from './../services/animation.service';
+import { spread } from 'q';
 
 @Directive({
   selector: '[guilloche]'
 })
-export class GuillocheDirective implements OnChanges {
+export class GuillocheDirective implements OnChanges, OnInit {
 
   private canvas: any;
   private group: any;
+  private animationInterval: any;
+  private x: any;
+  private y: any;
 
   @Input() graph: Graph;
   @Input() matrix: any;
   @Input() config: any;
+  @Input() animate: boolean;
 
   @Output() guillocheChange = new EventEmitter();
 
   constructor(
     private canvasService: CanvasService,
     private el: ElementRef,
-    private arithmetics: ArithmeticService
+    private math: MathService,
+    private graphService: GraphService,
+    private animationService: AnimationService
   ) {
     this.group = Selection.select(el.nativeElement);
     this.canvas = Selection.select(this.canvasService.get);
   }
 
+  ngOnInit() {
+    // console.log('guilloche:init');
+    // Timer.timer(function(elapsed) {
+    //   let t = (elapsed % 3000) / 3000;
+    //   console.log(t);
+    //   // dot1.attr("cx", x(t)).attr("cy", y(ease(t)));
+    //   // dot2.attr("cy", y(ease(t)));
+    // });
+
+    // console.log(Ease.easeLinear(0.5));
+    // const t = Timer.timer(function(elapsed) {
+    //   if (elapsed > 200) {
+    //     t.stop();
+    //   }
+    // }, 1000);
+  }
+
   ngOnChanges(changes: SimpleChanges) {
-    // console.log(this.graph);
+    // @todo modify graph here instead of in graphs.component.ts
+    this.group.selectAll('*').remove();
+
+    // console.log('guilloche:changes', changes);
+
+    if (this.graphService.isAnimated) {
+      console.log('is animated');
+      // this.graphService.startAnimation();
+      this.animationInterval = setInterval(() => this.animateGraph(), 60);
+    } else {
+      if (this.animationInterval) {
+        console.log('not animated');
+        // this.graphService.stopAnimation();
+        clearInterval(this.animationInterval);
+      }
+    }
 
     const points = [
       this.graph.start.point,
@@ -61,6 +104,18 @@ export class GuillocheDirective implements OnChanges {
     ];
     this.spreadLines(points);
     this.guillocheChanged();
+  }
+
+  private animateGraph() {
+    this.group.selectAll('*').remove();
+    this.graph = this.animationService.animate(this.graph);
+    // this.saveGraph();
+    const points = [
+      this.graph.start.point,
+      ...this.graph.nodes,
+      this.graph.end.point
+    ];
+    this.spreadLines(points);
   }
 
   public guillocheChanged() {
@@ -77,50 +132,93 @@ export class GuillocheDirective implements OnChanges {
       .attr('stroke-width', this.graph.stroke)
       .attr('fill', 'none');
 
-    if (!env.production) {
+    if (env.grid) {
       this.showGrid();
     }
   }
 
   private spreadLines(points: Point[]) {
-    const indexMiddle = Math.floor(points.length * 0.5);
-    const pointMiddle = points[indexMiddle];
-    const closestCenter = this.arithmetics.getClosestCenter(pointMiddle, this.matrix);
-    const radius = this.arithmetics.Δ(pointMiddle, closestCenter);
-    const spreadPoints = [];
-    const pies = 80;
+    const shiftedMedians = [];
+    const medianPoint = this.math.centerOfCurve(points);
+    const medianIndex = this.math.medianIndex(points);
+    const genshiftedMedians = this.graphService.spreadOrthogonal(medianPoint, 20);
 
-    for (let i = 0; i < pies; i++) {
-      spreadPoints.push({
-        x: radius * Math.cos(2 * i * Math.PI / pies) + closestCenter.x,
-        y: radius * Math.sin(2 * i * Math.PI / pies) + closestCenter.y,
+    for (let i = 0; i < this.config.spread; i++) {
+      shiftedMedians.push(genshiftedMedians.next().value);
+    }
+
+    // const indexMiddle = Math.floor(points.length * 0.5);
+    // const pointMiddle = points[indexMiddle];
+    // const closestCenter = this.math.getClosestCenter(pointMiddle, this.matrix);
+    // const radius = this.math.Δ(pointMiddle, closestCenter);
+    // const shiftedMedians = [];
+    // const pies = 200;
+
+    // for (let i = 0; i < pies; i++) {
+      //   shiftedMedians.push({
+        //     x: radius * Math.cos(2 * i * Math.PI / pies) + closestCenter.x,
+        //     y: radius * Math.sin(2 * i * Math.PI / pies) + closestCenter.y,
+        //   });
+        // }
+
+        // shiftedMedians.sort((a, b) => {
+          //   // Good possibility to align orientation points outsite
+          //   return this.math.Δ(b, pointMiddle) - this.math.Δ(a, pointMiddle);
+          // });
+
+          // console.log(shiftedMedians);
+
+          // shiftedMedians.some((point, index) => {
+            //   points[indexMiddle] = point;
+
+            //   this.drawGraph(points);
+
+            //   return index === this.config.spread - 1;
+            // });
+    if (env.grid) {
+      [medianPoint, ...shiftedMedians].forEach((point, index) => {
+        this.group.append('circle')
+          .attr('cx', point.x)
+          .attr('cy', point.y)
+          .attr('r', 10 / index)
+          .attr('fill-opacity', 0.6)
+          .attr('fill', 'darkgray');
       });
     }
 
-    spreadPoints.sort((a, b) => {
-      // Good possibility to align orientation points outsite
-      return this.arithmetics.Δ(b, pointMiddle) - this.arithmetics.Δ(a, pointMiddle);
+    shiftedMedians.forEach(median => {
+      const shiftedGraph = points.slice();
+      shiftedGraph.splice(medianIndex, 1, median);
+      this.drawGraph(shiftedGraph);
     });
 
-    spreadPoints.some((point, index) => {
-      points[indexMiddle] = point;
-
-      this.drawGraph(points);
-
-      return index === this.config.spread - 1;
-    });
-
+    // this.drawGraph(points);
   }
 
+  // private animateRange(n: number) {
+  //   return Ease.scaleLinear().range([n, n + 100]);
+  // }
+
   private showGrid() {
-    this.graph.nodes.forEach(point => {
-      this.group.append('circle')
+    this.graph.nodes.forEach((point, index) => {
+      const circle = this.group.append('g');
+      // const xRange = this.animateRange(point.x);
+      // const yRange = this.animateRange(point.y);
+
+      circle.append('circle')
         .attr('cx', point.x)
         .attr('cy', point.y)
         .attr('r', 3)
-        .attr('stroke-width', 0.1)
-        .attr('fill-opacity', 0)
-        .attr('stroke', 'darkgray');
+        .attr('fill-opacity', 0.6)
+        .attr('fill', this.graph.color);
+
+      circle.append('text')
+        .attr('x', point.x)
+        .attr('y', point.y)
+        .attr('dx', 8)
+        .attr('dy', 15)
+        .attr('fill', this.graph.color)
+        .text(index);
     });
   }
 }

@@ -19,7 +19,7 @@ import { interval, Observable } from 'rxjs';
 import * as Selection from 'd3-selection';
 
 import { Graph } from '../models/graph.model';
-import { ArithmeticService } from './arithmetic.service';
+import { MathService } from './math.service';
 import { HistoryService } from './history.service';
 
 @Injectable()
@@ -33,27 +33,28 @@ export class AnimationService {
   // private subscribtion: any;
 
   constructor(
-    private arithmetics: ArithmeticService,
+    private math: MathService,
     private historyService: HistoryService,
   ) {
   }
 
-  public animate(initialGraphs: Graph[]) {
-    const newGraphs = initialGraphs.slice();
+  // public animate(initialGraphs: Graph[]) {
+  public animate(initialGraph: Graph) {
+    // const newGraphs = initialGraphs.slice();
 
-    return newGraphs.map(graph => {
+    // return newGraphs.map(graph => {
 
-      const newGraph = Object.assign({}, graph);
+      const newGraph = Object.assign({}, initialGraph);
       const indexMiddle = Math.floor(newGraph.nodes.length * 0.5);
       const pointMiddle = newGraph.nodes[indexMiddle];
 
       newGraph.nodes.splice(indexMiddle, 1, {
-        x: pointMiddle.x - 1,
-        y: pointMiddle.y + 1,
+        x: pointMiddle.x - 2,
+        y: pointMiddle.y + 2,
       });
 
       return newGraph;
-    });
+  //   });
   }
 }
 

@@ -1,4 +1,3 @@
-import { AnimationService } from './services/animation.service';
 /**
  * Copyright (C) 2018 Michael Czechowski <mail@dailysh.it>
  * This program is free software; you can redistribute it and/or modify it
@@ -29,6 +28,8 @@ import { Config } from './models/config.model';
 import { CanvasService } from './services/canvas.service';
 import { HistoryService } from './services/history.service';
 import { Graph } from './models/graph.model';
+import { GraphService } from './services/graph.service';
+import { AnimationService } from './services/animation.service';
 
 @Component({
   selector: 'app-root',
@@ -49,6 +50,7 @@ export class AppComponent implements OnInit {
   constructor(
     private canvasService: CanvasService,
     private historyService: HistoryService,
+    private graphService: GraphService,
   ) {
     moment.locale('de');
 
@@ -99,5 +101,15 @@ export class AppComponent implements OnInit {
   public restoreGraph(history) {
     this.configForm.reset({...history.config});
     this.restoredHistory = history;
+  }
+
+  public startAnimation() {
+    this.animationActive = true;
+    this.graphService.startAnimation();
+  }
+
+  public stopAnimation() {
+    this.animationActive = false;
+    this.graphService.stopAnimation();
   }
 }
