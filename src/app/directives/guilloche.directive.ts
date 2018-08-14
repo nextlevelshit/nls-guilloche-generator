@@ -67,9 +67,11 @@ export class GuillocheDirective implements OnChanges {
     this.group.selectAll('*').remove();
 
     if (this.graphService.isAnimated) {
-      this.bounce = this.math.bounce(0, 600, 3);
+      const bounceStart = Math.round(Math.random() * 10) / 10;
+      const bounceAmplitude = Math.round(Math.random() * 500);
+      this.bounce = this.math.bounce(bounceStart, bounceAmplitude, 2);
       this.initialNodes = this.graph.nodes.slice();
-      this.animationInterval = setInterval(() => this.animateGraph(), 100);
+      this.animationInterval = setInterval(() => this.animateGraph(), 80);
     } else {
       if (this.animationInterval) {
         this.bounce = null;
@@ -102,6 +104,8 @@ export class GuillocheDirective implements OnChanges {
 
   private spreadLines(points: Point[]) {
     const shiftedMedians = [];
+    // Alternatively use median of curve instead of center
+    // const medianPoint = this.math.medianOfCurve(points);
     const medianPoint = this.math.centerOfCurve(points);
     const medianIndex = this.math.medianIndex(points);
     const genshiftedMedians = this.graphService.spreadOrthogonal(medianPoint, this.config.spread.spacing);

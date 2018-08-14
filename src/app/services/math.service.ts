@@ -139,10 +139,10 @@ export class MathService {
   ) {
     const power = Math.pow(10, decimals);
     const step = 1 / (power);
-    let index = start;
+    let index = 0;
 
     while (true) {
-      const radians = Math.PI * step * index;
+      const radians = Math.PI * step * index + start;
       yield Math.round((Math.sin(radians) * amplitude) * power) / power;
 
       index++;
