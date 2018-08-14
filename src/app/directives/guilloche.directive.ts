@@ -41,8 +41,11 @@ export class GuillocheDirective implements OnChanges {
   private canvas: any;
   private group: any;
   private bounce: any | null;
+  private bounces: any | null;
   private initialNodes: any;
   private animationInterval: any;
+  private medianPoint: Point;
+  private medianIndex: number;
 
   @Input() graph: Graph;
   @Input() matrix: any;
@@ -66,12 +69,26 @@ export class GuillocheDirective implements OnChanges {
     // @todo modify graph here instead of in graphs.component.ts
     this.group.selectAll('*').remove();
 
+    this.initialNodes = this.graph.nodes.slice();
+    this.medianPoint = this.math.medianOfCurve(this.initialNodes);
+    this.medianIndex = this.math.medianIndex(this.initialNodes);
+
     if (this.graphService.isAnimated) {
-      const bounceStart = Math.round(Math.random() * 10) / 10;
-      const bounceAmplitude = Math.round(Math.random() * 500);
-      this.bounce = this.math.bounce(bounceStart, bounceAmplitude, 2);
-      this.initialNodes = this.graph.nodes.slice();
-      this.animationInterval = setInterval(() => this.animateGraph(), 80);
+
+      this.graph.nodes = this.graph.nodes.slice().map((node, i) => {
+        return {
+          x: node.x,
+          y: node.y,
+          // ascent: Math.round(Math.random() * 100) / 100
+          ascent: this.medianPoint.ascent + i * 0.5
+        };
+      });
+      this.bounces = this.initialNodes.map(node => {
+        const bounceStart = Math.round(Math.random() * 10) / 10;
+        const bounceAmplitude = Math.round(Math.random() * 100);
+        return this.math.bounce(bounceStart, bounceAmplitude, 2);
+      });
+      this.animationInterval = setInterval(() => this.animateGraph(), 120);
     } else {
       if (this.animationInterval) {
         this.bounce = null;
@@ -82,52 +99,59 @@ export class GuillocheDirective implements OnChanges {
     this.guillocheChanged();
     this.spreadLines([
       this.graph.start.point,
+      this.graph.start.direction,
       ...this.graph.nodes,
-      this.graph.end.point
+      this.graph.end.point,
+      this.graph.end.direction,
     ]);
   }
 
   private animateGraph() {
-    const medianIndex = this.math.medianIndex(this.initialNodes);
-    const medianPoint = this.math.medianOfCurve(this.initialNodes);
-    const bouncedMedian = this.graphService.shiftPoint(medianPoint, medianPoint.ascent, this.bounce.next().value);
+    // const medianIndex = this.math.medianIndex(this.initialNodes);
+    // const bouncedMedian = this.graphService.shiftPoint(medianPoint, medianPoint.ascent, this.bounce.next().value);
 
-    this.graph.nodes.splice(medianIndex, 1, bouncedMedian);
+    // this.graph.nodes.splice(medianIndex, 1, bouncedMedian);
+
     this.group.selectAll('*').remove();
+
     this.spreadLines([
       this.graph.start.point,
-      ...this.graph.nodes,
+      this.graph.start.direction,
+      ...this.graph.nodes.map((point, i) => {
+        return this.graphService.shiftPoint(point, point.ascent, this.bounces[i].next().value);
+      }),
+      this.graph.end.direction,
       this.graph.end.point,
     ]);
-    this.debugBounce(bouncedMedian);
+    // this.debugBounce(bouncedMedian);
   }
 
   private spreadLines(points: Point[]) {
     const shiftedMedians = [];
     // Alternatively use median of curve instead of center
     // const medianPoint = this.math.medianOfCurve(points);
-    const medianPoint = this.math.centerOfCurve(points);
-    const medianIndex = this.math.medianIndex(points);
-    const genshiftedMedians = this.graphService.spreadOrthogonal(medianPoint, this.config.spread.spacing);
+    // const medianPoint = this.math.centerOfCurve(points);
+    // const medianIndex = this.math.medianIndex(points);
+    const genshiftedMedians = this.graphService.spreadOrthogonal(this.medianPoint, this.config.spread.spacing);
 
     for (let i = 0; i < this.config.spread.amount; i++) {
       shiftedMedians.push(genshiftedMedians.next().value);
     }
 
-    if (env.debug) {
-      [medianPoint, ...shiftedMedians].forEach((point, index) => {
-        this.group.append('circle')
-          .attr('cx', point.x)
-          .attr('cy', point.y)
-          .attr('r', 10 / index)
-          .attr('fill-opacity', 0.6)
-          .attr('fill', 'darkgray');
-      });
-    }
+    // if (env.debug) {
+    //   [medianPoint, ...shiftedMedians].forEach((point, index) => {
+    //     this.group.append('circle')
+    //       .attr('cx', point.x)
+    //       .attr('cy', point.y)
+    //       .attr('r', 10 / index)
+    //       .attr('fill-opacity', 0.6)
+    //       .attr('fill', 'darkgray');
+    //   });
+    // }
 
     shiftedMedians.forEach(median => {
       const shiftedGraph = points.slice();
-      shiftedGraph.splice(medianIndex, 1, median);
+      shiftedGraph.splice(this.medianIndex, 1, median);
       this.drawGraph(shiftedGraph);
     });
   }
@@ -143,7 +167,7 @@ export class GuillocheDirective implements OnChanges {
       .attr('fill', 'none');
 
     if (env.debug) {
-      this.debugGraph();
+      this.debugGraph(points);
     }
   }
 
@@ -151,8 +175,8 @@ export class GuillocheDirective implements OnChanges {
     this.guillocheChange.emit(this.el.nativeElement);
   }
 
-  private debugGraph() {
-    this.graph.nodes.forEach((point, index) => {
+  private debugGraph(points: Point[]) {
+    points.forEach((point, index) => {
       const circle = this.group.append('g');
 
       circle.append('circle')

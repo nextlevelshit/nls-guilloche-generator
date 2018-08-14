@@ -16,11 +16,11 @@
 
 export const environment = {
   production: false,
-  debug: false,
+  debug: true,
   guilloche: {
     colors: {
-      primary: '#950952',
-      secondary: '#189B8E'
+      primary: '#129490',
+      secondary: '#004FFF'
     }
   },
   formDefaults: {
@@ -31,14 +31,14 @@ export const environment = {
     vectors: {
       start: 1,
       end: 0,
-      range: 0.4,
+      range: 0.6,
       spacing: 7
     },
     nodes: 5,
     stroke: 0.7,
     spread: {
-      amount: 10,
-      spacing: 32
+      amount: 8,
+      spacing: 10
     }
   }
 };

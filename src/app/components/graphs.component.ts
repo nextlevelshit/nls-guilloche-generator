@@ -128,11 +128,13 @@ export class GraphsComponent implements OnChanges, OnInit {
   private adjustGraph(curve) {
     return Object.assign(curve, {
       stroke: this.config.stroke,
-      nodes: [
-        this.genVectorPoint(curve.start.point, curve.start.vector),
-        ...this.genRandomPoints(this.config.nodes),
-        this.genVectorPoint(curve.end.point, curve.end.vector)
-      ]
+      start: Object.assign(curve.start, {
+        direction: this.genVectorPoint(curve.start.point, curve.start.vector)
+      }),
+      end: Object.assign(curve.end, {
+        direction: this.genVectorPoint(curve.end.point, curve.end.vector)
+      }),
+      nodes: this.genRandomPoints(this.config.nodes)
     });
   }
 

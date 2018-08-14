@@ -21,10 +21,12 @@ export interface Graph {
   color: string; // can be set in enviroment
   start: {
     point: Point;
+    direction?: Point;
     vector: number; // degree between 0 and 360
   };
   end: {
     point: Point;
+    direction?: Point;
     vector: number; // degree between 0 and 360
   };
   stroke: number; // stroke width

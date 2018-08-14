@@ -66,7 +66,7 @@ export class GraphService {
     }
   }
 
-  public shiftPoint(point: Point, radians: number, spacing: number) {
+  public shiftPoint(point: Point, radians: number, spacing: number): Point {
     return {
       x: Math.sin(radians * Math.PI) * spacing + point.x,
       y: Math.cos(radians * Math.PI) * spacing + point.y
