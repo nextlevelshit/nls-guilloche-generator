@@ -64,6 +64,7 @@ export class AppComponent implements OnInit {
   ngOnInit() {
     this.configForm.reset({...this.config});
     this.list = this.historyService.list();
+    this.startAnimation();
   }
 
   public updateGraphs() {

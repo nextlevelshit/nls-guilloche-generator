@@ -1,5 +1,6 @@
-<svg #svg width="100%" height="100%">
+<svg #svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg"
+version="1.1" shape-rendering="geometricPrecision">
   <g guilloche [graph]="graphs[0]" [matrix]="matrix" [config]="config" [animate]="true" (guillocheChange)="prepareGuillocheExport($event)"></g>
-  <!-- <g guilloche [graph]="graphs[1]" [matrix]="matrix" [config]="config" [animate]="true" (guillocheChange)="prepareGuillocheExport($event)"></g> -->
+  <g guilloche [graph]="graphs[1]" [matrix]="matrix" [config]="config" [animate]="true" (guillocheChange)="prepareGuillocheExport($event)"></g>
   <!-- <g guilloche *ngFor="let graph of graphs" [graph]="graph" [matrix]="matrix" [config]="config" [animate]="true" (guillocheChange)="prepareGuillocheExport($event)"></g> -->
 </svg>
