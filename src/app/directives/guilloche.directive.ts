@@ -86,11 +86,11 @@ export class GuillocheDirective implements OnChanges, OnDestroy {
         };
       });
       this.bounces = this.initialNodes.map(node => {
-        const bounceStart = Math.round(Math.random() * 10) / 10;
-        const bounceAmplitude = Math.round(Math.random() * 100);
-        return this.math.bounce(bounceStart, bounceAmplitude, 2);
+        const bounceStart = Math.round(Math.random() * 100) / 100;
+        const bounceAmplitude = Math.round(Math.random() * 150);
+        return this.math.bounce(bounceStart, bounceAmplitude, 3);
       });
-      this.animationInterval = setInterval(() => this.animateGraph(), 60);
+      this.animationInterval = setInterval(() => this.animateGraph(), 40);
     } else {
       if (this.animationInterval) {
         this.bounce = null;
