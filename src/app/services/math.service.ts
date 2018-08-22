@@ -138,7 +138,7 @@ export class MathService {
     decimals: number = 1
   ) {
     const power = Math.pow(10, decimals);
-    const step = 1 / (power);
+    const step = 2 / (power);
     let index = 0;
 
     while (true) {

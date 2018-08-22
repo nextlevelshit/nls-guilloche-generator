@@ -37,8 +37,8 @@ export const environment = {
     nodes: 5,
     stroke: 1,
     spread: {
-      amount: 10,
-      spacing: 10
+      amount: 28,
+      spacing: 16
     }
   }
 };
