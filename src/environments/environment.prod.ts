@@ -19,8 +19,8 @@ export const environment = {
   debug: false,
   guilloche: {
     colors: {
-      primary: '#F8485E',
-      secondary: '#5CC0C7'
+      secondary: '#F8485E',
+      primary: '#5CC0C7'
     }
   },
   formDefaults: {
