@@ -31,7 +31,6 @@ import { CanvasService } from './../services/canvas.service';
 import { MathService } from './../services/math.service';
 import { GraphService } from '../services/graph.service';
 import { AnimationService } from './../services/animation.service';
-// import { spread } from 'q';
 
 @Directive({
   selector: '[guilloche]'
@@ -155,15 +154,17 @@ export class GuillocheDirective implements OnChanges, OnDestroy {
   }
 
   private drawGraph(points: Point[]): void {
+    this.group
+      .attr('stroke', this.graph.color)
+      .attr('stroke-width', this.graph.stroke)
+      .attr('fill', 'none');
+
     this.pathElements.push(
       this.group.append('path')
         .attr('d', Shape.line()
           .x(p => p.x)
           .y(p => p.y)
-          .curve(Shape.curveBasis)(points))
-        .attr('stroke', this.graph.color)
-        .attr('stroke-width', this.graph.stroke)
-        .attr('fill', 'none'));
+          .curve(Shape.curveBasis)(points)));
 
     if (env.debug) {
       this.debugGraph(points);

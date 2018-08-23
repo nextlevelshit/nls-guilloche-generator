@@ -74,6 +74,7 @@ export class GraphsComponent implements OnChanges, OnInit {
   }
 
   ngOnInit() {
+    console.log(this.svgElementRef);
     this.updateGraphs();
   }
 
@@ -104,7 +105,7 @@ export class GraphsComponent implements OnChanges, OnInit {
 
   private updateGraphs(): void {
     const genShiftStart = this.shiftPoint(this.matrix.start, this.config.vectors.start);
-    const genShiftEnd = this.shiftPoint(this.matrix.end, this.config.vectors.end);
+    const genShiftEnd = this.shiftPoint(this.matrix.end, this.config.vectors.end, false);
 
     const curveList = [
       {
@@ -192,9 +193,9 @@ export class GraphsComponent implements OnChanges, OnInit {
     };
   }
 
-  private *shiftPoint(point: Point, vector) {
-    const genShiftX = this.shiftNumber(this.config.vectors.spacing, vector);
-    const genShiftY = this.shiftNumber(this.config.vectors.spacing, vector);
+  private *shiftPoint(point: Point, vector: number, startPositive: boolean = true) {
+    const genShiftX = this.shiftNumber(this.config.vectors.spacing, vector, startPositive);
+    const genShiftY = this.shiftNumber(this.config.vectors.spacing, vector, startPositive);
 
     while (true) {
       yield {
@@ -207,10 +208,10 @@ export class GraphsComponent implements OnChanges, OnInit {
     }
   }
 
-  private *shiftNumber(space: number, vector: number) {
+  private *shiftNumber(space: number, vector: number, startPositive: boolean = true) {
     let current = 0;
     let index = 0;
-    const sign = this.math.flipSign();
+    const sign = this.math.flipSign(startPositive);
 
     while (true) {
       yield current = sign.next().value * index * space + current;

@@ -149,8 +149,8 @@ export class MathService {
     }
   }
 
-  public *flipSign() {
-    let sign = 1;
+  public *flipSign(startPositive: boolean = true) {
+    let sign = startPositive ? 1 : -1;
 
     while (true) {
       yield sign = sign * (-1);
