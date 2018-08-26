@@ -15,6 +15,7 @@
  */
 
 import { BrowserModule } from '@angular/platform-browser';
+// import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { NgModule } from '@angular/core';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { MomentModule } from 'ngx-moment';
@@ -36,6 +37,7 @@ import { GraphService } from './services/graph.service';
   ],
   imports: [
     BrowserModule,
+    // BrowserAnimationsModule,
     ReactiveFormsModule,
     FormsModule,
     MomentModule,

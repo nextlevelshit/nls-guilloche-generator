@@ -160,8 +160,8 @@ export class GraphsComponent implements OnChanges, OnInit {
   }
 
   private updateMatrix() {
-    const totalArea = Math.abs(this.canvas.clientWidth * this.canvas.clientHeight);
-    const totalCenter = this.math.centerOfArea(this.canvas.clientWidth, this.canvas.clientHeight);
+    const totalArea = Math.abs(this.canvas.getBoundingClientRect().width * this.canvas.getBoundingClientRect().height);
+    const totalCenter = this.math.centerOfArea(this.canvas.getBoundingClientRect().width, this.canvas.getBoundingClientRect().height);
 
     const baseArea = Math.abs(this.config.width * this.config.height);
     const baseScale = Math.pow(totalArea / baseArea * this.config.scale, 0.5);

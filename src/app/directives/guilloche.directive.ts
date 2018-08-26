@@ -61,8 +61,6 @@ export class GuillocheDirective implements OnChanges, OnDestroy {
     private graphService: GraphService,
     private animationService: AnimationService
   ) {
-    this.group = Selection.select(el.nativeElement);
-    this.canvas = Selection.select(this.canvasService.get);
   }
 
   ngOnDestroy() {
@@ -70,6 +68,8 @@ export class GuillocheDirective implements OnChanges, OnDestroy {
   }
 
   ngOnChanges(changes: SimpleChanges) {
+    this.group = Selection.select(this.el.nativeElement);
+    this.canvas = Selection.select(this.canvasService.get);
     // @todo modify graph here instead of in graphs.component.ts
     this.initialNodes = this.graph.nodes.slice();
     this.medianPoint = this.math.medianOfCurve(this.initialNodes);
