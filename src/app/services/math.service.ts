@@ -133,9 +133,9 @@ export class MathService {
    */
 
   public *bounce(
-    start: number = 0,
     amplitude: number = 1,
-    decimals: number = 1
+    decimals: number = 1,
+    start: number = 0
   ) {
     const power = Math.pow(10, decimals);
     const step = 2 / (power);

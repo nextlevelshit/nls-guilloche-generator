@@ -42,6 +42,7 @@ export class GuillocheDirective implements OnChanges, OnDestroy {
   private bounce: any | null;
   private bounces: any | null;
   private initialNodes: any;
+  private initialCurve: any;
   private animationInterval: any;
   private medianPoint: Point;
   private medianIndex: number;
@@ -72,7 +73,14 @@ export class GuillocheDirective implements OnChanges, OnDestroy {
     this.canvas = Selection.select(this.canvasService.get);
     // @todo modify graph here instead of in graphs.component.ts
     this.initialNodes = this.graph.nodes.slice();
-    this.medianPoint = this.math.medianOfCurve(this.initialNodes);
+    this.initialCurve = [
+      this.graph.start.point,
+      this.graph.start.direction,
+      ...this.graph.nodes.slice(),
+      this.graph.end.direction,
+      this.graph.end.point
+    ];
+    this.medianPoint = this.math.medianOfCurve(this.initialCurve);
     this.medianIndex = this.math.medianIndex(this.initialNodes);
 
     if (this.graphService.isAnimated) {
@@ -85,9 +93,8 @@ export class GuillocheDirective implements OnChanges, OnDestroy {
         };
       });
       this.bounces = this.initialNodes.map(node => {
-        // const bounceStart = Math.round(Math.random() * 100) / 100;
         const bounceAmplitude = Math.round(Math.random() * 150);
-        return this.math.bounce(0, bounceAmplitude, 3);
+        return this.math.bounce(bounceAmplitude, 3);
       });
       this.animationInterval = setInterval(() => this.animateGraph(), 40);
     } else {

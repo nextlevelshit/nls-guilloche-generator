@@ -74,7 +74,6 @@ export class GraphsComponent implements OnChanges, OnInit {
   }
 
   ngOnInit() {
-    console.log(this.svgElementRef);
     this.updateGraphs();
   }
 

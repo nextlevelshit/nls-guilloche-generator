@@ -40,7 +40,7 @@ export let ConfigForm: FormGroup = fb.group({
     ])),
   }),
   nodes: fb.control('', Validators.compose([
-    Validators.min(5),
+    Validators.min(4),
     Validators.max(10)
   ])),
   scale: fb.control('', Validators.compose([
