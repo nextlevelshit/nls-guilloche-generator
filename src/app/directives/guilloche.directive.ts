@@ -85,9 +85,9 @@ export class GuillocheDirective implements OnChanges, OnDestroy {
         };
       });
       this.bounces = this.initialNodes.map(node => {
-        const bounceStart = Math.round(Math.random() * 100) / 100;
+        // const bounceStart = Math.round(Math.random() * 100) / 100;
         const bounceAmplitude = Math.round(Math.random() * 150);
-        return this.math.bounce(bounceStart, bounceAmplitude, 3);
+        return this.math.bounce(0, bounceAmplitude, 3);
       });
       this.animationInterval = setInterval(() => this.animateGraph(), 40);
     } else {
@@ -147,10 +147,11 @@ export class GuillocheDirective implements OnChanges, OnDestroy {
         .y(p => p.y)
         .curve(Shape.curveBasis)(points));
 
-    if (env.debug) {
-      this.group.selectAll('circle').remove();
-      this.group.selectAll('text').remove();
-    }
+    // if (env.debug) {
+    //   this.group.selectAll('circle').remove();
+    //   this.group.selectAll('text').remove();
+    //   // this.debugGraph(points);
+    // }
   }
 
   private drawGraph(points: Point[]): void {
