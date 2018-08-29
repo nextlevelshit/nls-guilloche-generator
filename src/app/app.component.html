@@ -74,7 +74,7 @@
         <label class="form-control-label">
           Knotenpunkte
         </label>
-        <input type="number" class="form-control" formControlName="nodes" min="4" max="10">
+        <input type="number" class="form-control" formControlName="nodes" min="1" max="20">
       </div>
 
       <ng-container formGroupName="vectors">
@@ -97,7 +97,7 @@
           <label class="form-control-label">
             Linienanzahl
           </label>
-          <input type="number" class="form-control" formControlName="amount">
+          <input type="number" class="form-control" min="1" formControlName="amount">
         </div>
         <div class="form-group mb-4">
           <label class="form-control-label">

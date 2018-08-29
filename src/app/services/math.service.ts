@@ -94,6 +94,7 @@ export class MathService {
     const p2 = genMedian.next().value;
     const p3 = genMedian.next().value;
     const radians = this.angleRadians(p2, p3);
+    // const radians = Math.round(Math.random() * 10000) / 1000;
     // @todo if nodes are less than 5 error occures
     return Object.assign(p1, { ascent: radians });
   }

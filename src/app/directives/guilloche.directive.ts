@@ -32,6 +32,8 @@ import { MathService } from './../services/math.service';
 import { GraphService } from '../services/graph.service';
 import { AnimationService } from './../services/animation.service';
 
+const ANIMATION_INTERVAL = 60;
+
 @Directive({
   selector: '[guilloche]'
 })
@@ -81,7 +83,7 @@ export class GuillocheDirective implements OnChanges, OnDestroy {
       this.graph.end.point
     ];
     this.medianPoint = this.math.medianOfCurve(this.initialCurve);
-    this.medianIndex = this.math.medianIndex(this.initialNodes);
+    this.medianIndex = this.math.medianIndex(this.initialCurve);
 
     if (this.graphService.isAnimated) {
       this.graph.nodes = this.graph.nodes.slice().map((node, i) => {
@@ -96,7 +98,11 @@ export class GuillocheDirective implements OnChanges, OnDestroy {
         const bounceAmplitude = Math.round(Math.random() * 150);
         return this.math.bounce(bounceAmplitude, 3);
       });
-      this.animationInterval = setInterval(() => this.animateGraph(), 40);
+      let i = 0;
+      this.animationInterval = setInterval(() => {
+        // this.animateGraph();
+        this.animateGraph(i++ % 1000 / 10000);
+      }, ANIMATION_INTERVAL);
     } else {
       if (this.animationInterval) {
         this.bounce = null;
@@ -118,12 +124,13 @@ export class GuillocheDirective implements OnChanges, OnDestroy {
     this.guillocheChanged();
   }
 
-  private animateGraph() {
+  private animateGraph(x) {
     const graphs = this.spreadLines([
       this.graph.start.point,
       this.graph.start.direction,
       ...this.graph.nodes.map((point, i) => {
-        return this.graphService.shiftPoint(point, point.ascent, this.bounces[i].next().value);
+        const ascent = point.ascent * Math.sin(Math.PI * x);
+        return this.graphService.shiftPoint(point, ascent, this.bounces[i].next().value);
       }),
       this.graph.end.direction,
       this.graph.end.point,

@@ -24,9 +24,9 @@ export const environment = {
     }
   },
   formDefaults: {
-    width: 10,
-    height: 16,
-    scale: 0.3,
+    width: 1,
+    height: 1,
+    scale: 0.4,
     overlap: 0.6,
     vectors: {
       start: 1,
