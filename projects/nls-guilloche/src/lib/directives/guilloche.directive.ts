@@ -14,7 +14,7 @@
  * Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
-import { ElementRef, HostListener, Output, EventEmitter, Input, Directive, OnChanges, OnDestroy, SimpleChanges } from '@angular/core';
+import { ElementRef, HostListener, Input, Directive, OnChanges, OnDestroy, SimpleChanges } from '@angular/core';
 import * as Selection from 'd3-selection';
 import * as Shape from 'd3-shape';
 import * as Random from 'd3-random';
@@ -22,22 +22,20 @@ import * as Drag from 'd3-drag';
 import * as Ease from 'd3-ease';
 import * as Timer from 'd3-timer';
 
-import { environment as env } from './../../environments/environment';
 import { Config } from './../models/config.model';
 import { Graph } from './../models/graph.model';
 import { Point } from './../models/point.model';
 import { Param } from './../models/param.model';
-import { CanvasService } from './../services/canvas.service';
-import { MathService } from './../services/math.service';
-import { GraphService } from '../services/graph.service';
-import { AnimationService } from './../services/animation.service';
+import { NlsCanvasService } from './../services/canvas.service';
+import { NlsMathService } from './../services/math.service';
+import { NlsGraphService } from '../services/graph.service';
 
 const ANIMATION_INTERVAL = 60;
 
 @Directive({
-  selector: '[guilloche]'
+  selector: '[nlsGuilloche]'
 })
-export class GuillocheDirective implements OnChanges, OnDestroy {
+export class NlsGuillocheDirective implements OnChanges, OnDestroy {
 
   private canvas: any;
   private group: any;
@@ -55,14 +53,11 @@ export class GuillocheDirective implements OnChanges, OnDestroy {
   @Input() config: any;
   @Input() animate: boolean;
 
-  @Output() guillocheChange = new EventEmitter();
-
   constructor(
-    private canvasService: CanvasService,
+    private canvasService: NlsCanvasService,
     private el: ElementRef,
-    private math: MathService,
-    private graphService: GraphService,
-    private animationService: AnimationService
+    private math: NlsMathService,
+    private graphService: NlsGraphService
   ) {
   }
 
@@ -121,7 +116,6 @@ export class GuillocheDirective implements OnChanges, OnDestroy {
       this.graph.end.direction,
       this.graph.end.point,
     ]).forEach((points, index) => this.drawGraph(points));
-    this.guillocheChanged();
   }
 
   private animateGraph(x) {
@@ -160,12 +154,6 @@ export class GuillocheDirective implements OnChanges, OnDestroy {
         .x(p => p.x)
         .y(p => p.y)
         .curve(Shape.curveBasis)(points));
-
-    // if (env.debug) {
-    //   this.group.selectAll('circle').remove();
-    //   this.group.selectAll('text').remove();
-    //   // this.debugGraph(points);
-    // }
   }
 
   private drawGraph(points: Point[]): void {
@@ -180,14 +168,6 @@ export class GuillocheDirective implements OnChanges, OnDestroy {
           .x(p => p.x)
           .y(p => p.y)
           .curve(Shape.curveBasis)(points)));
-
-    if (env.debug) {
-      this.debugGraph(points);
-    }
-  }
-
-  public guillocheChanged() {
-    this.guillocheChange.emit(this.el.nativeElement);
   }
 
   private debugGraph(points: Point[]) {
@@ -209,16 +189,5 @@ export class GuillocheDirective implements OnChanges, OnDestroy {
         .attr('fill', this.graph.color)
         .text(index);
     });
-  }
-
-  private debugBounce(point: Point): void {
-    if (env.debug) {
-      this.group.append('circle')
-        .attr('cx', point.x)
-        .attr('cy', point.y)
-        .attr('r', 2)
-        .attr('fill-opacity', 0.4)
-        .attr('fill', 'darkgray');
-    }
   }
 }

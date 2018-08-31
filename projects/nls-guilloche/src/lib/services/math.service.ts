@@ -22,7 +22,7 @@ import { Point } from './../models/point.model';
 import { Graph } from './../models/graph.model';
 
 @Injectable()
-export class MathService {
+export class NlsMathService {
 
   /**
    * Calculate distance between to points with coordinates.

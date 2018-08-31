@@ -22,14 +22,13 @@ import * as Random from 'd3-random';
 import * as Drag from 'd3-drag';
 
 import { environment as env } from '../../environments/environment';
-import { CanvasService } from './../services/canvas.service';
-import { HistoryService } from './../services/history.service';
-import { AnimationService } from '../services/animation.service';
-import { MathService } from '../services/math.service';
-import { GuillocheDirective } from './../directives/guilloche.directive';
-import { Graph } from '../models/graph.model';
-import { Point } from '../models/point.model';
-import { GraphService } from '../services/graph.service';
+import { Graph } from './../../../projects/nls-guilloche/src/lib/models/graph.model';
+import { Point } from './../../../projects/nls-guilloche/src/lib/models/point.model';
+import { NlsCanvasService } from './../../../projects/nls-guilloche/src/lib/services/canvas.service';
+import { NlsHistoryService } from './../../../projects/nls-guilloche/src/lib/services/history.service';
+import { NlsMathService } from './../../../projects/nls-guilloche/src/lib/services/math.service';
+import { NlsGuillocheDirective } from './../../../projects/nls-guilloche/src/lib/directives/guilloche.directive';
+import { NlsGraphService } from './../../../projects/nls-guilloche/src/lib/services/graph.service';
 
 @Component({
   selector: 'app-graphs',
@@ -63,11 +62,10 @@ export class GraphsComponent implements OnChanges, OnInit {
   }
 
   constructor(
-    private canvasService: CanvasService,
-    private historyService: HistoryService,
-    private animationService: AnimationService,
-    private math: MathService,
-    private graphService: GraphService
+    private canvasService: NlsCanvasService,
+    private historyService: NlsHistoryService,
+    private math: NlsMathService,
+    private graphService: NlsGraphService
   ) {
     this.genLoadedAllGraphs = this.countLoadedGraphs();
     this.timer = interval(500);

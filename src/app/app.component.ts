@@ -18,18 +18,16 @@ import { ConfigForm } from './forms/config.form';
 import { Component, OnInit, HostListener } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
-// import { Moment } from 'moment';
 import * as moment from 'moment';
 import 'moment/min/locales';
 
 import { environment as env } from '../environments/environment';
-import { Param } from './models/param.model';
-import { Config } from './models/config.model';
-import { CanvasService } from './services/canvas.service';
-import { HistoryService } from './services/history.service';
-import { Graph } from './models/graph.model';
-import { GraphService } from './services/graph.service';
-import { AnimationService } from './services/animation.service';
+import { Param } from './../../projects/nls-guilloche/src/lib/models/param.model';
+import { Config } from './../../projects/nls-guilloche/src/lib/models/config.model';
+import { Graph } from './../../projects/nls-guilloche/src/lib/models/graph.model';
+import { NlsCanvasService } from './../../projects/nls-guilloche/src/lib/services/canvas.service';
+import { NlsHistoryService } from './../../projects/nls-guilloche/src/lib/services/history.service';
+import { NlsGraphService } from './../../projects/nls-guilloche/src/lib/services/graph.service';
 
 @Component({
   selector: 'app-root',
@@ -48,9 +46,9 @@ export class AppComponent implements OnInit {
   public animationActive: boolean;
 
   constructor(
-    private canvasService: CanvasService,
-    private historyService: HistoryService,
-    private graphService: GraphService,
+    private canvasService: NlsCanvasService,
+    private historyService: NlsHistoryService,
+    private graphService: NlsGraphService,
   ) {
     moment.locale('de');
 

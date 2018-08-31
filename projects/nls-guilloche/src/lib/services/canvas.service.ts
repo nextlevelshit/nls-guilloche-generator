@@ -18,7 +18,7 @@ import { Inject, Injectable, Renderer2, RendererFactory2 } from '@angular/core';
 import * as Selection from 'd3-selection';
 
 @Injectable()
-export class CanvasService {
+export class NlsCanvasService {
   private renderer: Renderer2;
 
   public canvas: any;

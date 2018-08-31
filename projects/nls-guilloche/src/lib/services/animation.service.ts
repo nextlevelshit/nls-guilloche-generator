@@ -19,11 +19,11 @@ import { interval, Observable } from 'rxjs';
 import * as Selection from 'd3-selection';
 
 import { Graph } from '../models/graph.model';
-import { MathService } from './math.service';
-import { HistoryService } from './history.service';
+import { NlsMathService } from './math.service';
+import { NlsHistoryService } from './history.service';
 
 @Injectable()
-export class AnimationService {
+export class NlsAnimationService {
 
   public graphs: Graph[];
   public speed: number;
@@ -33,8 +33,8 @@ export class AnimationService {
   // private subscribtion: any;
 
   constructor(
-    private math: MathService,
-    private historyService: HistoryService,
+    private math: NlsMathService,
+    private historyService: NlsHistoryService,
   ) {
   }
 

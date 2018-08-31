@@ -22,18 +22,18 @@ import { MomentModule } from 'ngx-moment';
 
 import { AppComponent } from './app.component';
 import { GraphsComponent } from './components/graphs.component';
-import { GuillocheDirective } from './directives/guilloche.directive';
-import { CanvasService } from './services/canvas.service';
-import { HistoryService } from './services/history.service';
-import { AnimationService } from './services/animation.service';
-import { MathService } from './services/math.service';
-import { GraphService } from './services/graph.service';
+import { NlsGuillocheDirective } from './../../projects/nls-guilloche/src/lib/directives/guilloche.directive';
+import { NlsCanvasService } from './../../projects/nls-guilloche/src/lib/services/canvas.service';
+import { NlsHistoryService } from './../../projects/nls-guilloche/src/lib/services/history.service';
+import { NlsAnimationService } from './../../projects/nls-guilloche/src/lib/services/animation.service';
+import { NlsMathService } from './../../projects/nls-guilloche/src/lib/services/math.service';
+import { NlsGraphService } from './../../projects/nls-guilloche/src/lib/services/graph.service';
 
 @NgModule({
   declarations: [
     AppComponent,
     GraphsComponent,
-    GuillocheDirective
+    NlsGuillocheDirective
   ],
   imports: [
     BrowserModule,
@@ -43,11 +43,11 @@ import { GraphService } from './services/graph.service';
     MomentModule,
   ],
   providers: [
-    CanvasService,
-    HistoryService,
-    AnimationService,
-    MathService,
-    GraphService,
+    NlsCanvasService,
+    NlsHistoryService,
+    NlsAnimationService,
+    NlsMathService,
+    NlsGraphService,
   ],
   bootstrap: [AppComponent]
 })

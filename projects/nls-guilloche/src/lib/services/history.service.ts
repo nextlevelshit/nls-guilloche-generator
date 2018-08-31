@@ -20,7 +20,7 @@ import * as Selection from 'd3-selection';
 import { Graph } from '../models/graph.model';
 
 @Injectable()
-export class HistoryService {
+export class NlsHistoryService {
 
   public history: any[];
 

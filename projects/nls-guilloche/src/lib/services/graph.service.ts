@@ -18,17 +18,17 @@ import { Validators } from '@angular/forms';
 import { Inject, Injectable, Renderer2, RendererFactory2 } from '@angular/core';
 import * as Selection from 'd3-selection';
 
-import { MathService } from './math.service';
+import { NlsMathService } from './math.service';
 import { Graph } from './../models/graph.model';
 import { Point } from './../models/point.model';
 
 @Injectable()
-export class GraphService {
+export class NlsGraphService {
   private graphs: Graph[];
   private animation: boolean | null;
 
   constructor(
-    private math: MathService
+    private math: NlsMathService
   ) {}
 
   public get() {
