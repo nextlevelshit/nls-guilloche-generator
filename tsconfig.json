@@ -17,7 +17,7 @@
       "dom"
     ],
     "paths": {
-      "nls-guilloche": [
+      "NlsGuilloche": [
         "dist/nls-guilloche"
       ]
     }

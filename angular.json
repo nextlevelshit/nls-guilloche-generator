@@ -3,7 +3,7 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "nls-guilloche-generator": {
+    "NlsGuillocheGenerator": {
       "root": "",
       "sourceRoot": "src",
       "projectType": "application",
@@ -99,7 +99,7 @@
         }
       }
     },
-    "nls-guilloche-generator-e2e": {
+    "NlsGuillocheGenerator-e2e": {
       "root": "e2e/",
       "projectType": "application",
       "architect": {
@@ -121,7 +121,7 @@
         }
       }
     },
-    "nls-guilloche": {
+    "NlsGuilloche": {
       "root": "projects/nls-guilloche",
       "sourceRoot": "projects/nls-guilloche/src",
       "projectType": "library",
