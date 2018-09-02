@@ -14,26 +14,19 @@
  * Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
-import { BrowserModule } from '@angular/platform-browser';
-// import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { NgModule } from '@angular/core';
+import { BrowserModule } from '@angular/platform-browser';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { MomentModule } from 'ngx-moment';
 
 import { AppComponent } from './app.component';
 import { NlsGraphsComponent } from 'projects/nls-guilloche/src/public_api';
-import { NlsGuillocheDirective } from 'projects/nls-guilloche/src/public_api';
-import { NlsCanvasService } from 'projects/nls-guilloche/src/public_api';
 import { NlsHistoryService } from 'projects/nls-guilloche/src/public_api';
-import { NlsAnimationService } from 'projects/nls-guilloche/src/public_api';
-import { NlsMathService } from 'projects/nls-guilloche/src/public_api';
-import { NlsGraphService } from 'projects/nls-guilloche/src/public_api';
 
 @NgModule({
   declarations: [
     AppComponent,
     NlsGraphsComponent,
-    NlsGuillocheDirective
   ],
   imports: [
     BrowserModule,
@@ -42,11 +35,7 @@ import { NlsGraphService } from 'projects/nls-guilloche/src/public_api';
     MomentModule,
   ],
   providers: [
-    NlsCanvasService,
     NlsHistoryService,
-    NlsAnimationService,
-    NlsMathService,
-    NlsGraphService,
   ],
   bootstrap: [AppComponent]
 })

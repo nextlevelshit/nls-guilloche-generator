@@ -22,11 +22,7 @@ import * as moment from 'moment';
 import 'moment/min/locales';
 
 import { environment as env } from '../environments/environment';
-import { Config } from 'projects/nls-guilloche/src/public_api';
-import { Graph } from 'projects/nls-guilloche/src/public_api';
-import { NlsCanvasService } from 'projects/nls-guilloche/src/public_api';
 import { NlsHistoryService } from 'projects/nls-guilloche/src/public_api';
-import { NlsGraphService } from 'projects/nls-guilloche/src/public_api';
 
 @Component({
   selector: 'app-root',
@@ -44,9 +40,7 @@ export class AppComponent implements OnInit {
   public animationActive: boolean;
 
   constructor(
-    private canvasService: NlsCanvasService,
     private historyService: NlsHistoryService,
-    private graphService: NlsGraphService,
   ) {
     moment.locale('de');
 
