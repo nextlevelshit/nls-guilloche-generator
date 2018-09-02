@@ -21,13 +21,13 @@ import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { MomentModule } from 'ngx-moment';
 
 import { AppComponent } from './app.component';
-import { NlsGraphsComponent } from './../../projects/nls-guilloche/src/lib/components/graphs.component';
-import { NlsGuillocheDirective } from './../../projects/nls-guilloche/src/lib/directives/guilloche.directive';
-import { NlsCanvasService } from './../../projects/nls-guilloche/src/lib/services/canvas.service';
-import { NlsHistoryService } from './../../projects/nls-guilloche/src/lib/services/history.service';
-import { NlsAnimationService } from './../../projects/nls-guilloche/src/lib/services/animation.service';
-import { NlsMathService } from './../../projects/nls-guilloche/src/lib/services/math.service';
-import { NlsGraphService } from './../../projects/nls-guilloche/src/lib/services/graph.service';
+import { NlsGraphsComponent } from './../../projects/nls-guilloche/src/nls/components/graphs.component';
+import { NlsGuillocheDirective } from './../../projects/nls-guilloche/src/nls/directives/guilloche.directive';
+import { NlsCanvasService } from './../../projects/nls-guilloche/src/nls/services/canvas.service';
+import { NlsHistoryService } from './../../projects/nls-guilloche/src/nls/services/history.service';
+import { NlsAnimationService } from './../../projects/nls-guilloche/src/nls/services/animation.service';
+import { NlsMathService } from './../../projects/nls-guilloche/src/nls/services/math.service';
+import { NlsGraphService } from './../../projects/nls-guilloche/src/nls/services/graph.service';
 
 @NgModule({
   declarations: [

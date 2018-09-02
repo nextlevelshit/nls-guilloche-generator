@@ -2,14 +2,14 @@
  * Public API Surface of nls-guilloche
  */
 
-export * from './lib/components/graphs.component';
-export * from './lib/directives/guilloche.directive';
-export * from './lib/models/config.model';
-export * from './lib/models/graph.model';
-export * from './lib/models/param.model';
-export * from './lib/models/point.model';
-export * from './lib/services/animation.service';
-export * from './lib/services/canvas.service';
-export * from './lib/services/graph.service';
-export * from './lib/services/history.service';
-export * from './lib/services/math.service';
+export * from './nls/components/graphs.component';
+export * from './nls/directives/guilloche.directive';
+export * from './nls/models/config.model';
+export * from './nls/models/graph.model';
+export * from './nls/models/param.model';
+export * from './nls/models/point.model';
+export * from './nls/services/animation.service';
+export * from './nls/services/canvas.service';
+export * from './nls/services/graph.service';
+export * from './nls/services/history.service';
+export * from './nls/services/math.service';

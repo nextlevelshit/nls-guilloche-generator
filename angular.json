@@ -125,7 +125,7 @@
       "root": "projects/nls-guilloche",
       "sourceRoot": "projects/nls-guilloche/src",
       "projectType": "library",
-      "prefix": "lib",
+      "prefix": "nls",
       "architect": {
         "build": {
           "builder": "@angular-devkit/build-ng-packagr:build",
