@@ -2,15 +2,16 @@
   <img src="https://user-images.githubusercontent.com/10194510/44956832-63746780-aeca-11e8-85a4-09fa8138e659.png" alt="Random Guilloche Generator" height="300" />
 </div>
 
+
+---
+
+<p align="center"><strong>Random Guilloche Generator</strong></p>
+
 <div align="center">
   <a href="https://npmjs.org/package/nls-guilloche">
     <img src="https://badgen.now.sh/npm/v/nls-guilloche" alt="version" />
   </a>
 </div>
-
----
-
-<p align="center"><strong>Random Guilloche Generator</strong></p>
 
 ---
 
