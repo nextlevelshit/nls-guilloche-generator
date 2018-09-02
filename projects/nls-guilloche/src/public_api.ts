@@ -2,6 +2,7 @@
  * Public API Surface of nls-guilloche
  */
 
+export * from './lib/components/graphs.component';
 export * from './lib/directives/guilloche.directive';
 export * from './lib/models/config.model';
 export * from './lib/models/graph.model';
