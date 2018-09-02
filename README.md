@@ -5,7 +5,7 @@
 
 ---
 
-<p align="center"><strong>Random Guilloche Generator</strong></p>
+<h1 align="center"><strong>Random Guilloche Generator</strong></h1>
 
 <div align="center">
   <a href="https://npmjs.org/package/nls-guilloche">
