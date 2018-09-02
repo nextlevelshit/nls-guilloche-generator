@@ -72,8 +72,9 @@ export class NlsGraphsComponent implements OnChanges, OnInit {
   }
 
   ngOnChanges(changes: SimpleChanges) {
+    this.config.autoHeight = true;
     this.updateCanvas();
-    this.updateMatrix();
+    this.matrix = this.calcMatrix();
 
     if (changes.config) {
       // Config changes must not trigger any other events
@@ -157,29 +158,50 @@ export class NlsGraphsComponent implements OnChanges, OnInit {
     this.canvasService.adjustToWindow();
   }
 
-  private updateMatrix() {
-    const totalArea = Math.abs(this.canvas.getBoundingClientRect().width * this.canvas.getBoundingClientRect().height);
-    const totalCenter = this.math.centerOfArea(this.canvas.getBoundingClientRect().width, this.canvas.getBoundingClientRect().height);
-
+  private calcMatrix() {
+    const canvasWidth = this.canvas.getBoundingClientRect().width;
+    const canvasHeight = this.canvas.getBoundingClientRect().height;
+    const totalArea = Math.abs(canvasWidth * canvasHeight);
+    const totalCenter = this.math.centerOfArea(canvasWidth, canvasHeight);
     const baseArea = Math.abs(this.config.width * this.config.height);
     const baseScale = Math.pow(totalArea / baseArea * this.config.scale, 0.5);
     const baseWidthScaled = baseScale * this.config.width;
     const baseHeightScaled = baseScale * this.config.height;
-    const baseCenter = this.math.centerOfArea(baseWidthScaled, baseHeightScaled);
+    const baseCenter = this.math.centerOfArea(
+      baseWidthScaled,
+      baseHeightScaled
+    );
 
-    this.matrix = {
-      start: {
-        x: totalCenter.x - baseCenter.x,
-        y: totalCenter.y + baseCenter.y
-      },
-      end: {
-        x: totalCenter.x + baseCenter.x,
-        y: totalCenter.y - baseCenter.y
-      },
-      width: baseWidthScaled,
-      height: baseHeightScaled,
-      center: totalCenter
-    };
+    if (this.config.autoHeight) {
+      return {
+        start: {
+          x: totalCenter.x - baseCenter.x,
+          y: canvasHeight
+        },
+        end: {
+          x: totalCenter.x + baseCenter.x,
+          y: 0
+        },
+        width: canvasWidth,
+        height: canvasHeight,
+        center: totalCenter
+      };
+    } else {
+
+      return {
+        start: {
+          x: totalCenter.x - baseCenter.x,
+          y: totalCenter.y + baseCenter.y
+        },
+        end: {
+          x: totalCenter.x + baseCenter.x,
+          y: totalCenter.y - baseCenter.y
+        },
+        width: baseWidthScaled,
+        height: baseHeightScaled,
+        center: totalCenter
+      };
+    }
   }
 
   private genVectorPoint(point: Point, vector: number) {

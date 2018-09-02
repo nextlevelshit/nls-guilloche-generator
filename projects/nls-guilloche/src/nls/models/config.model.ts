@@ -39,9 +39,10 @@ export interface Config {
     amount: number;
     spacing: number
   };
-  date?: Date;
   nodes: any;
   stroke: any;
   overlap: any;
   scale: any;
+  date?: Date;
+  autoHeight?: boolean;
 }
