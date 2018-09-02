@@ -17,6 +17,7 @@
 export const environment = {
   production: true,
   debug: false,
+  animation: false,
   guilloche: {
     colors: {
       secondary: '#F8485E',

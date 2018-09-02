@@ -23,6 +23,7 @@ import * as Drag from 'd3-drag';
 
 import { environment as env } from '../../environments/environment';
 import { Graph } from './../../../projects/nls-guilloche/src/lib/models/graph.model';
+import { Config } from './../../../projects/nls-guilloche/src/lib/models/config.model';
 import { Point } from './../../../projects/nls-guilloche/src/lib/models/point.model';
 import { NlsCanvasService } from './../../../projects/nls-guilloche/src/lib/services/canvas.service';
 import { NlsHistoryService } from './../../../projects/nls-guilloche/src/lib/services/history.service';
@@ -46,12 +47,10 @@ export class GraphsComponent implements OnChanges, OnInit {
   private genShiftPoint: any | null;
   private genLoadedAllGraphs: any | null;
   private hash: string;
-  private animation: Observable<Graph[]>;
-  private timer: Observable<number>;
 
-  @Input() config: any;
+  @Input() config: Config;
   @Input() restoredHistory: any;
-  @Input() animationActive: boolean;
+  @Input() animation: boolean;
   @Output() svgChange = new EventEmitter();
   @Output() graphChange = new EventEmitter();
   @ViewChild('svg') svgElementRef;
@@ -68,18 +67,18 @@ export class GraphsComponent implements OnChanges, OnInit {
     private graphService: NlsGraphService
   ) {
     this.genLoadedAllGraphs = this.countLoadedGraphs();
-    this.timer = interval(500);
   }
 
   ngOnInit() {
-    this.updateGraphs();
   }
 
   ngOnChanges(changes: SimpleChanges) {
     this.updateCanvas();
     this.updateMatrix();
 
-    if (changes.config && !changes.config.firstChange) {
+    console.log(changes);
+
+    if (changes.config) {
       // Config changes must not trigger any other events
       this.updateGraphs();
       return;
@@ -106,18 +105,23 @@ export class GraphsComponent implements OnChanges, OnInit {
 
     const curveList = [
       {
-        color: env.guilloche.colors.primary,
+        color: this.config.colors.primary,
         start: genShiftStart.next().value,
         end: genShiftEnd.next().value
       },
       {
-        color: env.guilloche.colors.secondary,
+        color: this.config.colors.secondary,
         start: genShiftEnd.next().value,
         end: genShiftStart.next().value
       }
     ];
 
-    this.graphs = curveList.map(curve => this.adjustGraph(curve));
+    this.graphs = curveList.map(curve => {
+      return {
+        ...this.adjustGraph(curve),
+        spread: this.config.spread
+      };
+    });
     this.hash = this.historyService.hash(this.graphs);
     this.saveHistory();
     this.saveGraph();

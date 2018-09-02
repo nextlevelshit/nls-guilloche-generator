@@ -22,10 +22,8 @@ import * as Drag from 'd3-drag';
 import * as Ease from 'd3-ease';
 import * as Timer from 'd3-timer';
 
-import { Config } from './../models/config.model';
 import { Graph } from './../models/graph.model';
 import { Point } from './../models/point.model';
-import { Param } from './../models/param.model';
 import { NlsCanvasService } from './../services/canvas.service';
 import { NlsMathService } from './../services/math.service';
 import { NlsGraphService } from '../services/graph.service';
@@ -49,9 +47,7 @@ export class NlsGuillocheDirective implements OnChanges, OnDestroy {
   private pathElements: any;
 
   @Input() graph: Graph;
-  @Input() matrix: any;
-  @Input() config: any;
-  @Input() animate: boolean;
+  @Input() animation: boolean;
 
   constructor(
     private canvasService: NlsCanvasService,
@@ -80,7 +76,7 @@ export class NlsGuillocheDirective implements OnChanges, OnDestroy {
     this.medianPoint = this.math.medianOfCurve(this.initialCurve);
     this.medianIndex = this.math.medianIndex(this.initialCurve);
 
-    if (this.graphService.isAnimated) {
+    if (this.animation) {
       this.graph.nodes = this.graph.nodes.slice().map((node, i) => {
         return {
           x: node.x,
@@ -135,9 +131,9 @@ export class NlsGuillocheDirective implements OnChanges, OnDestroy {
 
   private spreadLines(points: Point[]) {
     const shiftedMedians = [];
-    const genshiftedMedians = this.graphService.spreadOrthogonal(this.medianPoint, this.config.spread.spacing);
+    const genshiftedMedians = this.graphService.spreadOrthogonal(this.medianPoint, this.graph.spread.spacing);
 
-    for (let i = 0; i < this.config.spread.amount; i++) {
+    for (let i = 0; i < this.graph.spread.amount; i++) {
       shiftedMedians.push(genshiftedMedians.next().value);
     }
 

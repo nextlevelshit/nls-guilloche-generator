@@ -15,6 +15,7 @@
  */
 
 import { Point } from './point.model';
+import { Config } from './config.model';
 
 export interface Graph {
   id: string;
@@ -28,6 +29,10 @@ export interface Graph {
     point: Point;
     direction?: Point;
     vector: number; // degree between 0 and 360
+  };
+  spread: {
+    amount: number;
+    spacing: number
   };
   stroke: number; // stroke width
   nodes?: Point[]; // orientation points

@@ -17,6 +17,7 @@
 export const environment = {
   production: false,
   debug: false,
+  animation: false,
   guilloche: {
     colors: {
       primary: '#129490',

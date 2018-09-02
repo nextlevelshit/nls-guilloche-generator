@@ -20,18 +20,28 @@ export interface Config {
   start: {
     x: number;
     y: number;
-    color: string;
   };
   end: {
     x: number;
     y: number;
-    color: string;
   };
   vectors: {
-    spacing: number
+    spacing: number;
+    start: any;
+    end: any;
+    range: any;
+  };
+  colors: {
+    primary: string;
+    secondary: string;
   };
   spread: {
     amount: number;
     spacing: number
   };
+  date?: Date;
+  nodes: any;
+  stroke: any;
+  overlap: any;
+  scale: any;
 }

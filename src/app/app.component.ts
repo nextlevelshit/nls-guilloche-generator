@@ -22,7 +22,6 @@ import * as moment from 'moment';
 import 'moment/min/locales';
 
 import { environment as env } from '../environments/environment';
-import { Param } from './../../projects/nls-guilloche/src/lib/models/param.model';
 import { Config } from './../../projects/nls-guilloche/src/lib/models/config.model';
 import { Graph } from './../../projects/nls-guilloche/src/lib/models/graph.model';
 import { NlsCanvasService } from './../../projects/nls-guilloche/src/lib/services/canvas.service';
@@ -36,7 +35,6 @@ import { NlsGraphService } from './../../projects/nls-guilloche/src/lib/services
 })
 export class AppComponent implements OnInit {
 
-  public canvasParam: Param;
   public config: any | null;
   public configForm: FormGroup;
   public url: any;
@@ -52,21 +50,43 @@ export class AppComponent implements OnInit {
   ) {
     moment.locale('de');
 
-    this.config = env.formDefaults;
+    this.config = {
+      colors: {
+        primary: env.guilloche.colors.primary,
+        secondary: env.guilloche.colors.secondary,
+      },
+      ...env.formDefaults
+    };
     this.configForm = ConfigForm;
     this.list = [];
     this.showList = true;
-    this.animationActive = false;
+    this.animationActive = env.animation;
   }
 
   ngOnInit() {
+    this.resetForm();
+    this.refreshHistory();
+  }
+
+  private resetForm() {
     this.configForm.reset({...this.config});
+  }
+
+  private refreshHistory() {
     this.list = this.historyService.list();
   }
 
   public updateGraphs() {
-    this.config = {...this.configForm.value};
-    this.list = this.historyService.list();
+    this.config = Object.assign(
+      {
+        ...this.config,
+        // Adding date to force ngChange event of graphs component
+        date: new Date()
+      },
+      // Override config with new form values
+      this.configForm.value
+    );
+    this.refreshHistory();
   }
 
   public prepareSvgExport(svg) {
@@ -97,11 +117,9 @@ export class AppComponent implements OnInit {
 
   public startAnimation() {
     this.animationActive = true;
-    this.graphService.startAnimation();
   }
 
   public stopAnimation() {
     this.animationActive = false;
-    this.graphService.stopAnimation();
   }
 }
