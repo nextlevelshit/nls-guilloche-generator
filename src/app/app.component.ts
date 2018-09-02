@@ -22,11 +22,11 @@ import * as moment from 'moment';
 import 'moment/min/locales';
 
 import { environment as env } from '../environments/environment';
-import { Config } from './../../projects/nls-guilloche/src/nls/models/config.model';
-import { Graph } from './../../projects/nls-guilloche/src/nls/models/graph.model';
-import { NlsCanvasService } from './../../projects/nls-guilloche/src/nls/services/canvas.service';
-import { NlsHistoryService } from './../../projects/nls-guilloche/src/nls/services/history.service';
-import { NlsGraphService } from './../../projects/nls-guilloche/src/nls/services/graph.service';
+import { Config } from 'projects/nls-guilloche/src/public_api';
+import { Graph } from 'projects/nls-guilloche/src/public_api';
+import { NlsCanvasService } from 'projects/nls-guilloche/src/public_api';
+import { NlsHistoryService } from 'projects/nls-guilloche/src/public_api';
+import { NlsGraphService } from 'projects/nls-guilloche/src/public_api';
 
 @Component({
   selector: 'app-root',
