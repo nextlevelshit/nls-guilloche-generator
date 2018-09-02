@@ -42,12 +42,12 @@ export class NlsCanvasService {
       this.renderer.setStyle(
         this.canvas,
         'width',
-        window.innerWidth
+        this.canvas.innerWidth
       );
       this.renderer.setStyle(
         this.canvas,
         'height',
-        window.innerHeight
+        this.canvas.innerHeight
       );
     }
   }
