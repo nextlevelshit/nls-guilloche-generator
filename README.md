@@ -1,18 +1,42 @@
-# Automated guilloche graph generator
+<div align="center">
+  <img src="https://user-images.githubusercontent.com/10194510/44956832-63746780-aeca-11e8-85a4-09fa8138e659.png" alt="Random Guilloche Generator" height="300" />
+</div>
 
-![d3-guilloche](https://user-images.githubusercontent.com/10194510/40454963-20fbf46a-5eeb-11e8-863f-e8c619d8cda0.png)
+
+---
+
+<h1 align="center"><strong>Random Guilloche Generator</strong></h1>
+
+<div align="center">
+  <a href="https://npmjs.org/package/nls-guilloche">
+    <img src="https://badgen.now.sh/npm/v/nls-guilloche" alt="version" />
+  </a>
+</div>
+
+---
+
+## Rquirements
+
+- Node.js
+- Angular CLI
+
+## NPM Scripts
+
+| command          | description                                                     |
+|------------------|-----------------------------------------------------------------|
+| `npm run start`  | start development server on `http://localhost:4200/`            |
+| `npm run build`  | build production application and save to `./dist`               |
+| `npm run build:library` | build node module and save to `./dist/NlsGuilloche`      | 
 
 ## Development server
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
+Download dependencies with `npm i` or `yarn`.
 
-## Code scaffolding
-
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+Run `npm run start` for a dev server. Browser opens and navigates automatically to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
 
 ## Build
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory. Use the `--prod` flag for a production build.
+Run `npm run build` to build the project. The build artifacts will be stored in the `dist/` directory. Use the `--prod` flag for a production build.
 
 ## Author
 
