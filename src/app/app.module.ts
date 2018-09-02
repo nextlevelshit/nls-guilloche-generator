@@ -21,7 +21,7 @@ import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { MomentModule } from 'ngx-moment';
 
 import { AppComponent } from './app.component';
-import { GraphsComponent } from './components/graphs.component';
+import { NlsGraphsComponent } from './../../projects/nls-guilloche/src/lib/components/graphs.component';
 import { NlsGuillocheDirective } from './../../projects/nls-guilloche/src/lib/directives/guilloche.directive';
 import { NlsCanvasService } from './../../projects/nls-guilloche/src/lib/services/canvas.service';
 import { NlsHistoryService } from './../../projects/nls-guilloche/src/lib/services/history.service';
@@ -32,12 +32,11 @@ import { NlsGraphService } from './../../projects/nls-guilloche/src/lib/services
 @NgModule({
   declarations: [
     AppComponent,
-    GraphsComponent,
+    NlsGraphsComponent,
     NlsGuillocheDirective
   ],
   imports: [
     BrowserModule,
-    // BrowserAnimationsModule,
     ReactiveFormsModule,
     FormsModule,
     MomentModule,

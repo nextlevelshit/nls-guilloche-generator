@@ -21,22 +21,21 @@ import * as Shape from 'd3-shape';
 import * as Random from 'd3-random';
 import * as Drag from 'd3-drag';
 
-import { environment as env } from '../../environments/environment';
-import { Graph } from './../../../projects/nls-guilloche/src/lib/models/graph.model';
-import { Config } from './../../../projects/nls-guilloche/src/lib/models/config.model';
-import { Point } from './../../../projects/nls-guilloche/src/lib/models/point.model';
-import { NlsCanvasService } from './../../../projects/nls-guilloche/src/lib/services/canvas.service';
-import { NlsHistoryService } from './../../../projects/nls-guilloche/src/lib/services/history.service';
-import { NlsMathService } from './../../../projects/nls-guilloche/src/lib/services/math.service';
-import { NlsGuillocheDirective } from './../../../projects/nls-guilloche/src/lib/directives/guilloche.directive';
-import { NlsGraphService } from './../../../projects/nls-guilloche/src/lib/services/graph.service';
+import { Graph } from './../models/graph.model';
+import { Config } from './../models/config.model';
+import { Point } from './../models/point.model';
+import { NlsCanvasService } from './../services/canvas.service';
+import { NlsHistoryService } from './../services/history.service';
+import { NlsMathService } from './../services/math.service';
+import { NlsGuillocheDirective } from './../directives/guilloche.directive';
+import { NlsGraphService } from './../services/graph.service';
 
 @Component({
-  selector: 'app-graphs',
+  selector: 'nls-graphs',
   templateUrl: './graphs.component.html',
   styleUrls: ['./graphs.component.scss']
 })
-export class GraphsComponent implements OnChanges, OnInit {
+export class NlsGraphsComponent implements OnChanges, OnInit {
 
   public canvas: any | null;
   public matrix: any | null;
