@@ -14,7 +14,7 @@
  * Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
-import { ViewChild, Component, Input, Output, SimpleChanges, OnChanges, EventEmitter, OnInit, HostListener } from '@angular/core';
+import { ViewChild, Component, Input, Output, SimpleChanges, OnChanges, EventEmitter, HostListener } from '@angular/core';
 import { Observable, interval, Subscription } from 'rxjs';
 import * as Selection from 'd3-selection';
 import * as Shape from 'd3-shape';
@@ -35,7 +35,7 @@ import { NlsGraphService } from './../services/graph.service';
   templateUrl: './graphs.component.html',
   styleUrls: ['./graphs.component.scss']
 })
-export class NlsGraphsComponent implements OnChanges, OnInit {
+export class NlsGraphsComponent implements OnChanges {
 
   public canvas: any | null;
   public matrix: any | null;
@@ -66,9 +66,6 @@ export class NlsGraphsComponent implements OnChanges, OnInit {
     private graphService: NlsGraphService
   ) {
     this.genLoadedAllGraphs = this.countLoadedGraphs();
-  }
-
-  ngOnInit() {
   }
 
   ngOnChanges(changes: SimpleChanges) {
