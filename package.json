@@ -1,14 +1,14 @@
 {
   "name": "nls-guilloche-generator",
-  "version": "0.3.0",
+  "version": "1.0.0-rc.1",
   "repository": {
     "type": "git",
-    "url": "https://github.com/nextlevelshit/nls-ng6-d3js-guilloche"
+    "url": "https://github.com/nextlevelshit/nls-guilloche-generator"
   },
   "licenses": [
     {
       "type": "GPL-2.0-only",
-      "url": "https://github.com/nextlevelshit/nls-ng6-d3js-guilloche/LICENSE.md"
+      "url": "https://github.com/nextlevelshit/nls-guilloche-generator/LICENSE.md"
     }
   ],
   "author": {
