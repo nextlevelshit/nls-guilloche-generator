@@ -54,18 +54,18 @@
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
-            "browserTarget": "nls-guilloche-generator:build"
+            "browserTarget": "NlsGuillocheGenerator:build"
           },
           "configurations": {
             "production": {
-              "browserTarget": "nls-guilloche-generator:build:production"
+              "browserTarget": "NlsGuillocheGenerator:build:production"
             }
           }
         },
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "nls-guilloche-generator:build"
+            "browserTarget": "NlsGuillocheGenerator:build"
           }
         },
         "test": {
@@ -162,5 +162,5 @@
       }
     }
   },
-  "defaultProject": "nls-guilloche-generator"
+  "defaultProject": "NlsGuillocheGenerator"
 }
