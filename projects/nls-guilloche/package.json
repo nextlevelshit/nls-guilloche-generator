@@ -1,6 +1,6 @@
 {
   "name": "nls-guilloche",
-  "version": "1.0.0-rc.4",
+  "version": "1.0.0-rc.5",
   "repository": {
     "type": "git",
     "url": "https://github.com/nextlevelshit/nls-guilloche-generator"
@@ -30,7 +30,7 @@
     "@angular/common": "^6.0.0-rc.0 || ^6.0.0",
     "@angular/core": "^6.0.0-rc.0 || ^6.0.0"
   },
-  "devDependencies": {
+  "dependencies": {
     "d3": "^5.3.0"
   }
 }
