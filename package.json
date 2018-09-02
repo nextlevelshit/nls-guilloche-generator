@@ -31,6 +31,7 @@
     "ng": "ng",
     "start": "ng serve --aot -o",
     "build": "ng build --prod",
+    "build:library": "ng build NlsGuilloche --prod",
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e"

@@ -75,8 +75,6 @@ export class NlsGraphsComponent implements OnChanges, OnInit {
     this.updateCanvas();
     this.updateMatrix();
 
-    console.log(changes);
-
     if (changes.config) {
       // Config changes must not trigger any other events
       this.updateGraphs();

@@ -107,7 +107,7 @@
           "builder": "@angular-devkit/build-angular:protractor",
           "options": {
             "protractorConfig": "e2e/protractor.conf.js",
-            "devServerTarget": "nls-guilloche-generator:serve"
+            "devServerTarget": "NlsGuillocheGenerator:serve"
           }
         },
         "lint": {
