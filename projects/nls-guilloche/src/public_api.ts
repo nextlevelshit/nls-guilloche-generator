@@ -13,3 +13,4 @@ export * from './nls/services/canvas.service';
 export * from './nls/services/graph.service';
 export * from './nls/services/history.service';
 export * from './nls/services/math.service';
+export * from './nls/nls-guilloche.module';

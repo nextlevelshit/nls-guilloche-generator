@@ -23,7 +23,7 @@ import 'moment/min/locales';
 
 import { environment as env } from '../environments/environment';
 import { NlsHistoryService } from 'projects/nls-guilloche/src/public_api';
-import { NlsGraphsComponent } from 'projects/nls-guilloche/src/public_api';
+
 
 @Component({
   selector: 'app-root',
