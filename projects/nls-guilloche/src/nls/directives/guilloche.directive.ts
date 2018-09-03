@@ -28,7 +28,7 @@ import { NlsCanvasService } from './../services/canvas.service';
 import { NlsMathService } from './../services/math.service';
 import { NlsGraphService } from '../services/graph.service';
 
-const ANIMATION_INTERVAL = 60;
+const ANIMATION_INTERVAL = 30;
 
 @Directive({
   selector: '[nlsGuilloche]'

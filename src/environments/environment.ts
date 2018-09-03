@@ -23,24 +23,24 @@ export const environment = {
       primary: '#129490',
       secondary: '#CE1483'
     },
-    autoSize: true
+    autoHeight: true
   },
   formDefaults: {
-    width: 1,
+    width: 1e-10,
     height: 1,
     scale: 0.4,
-    overlap: 0.6,
+    overlap: 0.3,
     vectors: {
       start: 1,
       end: 0,
       range: 0.6,
       spacing: 7
     },
-    nodes: 5,
+    nodes: 3,
     stroke: 0.7,
     spread: {
       amount: 30,
-      spacing: 10
+      spacing: 20
     }
   }
 };

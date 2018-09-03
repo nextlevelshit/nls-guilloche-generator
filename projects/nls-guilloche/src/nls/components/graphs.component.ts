@@ -182,6 +182,7 @@ export class NlsGraphsComponent implements OnChanges {
     );
 
     if (this.config.autoHeight) {
+      // Snap bottom and top to window limits
       return {
         start: {
           x: totalCenter.x - baseCenter.x,
@@ -196,7 +197,7 @@ export class NlsGraphsComponent implements OnChanges {
         center: totalCenter
       };
     } else {
-
+      // Adjust matrix relatively to window size
       return {
         start: {
           x: totalCenter.x - baseCenter.x,

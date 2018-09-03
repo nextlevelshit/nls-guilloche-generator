@@ -22,7 +22,8 @@ export const environment = {
     colors: {
       secondary: '#F8485E',
       primary: '#5CC0C7'
-    }
+    },
+    autoHeight: false
   },
   formDefaults: {
     width: 10,
