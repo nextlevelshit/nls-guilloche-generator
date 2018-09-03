@@ -46,10 +46,7 @@ export class AppComponent implements OnInit {
     moment.locale('de');
 
     this.config = {
-      colors: {
-        primary: env.guilloche.colors.primary,
-        secondary: env.guilloche.colors.secondary,
-      },
+      ...env.config,
       ...env.formDefaults
     };
     this.configForm = ConfigForm;

@@ -30,6 +30,8 @@ import { NlsMathService } from './../services/math.service';
 import { NlsGuillocheDirective } from './../directives/guilloche.directive';
 import { NlsGraphService } from './../services/graph.service';
 
+const RESIZING_TIMEOUT = 800;
+
 @Component({
   selector: 'nls-graphs',
   templateUrl: './graphs.component.html',
@@ -46,6 +48,7 @@ export class NlsGraphsComponent implements OnChanges {
   private genShiftPoint: any | null;
   private genLoadedAllGraphs: any | null;
   private hash: string;
+  private resizingWindow: any;
 
   @Input() config: Config;
   @Input() restoredHistory: any;
@@ -56,7 +59,13 @@ export class NlsGraphsComponent implements OnChanges {
 
   @HostListener('window:resize', ['$event'])
   onResize(event) {
-    this.canvasService.adjustToWindow();
+    clearTimeout(this.resizingWindow);
+
+    this.resizingWindow = setTimeout(() => {
+      this.canvas = this.adjustCanvas();
+      this.matrix = this.calcMatrix();
+      this.updateGraphs();
+    }, RESIZING_TIMEOUT);
   }
 
   constructor(
@@ -66,23 +75,25 @@ export class NlsGraphsComponent implements OnChanges {
     private graphService: NlsGraphService
   ) {
     this.genLoadedAllGraphs = this.countLoadedGraphs();
+    this.resizingWindow = false;
   }
 
   ngOnChanges(changes: SimpleChanges) {
-    this.config.autoHeight = true;
-    this.updateCanvas();
+    this.canvas = this.adjustCanvas();
     this.matrix = this.calcMatrix();
 
     if (changes.config) {
-      // Config changes must not trigger any other events
       this.updateGraphs();
-      return;
     }
 
     if (this.restoredHistory && this.restoredHistory.hash !== this.hash) {
-      this.graphs = this.restoredHistory.graphs;
-      this.hash = this.restoredHistory.hash;
+      this.restoreGraph();
     }
+  }
+
+  private restoreGraph() {
+    this.graphs = this.restoredHistory.graphs;
+    this.hash = this.restoredHistory.hash;
   }
 
   private saveHistory() {
@@ -149,10 +160,11 @@ export class NlsGraphsComponent implements OnChanges {
     return (x === 'start') ? 'end' : 'start';
   }
 
-  private updateCanvas(): void {
-    this.canvas = this.svgElementRef.nativeElement;
+  private adjustCanvas(): void {
     this.canvasService.set(this.canvas);
     this.canvasService.adjustToWindow();
+
+    return this.svgElementRef.nativeElement;
   }
 
   private calcMatrix() {

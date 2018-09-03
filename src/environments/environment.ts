@@ -18,11 +18,12 @@ export const environment = {
   production: false,
   debug: false,
   animation: false,
-  guilloche: {
+  config: {
     colors: {
       primary: '#129490',
       secondary: '#CE1483'
-    }
+    },
+    autoSize: true
   },
   formDefaults: {
     width: 1,
