@@ -109,16 +109,34 @@ export class NlsGraphsComponent implements OnChanges {
     const genShiftStart = this.shiftPoint(this.matrix.start, this.config.vectors.start);
     const genShiftEnd = this.shiftPoint(this.matrix.end, this.config.vectors.end, false);
 
+    console.log(this.matrix);
+
     const curveList = [
       {
         color: this.config.colors.primary,
         start: genShiftStart.next().value,
         end: genShiftEnd.next().value
+        // start: {
+        //   point: this.matrix.start,
+        //   vector: this.config.vectors.start
+        // },
+        // end: {
+        //   point: this.matrix.end,
+        //   vector: this.config.vectors.end
+        // }
       },
       {
         color: this.config.colors.secondary,
         start: genShiftEnd.next().value,
         end: genShiftStart.next().value
+        // end: {
+        //   point: this.matrix.start,
+        //   vector: this.config.vectors.start
+        // },
+        // start: {
+        //   point: this.matrix.end,
+        //   vector: this.config.vectors.end
+        // }
       }
     ];
 
@@ -173,46 +191,20 @@ export class NlsGraphsComponent implements OnChanges {
     const canvasHeight = this.canvas.getBoundingClientRect().height;
     const totalArea = Math.abs(canvasWidth * canvasHeight);
     const totalCenter = this.math.centerOfArea(canvasWidth, canvasHeight);
-    const baseArea = Math.abs(this.config.width * this.config.height);
-    const baseScale = Math.pow(totalArea / baseArea * this.config.scale, 0.5);
-    const baseWidthScaled = baseScale * this.config.width;
-    const baseHeightScaled = baseScale * this.config.height;
-    const baseCenter = this.math.centerOfArea(
-      baseWidthScaled,
-      baseHeightScaled
-    );
 
-    if (this.config.autoHeight) {
-      // Snap bottom and top to window limits
-      return {
-        start: {
-          x: totalCenter.x - baseCenter.x,
-          y: canvasHeight
-        },
-        end: {
-          x: totalCenter.x + baseCenter.x,
-          y: 0
-        },
-        width: canvasWidth,
-        height: canvasHeight,
-        center: totalCenter
-      };
-    } else {
-      // Adjust matrix relatively to window size
-      return {
-        start: {
-          x: totalCenter.x - baseCenter.x,
-          y: totalCenter.y + baseCenter.y
-        },
-        end: {
-          x: totalCenter.x + baseCenter.x,
-          y: totalCenter.y - baseCenter.y
-        },
-        width: baseWidthScaled,
-        height: baseHeightScaled,
-        center: totalCenter
-      };
-    }
+    return {
+      start: {
+        x: 0,
+        y: canvasHeight - this.config.vectors.spacing - this.config.margin.y
+      },
+      end: {
+        x: canvasWidth - this.config.vectors.spacing - this.config.margin.x,
+        y: 0
+      },
+      width: canvasWidth,
+      height: canvasHeight,
+      center: totalCenter
+    };
   }
 
   private genVectorPoint(point: Point, vector: number) {

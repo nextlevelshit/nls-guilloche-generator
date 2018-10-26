@@ -23,8 +23,6 @@ export let ConfigForm: FormGroup = fb.group({
     x: fb.control('', Validators.min(0)),
     y: fb.control('', Validators.min(0))
   }),
-  width: fb.control('', Validators.required),
-  height: fb.control('', Validators.required),
   vectors: fb.group({
     start: fb.control('', Validators.compose([
       Validators.min(0),

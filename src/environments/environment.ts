@@ -23,28 +23,25 @@ export const environment = {
     colors: {
       primary: '#129490',
       secondary: '#CE1483'
-    },
-    autoHeight: true
+    }
   },
   formDefaults: {
     margin: {
       x: 0,
       y: 0
     },
-    width: 1e-10,
-    height: 1,
     scale: 0.4,
-    overlap: 0.3,
+    overlap: 0.5,
     vectors: {
-      start: 1,
+      start: 0.5,
       end: 0,
-      range: 0.6,
+      range: 0.2,
       spacing: 7
     },
-    nodes: 3,
+    nodes: 4,
     stroke: 0.7,
     spread: {
-      amount: 30,
+      amount: 60,
       spacing: 20
     },
     interval: 30

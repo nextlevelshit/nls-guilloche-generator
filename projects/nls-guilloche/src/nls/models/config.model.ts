@@ -15,8 +15,6 @@
  */
 
 export interface Config {
-  width: number;
-  height: number;
   margin: {
     x: number;
     y: number;
@@ -49,5 +47,4 @@ export interface Config {
   scale: any;
   interval: number;
   date?: Date;
-  autoHeight?: boolean;
 }
