@@ -26,6 +26,10 @@ export const environment = {
     autoHeight: false
   },
   formDefaults: {
+    margin: {
+      x: 0,
+      y: 0
+    },
     width: 10,
     height: 16,
     scale: 0.4,

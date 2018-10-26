@@ -17,6 +17,10 @@
 export interface Config {
   width: number;
   height: number;
+  margin: {
+    x: number;
+    y: number;
+  };
   start: {
     x: number;
     y: number;

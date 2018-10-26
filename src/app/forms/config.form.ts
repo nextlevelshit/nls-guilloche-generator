@@ -19,6 +19,10 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 const fb = new FormBuilder();
 
 export let ConfigForm: FormGroup = fb.group({
+  margin: fb.group({
+    x: fb.control('', Validators.min(0)),
+    y: fb.control('', Validators.min(0))
+  }),
   width: fb.control('', Validators.required),
   height: fb.control('', Validators.required),
   vectors: fb.group({

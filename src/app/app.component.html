@@ -6,6 +6,20 @@
       <div class="pb-5">
         <h5>Grundfläche</h5>
         <hr>
+        <ng-container formGroupName="margin">
+          <div class="form-group mb-4">
+            <label class="form-control-label">
+              X-Achse
+            </label>
+            <input type="number" class="form-control" min="0" formControlName="x">
+          </div>
+          <div class="form-group mb-4">
+            <label class="form-control-label">
+              Y-Achse
+            </label>
+            <input type="number" class="form-control" formControlName="y">
+          </div>
+        </ng-container>
         <div class="form-group">
           <label class="form-control-label">
             Breite
