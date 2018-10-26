@@ -28,8 +28,6 @@ import { NlsCanvasService } from './../services/canvas.service';
 import { NlsMathService } from './../services/math.service';
 import { NlsGraphService } from '../services/graph.service';
 
-const ANIMATION_INTERVAL = 30;
-
 @Directive({
   selector: '[nlsGuilloche]'
 })
@@ -91,14 +89,12 @@ export class NlsGuillocheDirective implements OnChanges, OnDestroy {
       });
       let i = 0;
       this.animationInterval = setInterval(() => {
-        // this.animateGraph();
         this.animateGraph(i++ % 1000 / 10000);
-      }, ANIMATION_INTERVAL);
+      }, this.graph.interval);
     } else {
       if (this.animationInterval) {
         this.bounce = null;
         clearInterval(this.animationInterval);
-        // return;
       }
     }
 

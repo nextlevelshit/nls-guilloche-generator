@@ -15,7 +15,7 @@
  */
 
 import { ViewChild, Component, Input, Output, SimpleChanges, OnChanges, EventEmitter, HostListener } from '@angular/core';
-import { Observable, interval, Subscription } from 'rxjs';
+import { Observable, interval } from 'rxjs';
 import * as Selection from 'd3-selection';
 import * as Shape from 'd3-shape';
 import * as Random from 'd3-random';
@@ -125,7 +125,8 @@ export class NlsGraphsComponent implements OnChanges {
     this.graphs = curveList.map(curve => {
       return {
         ...this.adjustGraph(curve),
-        spread: this.config.spread
+        spread: this.config.spread,
+        interval: this.config.interval
       };
     });
     this.hash = this.historyService.hash(this.graphs);

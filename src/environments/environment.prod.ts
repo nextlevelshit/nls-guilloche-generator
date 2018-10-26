@@ -41,6 +41,7 @@ export const environment = {
     spread: {
       amount: 28,
       spacing: 16
-    }
+    },
+    interval: 30
   }
 };

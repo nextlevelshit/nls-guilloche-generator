@@ -18,6 +18,7 @@ export const environment = {
   production: false,
   debug: false,
   animation: false,
+  animationInterval: 30,
   config: {
     colors: {
       primary: '#129490',
@@ -41,6 +42,7 @@ export const environment = {
     spread: {
       amount: 30,
       spacing: 20
-    }
+    },
+    interval: 30
   }
 };

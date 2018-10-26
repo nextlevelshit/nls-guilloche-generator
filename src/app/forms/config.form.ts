@@ -58,5 +58,9 @@ export let ConfigForm: FormGroup = fb.group({
       Validators.min(0),
       Validators.max(50)
     ])),
-  })
+  }),
+  interval: fb.control('', Validators.compose([
+    Validators.min(0),
+    Validators.max(1000)
+  ])),
 });

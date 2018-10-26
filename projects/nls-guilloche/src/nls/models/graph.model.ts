@@ -1,3 +1,4 @@
+import { interval } from 'rxjs';
 /**
  * Copyright (C) 2018 Michael Czechowski <mail@dailysh.it>
  * This program is free software; you can redistribute it and/or modify it
@@ -34,6 +35,7 @@ export interface Graph {
     amount: number;
     spacing: number
   };
+  interval: number;
   stroke: number; // stroke width
   nodes?: Point[]; // orientation points
 }

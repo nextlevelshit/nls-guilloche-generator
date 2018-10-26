@@ -43,6 +43,7 @@ export interface Config {
   stroke: any;
   overlap: any;
   scale: any;
+  interval: number;
   date?: Date;
   autoHeight?: boolean;
 }
