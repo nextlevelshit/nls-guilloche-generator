@@ -107,9 +107,9 @@ export class NlsGraphsComponent implements OnChanges {
 
   private updateGraphs(): void {
     const genShiftStart = this.shiftPoint(this.matrix.start, this.config.vectors.start);
-    const genShiftEnd = this.shiftPoint(this.matrix.end, this.config.vectors.end, false);
+    const genShiftEnd = this.shiftPoint(this.matrix.end, this.config.vectors.end);
 
-    console.log(this.matrix);
+    // console.log(this.matrix);
 
     const curveList = [
       {
@@ -195,10 +195,12 @@ export class NlsGraphsComponent implements OnChanges {
     return {
       start: {
         x: 0,
-        y: canvasHeight - this.config.vectors.spacing - this.config.margin.y
+        y: canvasHeight - this.config.vectors.spacing
+        // y: canvasHeight - this.config.vectors.spacing - this.config.margin.y
       },
       end: {
-        x: canvasWidth - this.config.vectors.spacing - this.config.margin.x,
+        // x: canvasWidth - this.config.vectors.spacing - this.config.margin.x,
+        x: canvasWidth - this.config.vectors.spacing,
         y: 0
       },
       width: canvasWidth,

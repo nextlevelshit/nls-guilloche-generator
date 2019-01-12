@@ -46,6 +46,7 @@ export const environment = {
       amount: 28,
       spacing: 16
     },
-    interval: 30
+    interval: 30,
+    debug: false
   }
 };

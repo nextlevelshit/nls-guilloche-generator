@@ -47,4 +47,5 @@ export interface Config {
   scale: any;
   interval: number;
   date?: Date;
+  debug?: boolean;
 }

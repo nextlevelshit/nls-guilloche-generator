@@ -47,7 +47,7 @@ export let ConfigForm: FormGroup = fb.group({
   ])),
   scale: fb.control('', Validators.compose([
     Validators.min(0),
-    Validators.max(1)
+    Validators.max(10)
   ])),
   stroke: fb.control('', Validators.compose([
     Validators.min(0.1),

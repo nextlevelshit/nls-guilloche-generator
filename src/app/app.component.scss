@@ -19,8 +19,21 @@
   height: 100%;
   top: 0;
   left: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   overflow: hidden;
-  opacity: 0.2;
+  background: #e3e6e9;
+
+  &-inner {
+    $this-width: 30vw;
+
+    position: relative;
+    height: 1.41 * $this-width;
+    width: $this-width;
+    background: #ffffff;
+    box-shadow: 0 0.2rem 1rem #a39f9f;
+  }
 }
 
 .list-group-item {
@@ -35,10 +48,9 @@ aside {
   right: 0;
   bottom: 0;
   left: auto;
-  // justify-content: center;
   padding: 0;
   margin: 0;
-  background: rgba(251, 252, 253, 0.9);
+  background: rgba(255, 255, 255, 0.6);
 
   .aside-inner {
     overflow: auto;
