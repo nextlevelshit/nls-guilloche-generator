@@ -112,9 +112,7 @@ export class NlsGuillocheDirective implements OnChanges, OnDestroy {
 
   /**
    * Clean up existing groups, paths and points.
-   * Specify where to append the generated curves
-   *
-   * @return {void}
+   * Specify where to append the generated curves.
    */
   private initSVG(): void {
     // init SVG
@@ -131,8 +129,6 @@ export class NlsGuillocheDirective implements OnChanges, OnDestroy {
    * Gather all points in the right order and calculate
    * the median point and index for later usage to spread
    * curves on the axis of medians' ascent.
-   *
-   * @return {void}
    */
   private initInitialCurve(): void {
     this.initialCurve = [
@@ -150,8 +146,6 @@ export class NlsGuillocheDirective implements OnChanges, OnDestroy {
    * Take graph and spread median points orthogonal to medians
    * ascent by specific amount of times. Amount of spreaded
    * curves can be set inside graph parameters.
-   *
-   * @return {void}
    */
   private spreadInitialCurve(): void {
     const spreadCurveList = [];
@@ -172,8 +166,6 @@ export class NlsGuillocheDirective implements OnChanges, OnDestroy {
   /**
    * Iterate through generated curve list and append for
    * each curve a new path to the SVG group.
-   *
-   * @return {void}
    */
   private drawPaths(): void {
     this.curveList.map(curve => {
@@ -190,8 +182,6 @@ export class NlsGuillocheDirective implements OnChanges, OnDestroy {
 
   /**
    * Update existing paths with transition
-   *
-   * @return {void}
    */
   private updatePaths(): void {
     for (let i = 0; i < this.graph.spread.amount; i++) {

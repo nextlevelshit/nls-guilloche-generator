@@ -161,9 +161,9 @@ export class NlsMathService {
   /**
    * Get a random floating point number between `min` and `max`.
    *
-   * @param {number} min - min number
-   * @param {number} max - max number
-   * @return {number} a random floating point number
+   * @param min - min number
+   * @param max - max number
+   * @return a random floating point number
    */
   public randomFloat(min: number, max: number): number {
     return Math.random() * (max - min) + min;
@@ -172,9 +172,9 @@ export class NlsMathService {
   /**
    * Get a random integer between `min` and `max`.
    *
-   * @param {number} min - min number
-   * @param {number} max - max number
-   * @return {number} a random integer
+   * @param min - min number
+   * @param max - max number
+   * @return a random integer
    */
   public randomInt(min: number, max: number): number {
     return Math.floor(Math.random() * (max - min + 1) + min);
@@ -183,7 +183,7 @@ export class NlsMathService {
   /**
    * Get a random boolean value.
    *
-   * @return {boolean} a random true/false
+   * @return a random true/false
    */
   public getRandomBool(): boolean {
     return Math.random() >= 0.5;
