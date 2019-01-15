@@ -28,7 +28,7 @@ export const environment = {
   formDefaults: {
     debug: true,
     margin: {
-      x: 0,
+      x: 20,
       y: 0
     },
     scale: 1.4,

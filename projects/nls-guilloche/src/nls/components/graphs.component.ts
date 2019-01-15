@@ -105,37 +105,25 @@ export class NlsGraphsComponent implements OnChanges {
   }
 
   private updateGraphs(): void {
-    const genShiftStart = this.shiftPoint(this.matrix.start, this.config.vectors.start);
-    const genShiftEnd = this.shiftPoint(this.matrix.end, this.config.vectors.end);
-
-    // console.log(this.matrix);
+    const genShiftStart = this.shiftPoint(
+      this.matrix.start,
+      this.config.vectors.start
+    );
+    const genShiftEnd = this.shiftPoint(
+      this.matrix.end,
+      this.config.vectors.end
+    );
 
     const graphList: Graph[] = [
       {
         color: this.config.colors.primary,
         start: genShiftStart.next().value,
         end: genShiftEnd.next().value
-        // start: {
-        //   point: this.matrix.start,
-        //   vector: this.config.vectors.start
-        // },
-        // end: {
-        //   point: this.matrix.end,
-        //   vector: this.config.vectors.end
-        // }
       },
       {
         color: this.config.colors.secondary,
         start: genShiftEnd.next().value,
         end: genShiftStart.next().value
-        // end: {
-        //   point: this.matrix.start,
-        //   vector: this.config.vectors.start
-        // },
-        // start: {
-        //   point: this.matrix.end,
-        //   vector: this.config.vectors.end
-        // }
       }
     ];
 
@@ -147,6 +135,7 @@ export class NlsGraphsComponent implements OnChanges {
         debug: this.config.debug
       };
     });
+
     this.hash = this.historyService.hash(this.graphs);
     this.saveHistory();
     this.saveGraph();
@@ -209,7 +198,12 @@ export class NlsGraphsComponent implements OnChanges {
     const generatedPoints: Point[] = [];
 
     for (let i = 1; i <= this.config.nodes; i++) {
-      generatedPoints.push(this.math.randomPoint(this.matrix, this.config.overlap));
+      generatedPoints.push(
+        this.math.randomPoint(
+          this.matrix,
+          this.config.overlap
+        )
+      );
     }
 
     return generatedPoints;
@@ -230,14 +224,14 @@ export class NlsGraphsComponent implements OnChanges {
 
     return {
       start: {
-        x: 0,
-        y: canvasHeight - this.config.vectors.spacing
-        // y: canvasHeight - this.config.vectors.spacing - this.config.margin.y
+        x: this.config.margin.x,
+        // y: canvasHeight - this.config.vectors.spacing
+        y: canvasHeight - this.config.vectors.spacing - this.config.margin.y
       },
       end: {
-        // x: canvasWidth - this.config.vectors.spacing - this.config.margin.x,
-        x: canvasWidth - this.config.vectors.spacing,
-        y: 0
+        x: canvasWidth - this.config.vectors.spacing - this.config.margin.x,
+        // x: canvasWidth - this.config.vectors.spacing,
+        y: this.config.margin.y
       },
       width: canvasWidth,
       height: canvasHeight,
