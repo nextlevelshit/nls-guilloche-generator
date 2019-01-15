@@ -70,6 +70,11 @@ export class NlsGuillocheDirective implements OnChanges, OnDestroy {
       const amplitude = this.math.randomInt(20, 60);
       const shift = this.math.randomFloat(0, 2);
 
+      if (!this.pathList.length) {
+        this.clearSVG();
+        this.drawPaths();
+      }
+
       for (let i = 0; i < this.graph.spread.amount; i++) {
         this.animatePath(
           this.pathList[i],

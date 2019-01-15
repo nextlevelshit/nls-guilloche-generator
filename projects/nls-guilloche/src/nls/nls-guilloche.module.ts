@@ -24,7 +24,7 @@ import { NlsGraphService } from './services/graph.service';
   ],
   exports: [
     NlsGraphsComponent,
-    NlsGuillocheDirective
+    NlsGuillocheDirective,
   ]
 })
 export class NlsGuillocheModule {}
