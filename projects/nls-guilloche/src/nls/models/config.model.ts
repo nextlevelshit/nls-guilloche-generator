@@ -45,7 +45,6 @@ export interface Config {
   stroke: any;
   overlap: any;
   scale: any;
-  interval: number;
   date?: Date;
   debug?: boolean;
 }

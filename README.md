@@ -55,7 +55,6 @@ export class AppModule { }
 ## 3) Set up your configuration
 
 ```ts
-
 // e.g. app.component.html
 this.graph = {
   colors: {
@@ -88,7 +87,7 @@ this.isAnimated = true;
 Past in the configuration and set animation to `true` or `false` (default is `false`):
 
 ```html
-  <nls-graphs [config]="graph" [animation]="true"></nls-graphs>
+<nls-graphs [config]="graph" [animation]="true"></nls-graphs>
 ```
 
 ## Usage only

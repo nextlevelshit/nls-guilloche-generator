@@ -131,7 +131,6 @@ export class NlsGraphsComponent implements OnChanges {
       return {
         ...this.adjustGraph(graph),
         spread: this.config.spread,
-        interval: this.config.interval,
         debug: this.config.debug
       };
     });
