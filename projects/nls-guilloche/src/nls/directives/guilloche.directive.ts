@@ -28,6 +28,11 @@ import { Point } from './../models/point.model';
 import { NlsMathService } from './../services/math.service';
 import { NlsGraphService } from '../services/graph.service';
 
+// const CURVE_SHAPE = Shape.curveCardinal.tension(0.1);
+// const CURVE_SHAPE = Shape.curveCatmullRom.alpha(1);
+const CURVE_SHAPE = Shape.curveBundle.beta(0.9);
+// const CURVE_SHAPE = Shape.curveBasis;
+
 @Directive({
   selector: '[nlsGuilloche]'
 })
@@ -39,12 +44,6 @@ export class NlsGuillocheDirective implements OnChanges, OnDestroy {
   private medianIndex: number; // generated from initialCurve
   private curveList: Point[][]; // generated from initialCurve
   private pathList: any; // generated from curveList
-  // private graphList: Graph[];
-  // private bounce: any | null;
-  // private bounces: any | null;
-  // private initialNodes: any;
-  // private animationInterval: any;
-  // private canvas: any;
 
   @Input() graph: Graph;
   @Input() animation: boolean;
@@ -66,10 +65,6 @@ export class NlsGuillocheDirective implements OnChanges, OnDestroy {
     this.initInitialCurve(); // Generate curve from graph
     this.spreadInitialCurve(); // Spread generated curve to many
 
-    // @todo modify graph here instead of in graphs.component.ts
-    // this.initialNodes = this.graph.nodes.slice();
-
-
     if (this.animation) {
       const duration = this.math.randomInt(1800, 2000);
       const amplitude = this.math.randomInt(20, 60);
@@ -85,11 +80,12 @@ export class NlsGuillocheDirective implements OnChanges, OnDestroy {
         );
       }
     } else {
-      // Check whether
-      if (changes.graph.firstChange
-        || this.graphNodesChanged(
-          changes.graph.previousValue,
-          changes.graph.currentValue
+      if (changes.graph
+        && (changes.graph.firstChange
+          || this.graphNodesChanged(
+            changes.graph.previousValue,
+            changes.graph.currentValue
+          )
         )
       ) {
         this.clearSVG();
@@ -97,6 +93,10 @@ export class NlsGuillocheDirective implements OnChanges, OnDestroy {
       } else {
         this.updatePaths();
       }
+    }
+    if (this.graph.debug) {
+      this.group.selectAll('circle').remove();
+      this.curveList.map(curve => this.debugGraph(curve));
     }
   }
 
@@ -154,6 +154,7 @@ export class NlsGuillocheDirective implements OnChanges, OnDestroy {
    * @return {void}
    */
   private spreadInitialCurve(): void {
+    const spreadCurveList = [];
     const shiftedMedians = [];
     const genshiftedMedians = this.graphService.spreadOrthogonal(this.medianPoint, this.graph.spread.spacing);
 
@@ -181,7 +182,7 @@ export class NlsGuillocheDirective implements OnChanges, OnDestroy {
           .attr('d', Shape.line()
             .x(p => p.x)
             .y(p => p.y)
-            .curve(Shape.curveBasis)(curve)
+            .curve(CURVE_SHAPE)(curve)
           )
       );
     });
@@ -201,7 +202,7 @@ export class NlsGuillocheDirective implements OnChanges, OnDestroy {
         .attr('d', Shape.line()
           .x(p => p.x)
           .y(p => p.y)
-          .curve(Shape.curveBasis)(this.curveList[i]));
+          .curve(CURVE_SHAPE)(this.curveList[i]));
     }
   }
 
@@ -216,28 +217,28 @@ export class NlsGuillocheDirective implements OnChanges, OnDestroy {
       .attr('d', Shape.line()
         .x(p => p.x)
         .y(p => p.y)
-        .curve(Shape.curveBasis)(this.shiftCurve(curve, amplitude, shift)))
+        .curve(CURVE_SHAPE)(this.shiftCurve(curve, amplitude, shift)))
       .transition()
       .duration(duration)
       .ease(easeIn)
       .attr('d', Shape.line()
         .x(p => p.x)
         .y(p => p.y)
-        .curve(Shape.curveBasis)(this.shiftCurve(curve, 0, shift)))
+        .curve(CURVE_SHAPE)(this.shiftCurve(curve, 0, shift)))
       .transition()
       .ease(easeOut)
       .duration(duration)
       .attr('d', Shape.line()
         .x(p => p.x)
         .y(p => p.y)
-        .curve(Shape.curveBasis)(this.shiftCurve(curve, -amplitude, shift)))
+        .curve(CURVE_SHAPE)(this.shiftCurve(curve, -amplitude, shift)))
       .transition()
       .ease(easeIn)
       .duration(duration)
       .attr('d', Shape.line()
         .x(p => p.x)
         .y(p => p.y)
-        .curve(Shape.curveBasis)(this.shiftCurve(curve, 0, shift)))
+        .curve(CURVE_SHAPE)(this.shiftCurve(curve, 0, shift)))
       .on('end', () => {
         if (this.animation) {
           this.animatePath(path, curve, duration, amplitude, shift);
@@ -253,17 +254,11 @@ export class NlsGuillocheDirective implements OnChanges, OnDestroy {
 
     return [
       ...start,
-      ...curveCopy.map(point => {
-        const shiftedPoint = this.graphService.shiftPoint(
-          point,
-          amplitude * sign.next().value,
-          shift
-        );
-        // this.debugPoint(point, 0.01);
-        // this.debugPoint(shiftedPoint, 0.06);
-
-        return shiftedPoint;
-      }),
+      ...curveCopy.map(point => this.graphService.shiftPoint(
+        point,
+        amplitude * sign.next().value,
+        shift
+      )),
       ...end
     ];
   }
@@ -274,31 +269,22 @@ export class NlsGuillocheDirective implements OnChanges, OnDestroy {
         .attr('d', Shape.line()
           .x(p => p.x)
           .y(p => p.y)
-          .curve(Shape.curveBasis)(points)
+          .curve(CURVE_SHAPE)(points)
         )
       );
   }
 
   private debugGraph(points: Point[]) {
-    points.forEach((point, index) => {
-      const circle = this.group.append('g');
-
-      circle.append('circle')
-        .attr('cx', point.x)
-        .attr('cy', point.y)
-        .attr('r', 3)
-        .attr('fill-opacity', 0.6)
-        .attr('fill', this.graph.color);
-    });
+    points.forEach((point, index) => this.debugPoint(point));
   }
 
   private debugPoint(point: Point, opacity: number = 0.1): void {
     this.group.append('circle')
-    .attr('cx', point.x)
-    .attr('cy', point.y)
-    .attr('r', 3)
-    .attr('stroke-width', 0)
-    .attr('fill-opacity', opacity)
-    .attr('fill', this.graph.color);
+      .attr('cx', point.x)
+      .attr('cy', point.y)
+      .attr('r', 4)
+      .attr('stroke-width', 0)
+      .attr('fill-opacity', opacity)
+      .attr('fill', this.graph.color);
   }
 }

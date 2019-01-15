@@ -19,7 +19,7 @@ import { Point } from './point.model';
 import { Config } from './config.model';
 
 export interface Graph {
-  id: string;
+  id?: string;
   color: string; // can be set in enviroment
   start: {
     point: Point;
@@ -31,11 +31,12 @@ export interface Graph {
     direction?: Point;
     vector: number; // degree between 0 and 360
   };
-  spread: {
+  spread?: {
     amount: number;
     spacing: number
   };
-  interval: number;
-  stroke: number; // stroke width
+  interval?: number;
+  stroke?: number; // stroke width
   nodes?: Point[]; // orientation points
+  debug?: boolean;
 }

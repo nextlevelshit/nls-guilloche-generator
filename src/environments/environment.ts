@@ -31,19 +31,19 @@ export const environment = {
       x: 0,
       y: 0
     },
-    scale: 0.4,
-    overlap: 0.5,
+    scale: 1.4,
+    overlap: 0.7,
     vectors: {
-      start: 0.5,
+      start: 1,
       end: 0,
-      range: 0.2,
+      range: 0.3,
       spacing: 0
     },
-    nodes: 4,
-    stroke: 1,
+    nodes: 6,
+    stroke: 0.6,
     spread: {
-      amount: 20,
-      spacing: 7
+      amount: 30,
+      spacing: 13
     },
     interval: 30
   }

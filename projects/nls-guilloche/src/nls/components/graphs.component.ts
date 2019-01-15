@@ -110,7 +110,7 @@ export class NlsGraphsComponent implements OnChanges {
 
     // console.log(this.matrix);
 
-    const curveList = [
+    const graphList: Graph[] = [
       {
         color: this.config.colors.primary,
         start: genShiftStart.next().value,
@@ -139,11 +139,12 @@ export class NlsGraphsComponent implements OnChanges {
       }
     ];
 
-    this.graphs = curveList.map(curve => {
+    this.graphs = graphList.map(graph => {
       return {
-        ...this.adjustGraph(curve),
+        ...this.adjustGraph(graph),
         spread: this.config.spread,
-        interval: this.config.interval
+        interval: this.config.interval,
+        debug: this.config.debug
       };
     });
     this.hash = this.historyService.hash(this.graphs);
@@ -151,17 +152,23 @@ export class NlsGraphsComponent implements OnChanges {
     this.saveGraph();
   }
 
-  private adjustGraph(curve) {
-    return Object.assign(curve, {
-      stroke: this.config.stroke,
-      start: Object.assign(curve.start, {
-        direction: this.genVectorPoint(curve.start.point, curve.start.vector)
-      }),
-      end: Object.assign(curve.end, {
-        direction: this.genVectorPoint(curve.end.point, curve.end.vector)
-      }),
-      nodes: this.genRandomPoints(this.config.nodes)
-    });
+  private adjustGraph(graph: Graph): Graph {
+    return {
+      ...graph,
+      start: {
+        ...graph.start,
+        direction: this.genVectorPoint(graph.start.point, graph.start.vector)
+      },
+      end: {
+        ...graph.end,
+        direction: this.genVectorPoint(graph.end.point, graph.end.vector)
+      },
+      nodes: this.genRandomPoints(this.config.nodes).sort((a: Point, b: Point) => {
+        const start = graph.start.point;
+        return this.math.Δ(a, start) - this.math.Δ(b, start);
+        // return (graph.start.point.y - b.y) - (graph.start.point.y - a.y);
+      })
+    };
   }
 
   /**
@@ -198,23 +205,14 @@ export class NlsGraphsComponent implements OnChanges {
    * und verspüre überhaupt keinen Druck mehr Großartiges leisten zu müssen.
    */
 
-  private genRandomPoints(num: number) {
-    const generatedPoints = [];
-
-
+  private genRandomPoints(num: number): Point[] {
+    const generatedPoints: Point[] = [];
 
     for (let i = 1; i <= this.config.nodes; i++) {
-
-      // console.log(i % this.config.nodes / 2);
-
       generatedPoints.push(this.math.randomPoint(this.matrix, this.config.overlap));
     }
 
     return generatedPoints;
-  }
-
-  private flipflop(x: string) {
-    return (x === 'start') ? 'end' : 'start';
   }
 
   private adjustCanvas(): void {
@@ -247,7 +245,7 @@ export class NlsGraphsComponent implements OnChanges {
     };
   }
 
-  private genVectorPoint(point: Point, vector: number) {
+  private genVectorPoint(point: Point, vector: number): Point {
     const range = this.math.Δ(this.matrix.start, this.matrix.end) * this.config.vectors.range;
 
     return {
