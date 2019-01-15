@@ -21,10 +21,10 @@ import * as Random from 'd3-random';
 import * as Drag from 'd3-drag';
 import * as Ease from 'd3-ease';
 import * as Timer from 'd3-timer';
+import 'd3-transition';
 
 import { Graph } from './../models/graph.model';
 import { Point } from './../models/point.model';
-import { NlsCanvasService } from './../services/canvas.service';
 import { NlsMathService } from './../services/math.service';
 import { NlsGraphService } from '../services/graph.service';
 
@@ -33,37 +33,108 @@ import { NlsGraphService } from '../services/graph.service';
 })
 export class NlsGuillocheDirective implements OnChanges, OnDestroy {
 
-  private canvas: any;
-  private group: any;
-  private bounce: any | null;
-  private bounces: any | null;
-  private initialNodes: any;
-  private initialCurve: any;
-  private animationInterval: any;
-  private medianPoint: Point;
-  private medianIndex: number;
-  private pathElements: any;
+  private group: Selection;
+  private initialCurve: Point[]; // generated from graph
+  private medianPoint: Point; // generated from initialCurve
+  private medianIndex: number; // generated from initialCurve
+  private curveList: Point[][]; // generated from initialCurve
+  private pathList: any; // generated from curveList
+  // private graphList: Graph[];
+  // private bounce: any | null;
+  // private bounces: any | null;
+  // private initialNodes: any;
+  // private animationInterval: any;
+  // private canvas: any;
 
   @Input() graph: Graph;
   @Input() animation: boolean;
 
   constructor(
-    private canvasService: NlsCanvasService,
     private el: ElementRef,
     private math: NlsMathService,
-    private graphService: NlsGraphService
+    private graphService: NlsGraphService,
+    private mathService: NlsMathService
   ) {
   }
 
   ngOnDestroy() {
-    this.group.selectAll('*').remove();
+    this.clearSVG();
   }
 
   ngOnChanges(changes: SimpleChanges) {
-    this.group = Selection.select(this.el.nativeElement);
-    this.canvas = Selection.select(this.canvasService.get);
+    this.initSVG(); // Prepare canvas and group
+    this.initInitialCurve(); // Generate curve from graph
+    this.spreadInitialCurve(); // Spread generated curve to many
+
     // @todo modify graph here instead of in graphs.component.ts
-    this.initialNodes = this.graph.nodes.slice();
+    // this.initialNodes = this.graph.nodes.slice();
+
+
+    if (this.animation) {
+      const duration = this.math.randomInt(1800, 2000);
+      const amplitude = this.math.randomInt(20, 60);
+      const shift = this.math.randomFloat(0, 2);
+
+      for (let i = 0; i < this.graph.spread.amount; i++) {
+        this.animatePath(
+          this.pathList[i],
+          this.curveList[i],
+          duration,
+          amplitude,
+          shift
+        );
+      }
+    } else {
+      // Check whether
+      if (changes.graph.firstChange
+        || this.graphNodesChanged(
+          changes.graph.previousValue,
+          changes.graph.currentValue
+        )
+      ) {
+        this.clearSVG();
+        this.drawPaths();
+      } else {
+        this.updatePaths();
+      }
+    }
+  }
+
+  private clearSVG(): void {
+    this.group.selectAll('*').remove();
+    this.pathList = [];
+  }
+
+  private graphNodesChanged(prev, current): boolean {
+    return prev.nodes.length !== current.nodes.length
+      || prev.spread.amount !== current.spread.amount;
+  }
+
+  /**
+   * Clean up existing groups, paths and points.
+   * Specify where to append the generated curves
+   *
+   * @return {void}
+   */
+  private initSVG(): void {
+    // init SVG
+    this.group = Selection.select(this.el.nativeElement);
+    // Set configuration of handed in graph
+    this.group
+      .attr('stroke', this.graph.color)
+      .attr('stroke-width', this.graph.stroke)
+      .attr('fill', 'none');
+  }
+
+  /**
+   * Initiate the initial curve from handed in graph.
+   * Gather all points in the right order and calculate
+   * the median point and index for later usage to spread
+   * curves on the axis of medians' ascent.
+   *
+   * @return {void}
+   */
+  private initInitialCurve(): void {
     this.initialCurve = [
       this.graph.start.point,
       this.graph.start.direction,
@@ -73,59 +144,16 @@ export class NlsGuillocheDirective implements OnChanges, OnDestroy {
     ];
     this.medianPoint = this.math.medianOfCurve(this.initialCurve);
     this.medianIndex = this.math.medianIndex(this.initialCurve);
-
-    if (this.animation) {
-      this.graph.nodes = this.graph.nodes.slice().map((node, i) => {
-        return {
-          x: node.x,
-          y: node.y,
-          // ascent: Math.round(Math.random() * 100) / 100
-          ascent: this.medianPoint.ascent + i * 0.5
-        };
-      });
-      this.bounces = this.initialNodes.map(node => {
-        const bounceAmplitude = Math.round(Math.random() * 150);
-        return this.math.bounce(bounceAmplitude, 3);
-      });
-      let i = 0;
-      this.animationInterval = setInterval(() => {
-        this.animateGraph(i++ % 1000 / 10000);
-      }, this.graph.interval);
-    } else {
-      if (this.animationInterval) {
-        this.bounce = null;
-        clearInterval(this.animationInterval);
-      }
-    }
-
-    this.group.selectAll('*').remove();
-    this.pathElements = [];
-
-    const graphs = this.spreadLines([
-      this.graph.start.point,
-      this.graph.start.direction,
-      ...this.graph.nodes,
-      this.graph.end.direction,
-      this.graph.end.point,
-    ]).forEach((points, index) => this.drawGraph(points));
   }
 
-  private animateGraph(x) {
-    const graphs = this.spreadLines([
-      this.graph.start.point,
-      this.graph.start.direction,
-      ...this.graph.nodes.map((point, i) => {
-        const ascent = point.ascent * Math.sin(Math.PI * x);
-        return this.graphService.shiftPoint(point, ascent, this.bounces[i].next().value);
-      }),
-      this.graph.end.direction,
-      this.graph.end.point,
-    ]);
-
-    graphs.forEach((points, i) => this.updateGraph(points, i));
-  }
-
-  private spreadLines(points: Point[]) {
+  /**
+   * Take graph and spread median points orthogonal to medians
+   * ascent by specific amount of times. Amount of spreaded
+   * curves can be set inside graph parameters.
+   *
+   * @return {void}
+   */
+  private spreadInitialCurve(): void {
     const shiftedMedians = [];
     const genshiftedMedians = this.graphService.spreadOrthogonal(this.medianPoint, this.graph.spread.spacing);
 
@@ -133,33 +161,122 @@ export class NlsGuillocheDirective implements OnChanges, OnDestroy {
       shiftedMedians.push(genshiftedMedians.next().value);
     }
 
-    return shiftedMedians.map(median => {
-      const shiftedPoints = points.slice();
+    this.curveList = shiftedMedians.map(median => {
+      const shiftedPoints = this.initialCurve.slice();
       shiftedPoints.splice(this.medianIndex, 1, median);
       return shiftedPoints;
     });
   }
 
-  private updateGraph(points: Point[], index: number): void {
-    this.pathElements[index]
+  /**
+   * Iterate through generated curve list and append for
+   * each curve a new path to the SVG group.
+   *
+   * @return {void}
+   */
+  private drawPaths(): void {
+    this.curveList.map(curve => {
+      this.pathList.push(
+        this.group.append('path')
+          .attr('d', Shape.line()
+            .x(p => p.x)
+            .y(p => p.y)
+            .curve(Shape.curveBasis)(curve)
+          )
+      );
+    });
+  }
+
+  /**
+   * Update existing paths with transition
+   *
+   * @return {void}
+   */
+  private updatePaths(): void {
+    for (let i = 0; i < this.graph.spread.amount; i++) {
+      this.pathList[i]
+        .transition()
+        .duration(2000)
+        .ease(Ease.easeExpInOut)
+        .attr('d', Shape.line()
+          .x(p => p.x)
+          .y(p => p.y)
+          .curve(Shape.curveBasis)(this.curveList[i]));
+    }
+  }
+
+  private animatePath(path: any, curve: Point[], duration: number, amplitude: number, shift: number = 0): void {
+    const easeIn = Ease.easeQuadIn;
+    const easeOut = Ease.easeQuadOut;
+
+    path
+      .transition()
+      .duration(duration)
+      .ease(easeOut)
       .attr('d', Shape.line()
         .x(p => p.x)
         .y(p => p.y)
-        .curve(Shape.curveBasis)(points));
+        .curve(Shape.curveBasis)(this.shiftCurve(curve, amplitude, shift)))
+      .transition()
+      .duration(duration)
+      .ease(easeIn)
+      .attr('d', Shape.line()
+        .x(p => p.x)
+        .y(p => p.y)
+        .curve(Shape.curveBasis)(this.shiftCurve(curve, 0, shift)))
+      .transition()
+      .ease(easeOut)
+      .duration(duration)
+      .attr('d', Shape.line()
+        .x(p => p.x)
+        .y(p => p.y)
+        .curve(Shape.curveBasis)(this.shiftCurve(curve, -amplitude, shift)))
+      .transition()
+      .ease(easeIn)
+      .duration(duration)
+      .attr('d', Shape.line()
+        .x(p => p.x)
+        .y(p => p.y)
+        .curve(Shape.curveBasis)(this.shiftCurve(curve, 0, shift)))
+      .on('end', () => {
+        if (this.animation) {
+          this.animatePath(path, curve, duration, amplitude, shift);
+        }
+      });
+  }
+
+  private shiftCurve(curve: Point[], amplitude: number, shift: number = 0): Point[] {
+    const curveCopy = Object.assign([], curve);
+    const sign = this.math.flipSign();
+    const start = curveCopy.splice(0, 2);
+    const end = curveCopy.splice(-2, 2);
+
+    return [
+      ...start,
+      ...curveCopy.map(point => {
+        const shiftedPoint = this.graphService.shiftPoint(
+          point,
+          amplitude * sign.next().value,
+          shift
+        );
+        // this.debugPoint(point, 0.01);
+        // this.debugPoint(shiftedPoint, 0.06);
+
+        return shiftedPoint;
+      }),
+      ...end
+    ];
   }
 
   private drawGraph(points: Point[]): void {
-    this.group
-      .attr('stroke', this.graph.color)
-      .attr('stroke-width', this.graph.stroke)
-      .attr('fill', 'none');
-
-    this.pathElements.push(
+    this.pathList.push(
       this.group.append('path')
         .attr('d', Shape.line()
           .x(p => p.x)
           .y(p => p.y)
-          .curve(Shape.curveBasis)(points)));
+          .curve(Shape.curveBasis)(points)
+        )
+      );
   }
 
   private debugGraph(points: Point[]) {
@@ -172,14 +289,16 @@ export class NlsGuillocheDirective implements OnChanges, OnDestroy {
         .attr('r', 3)
         .attr('fill-opacity', 0.6)
         .attr('fill', this.graph.color);
-
-      circle.append('text')
-        .attr('x', point.x)
-        .attr('y', point.y)
-        .attr('dx', 8)
-        .attr('dy', 15)
-        .attr('fill', this.graph.color)
-        .text(index);
     });
+  }
+
+  private debugPoint(point: Point, opacity: number = 0.1): void {
+    this.group.append('circle')
+    .attr('cx', point.x)
+    .attr('cy', point.y)
+    .attr('r', 3)
+    .attr('stroke-width', 0)
+    .attr('fill-opacity', opacity)
+    .attr('fill', this.graph.color);
   }
 }

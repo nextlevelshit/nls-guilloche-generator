@@ -19,7 +19,6 @@ import { Observable, interval } from 'rxjs';
 import * as Selection from 'd3-selection';
 import * as Shape from 'd3-shape';
 import * as Random from 'd3-random';
-import * as Drag from 'd3-drag';
 
 import { Graph } from './../models/graph.model';
 import { Config } from './../models/config.model';
@@ -165,10 +164,49 @@ export class NlsGraphsComponent implements OnChanges {
     });
   }
 
+  /**
+   * BERLIN, 12.01.2019
+   *
+   * Manchmal kostet es einen doch ein größeres Stück Arbeit als sonst, seine
+   * Tage zu „nutzen“. Was schadet einem schon ein verlorener Tag? Sollte man
+   * diese nicht lieber anerkennen und besonders behutsam sein? Wenn ich an
+   * solchen Tagen einfach weniger zulasse und selber Entscheidungen übernehme,
+   * kann ich niemanden anderen dafür zur Verantwortung ziehen. Auf diese
+   * Weise bleibe ich selbstwirksam und werde gezwungen mir Raum und Zeit für
+   * mich einzufordern. Nicht nur von mir, sondern auch von meinem Umfeld.
+   * Ich bin alleinig in der Verantwortung meinen Schwermut zu äußern ohne
+   * gleichzeitig einzufordern, dass mein Gegenüber Bescheid weiß wie er auf
+   * mich zu reagieren hat. Paradoxerweise wünsche ich mir in solchen
+   * Situationen, dass ich von einer empathischen und loyalen Wärme umarmt
+   * werde, in der mir einfach Verständnis entgegengebracht wird, quasi am
+   * kleinen Finger geführte werde.
+   *
+   * In Zeiten der Rumtriebigkeit^[Typische Anzeichen für *Rumtriebigkeit*:
+   * - Viele Dinge anfangen und nicht zu Ende bringen
+   * -
+   * ] und zu großen Komforts^[Typische Anzeichen:
+   * - Fehlende kreative Betätigung
+   * - Fehlende körperliche Betätigung
+   * - Fehlende Muße zu Ordnung
+   * - Lethargie
+   * - Häufige Schlemmereien (Nachos, Eis, Süßes im Allgemeinen etc.)
+   * ]
+   * Der einfachste Ausweg aus der Lethargie wäre es schon einmal die un-
+   * gewünschten Aufgaben sich so angenehm wie möglich zu gestalten. Ich
+   * bspw. kiffe einfach gerne einen dabei und lasse mal meine grauen
+   * Zellen für mich arbeiten. Ich bekomme ein angenehmes Körpergefühl
+   * und verspüre überhaupt keinen Druck mehr Großartiges leisten zu müssen.
+   */
+
   private genRandomPoints(num: number) {
     const generatedPoints = [];
 
-    for (let i = 0; i < this.config.nodes; i++) {
+
+
+    for (let i = 1; i <= this.config.nodes; i++) {
+
+      // console.log(i % this.config.nodes / 2);
+
       generatedPoints.push(this.math.randomPoint(this.matrix, this.config.overlap));
     }
 

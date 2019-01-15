@@ -53,20 +53,21 @@ export class NlsGraphService {
 
   public *spreadOrthogonal(start: Point, spacing: number) {
     const sign = this.math.flipSign();
-    let currentPoint = start;
+    let point = start;
     let i = 0;
 
     while (true) {
-      const currentSpacing = sign.next().value * spacing * i;
-      currentPoint = this.shiftPoint(currentPoint, start.ascent, currentSpacing);
+      const nextSpacing = sign.next().value * spacing * i;
+      point = this.shiftPoint(point, nextSpacing, start.ascent);
 
-      yield currentPoint;
+      yield point;
 
       i++;
     }
   }
 
-  public shiftPoint(point: Point, radians: number, spacing: number): Point {
+  public shiftPoint(point: Point, spacing: number, radians?: number): Point {
+    radians = radians ? radians : this.math.randomFloat(0, 2);
     return {
       x: Math.sin(radians * Math.PI) * spacing + point.x,
       y: Math.cos(radians * Math.PI) * spacing + point.y

@@ -22,3 +22,9 @@
   left: 0;
   overflow: hidden;
 }
+
+canvas,
+svg {
+  height: 100%;
+  width: 100%;
+}

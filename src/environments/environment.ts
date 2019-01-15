@@ -21,8 +21,8 @@ export const environment = {
   animationInterval: 30,
   config: {
     colors: {
-      primary: '#00BC35',
-      secondary: '#0080D6'
+      secondary: '#F8485E',
+      primary: '#5CC0C7'
     }
   },
   formDefaults: {
@@ -39,11 +39,11 @@ export const environment = {
       range: 0.2,
       spacing: 0
     },
-    nodes: 1,
+    nodes: 4,
     stroke: 1,
     spread: {
-      amount: 60,
-      spacing: 1
+      amount: 20,
+      spacing: 7
     },
     interval: 30
   }
