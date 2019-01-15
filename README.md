@@ -15,28 +15,98 @@
 
 ---
 
-## Rquirements
+# Getting started
+
+## 1) Add dependency to your project
+
+```bash
+# npm
+npm install nls-guilloche --save
+
+# yarn
+yarn add nls-guilloche
+```
+
+## 2) Import module to your Angular application
+
+```ts
+// app.module.ts (default filename)
+
+import { NlsGuillocheModule } from 'nls-guilloche';
+
+@NgModule({
+  declarations: [
+    // ...
+  ],
+  imports: [
+    // ...
+    NlsGuillocheModule
+  ],
+  providers: [
+    // ...
+  ],
+  bootstrap: [
+    // ...
+  ]
+})
+export class AppModule { }
+```
+
+## 3) Set up your configuration
+
+```ts
+
+// e.g. app.component.html
+this.graph = {
+  colors: {
+    primary: '#ff005e',  //---| color of first graph in hexadecimal
+    secondary: '#00d0c6'  // -| color of second graph in hexadecimal
+  },
+  margin: {
+    x: 0, // -----------------| margin to parent container edges on x-axis
+    y: 60  // ----------------| margin to parent container edges on x-axis
+  }, 
+  overlap: 0.6,  // ----------| generated nodes overlap parent container in percent
+  vectors: {
+    start: 0.5,  // ----------| direction of starting vector (Radians, 0 = up, 1 = down)
+    end: 0,  // --------------| direction of ending vector (Radians, 0.5 = right, 1.5 = left)
+    range: 0.3,  // ----------| directional starting/ending vector weight in percent
+    spacing: 7  // -----------| spacing between graphs in starting/ending position
+  },
+  nodes: 4,  // --------------| amount of generated nodes
+  stroke: 1,  // -------------| stroke width of graphs
+  spread: {
+    amount: 60,  // ----------| amount of cloned and spread graphs
+    spacing: 20  // ----------| spacing between spread graphs
+  }
+};
+this.isAnimated = true;
+```
+
+## 4) Implement directive in your template
+
+Past in the configuration and set animation to `true` or `false` (default is `false`):
+
+```html
+  <nls-graphs [config]="graph" [animation]="true"></nls-graphs>
+```
+
+## Usage only
+
+## Active Development (Advanced)
+
+### Rquirements
 
 - Node.js
 - Angular CLI
 
-## NPM Scripts
+### NPM Scripts
 
 | command          | description                                                     |
 |------------------|-----------------------------------------------------------------|
 | `npm run start`  | start development server on `http://localhost:4200/`            |
 | `npm run build`  | build production application and save to `./dist`               |
 | `npm run build:library` | build node module and save to `./dist/NlsGuilloche`      | 
-
-## Development server
-
-Download dependencies with `npm i` or `yarn`.
-
-Run `npm run start` for a dev server. Browser opens and navigates automatically to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
-
-## Build
-
-Run `npm run build` to build the project. The build artifacts will be stored in the `dist/` directory. Use the `--prod` flag for a production build.
 
 ## Author
 
