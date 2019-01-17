@@ -88,6 +88,8 @@ export class NlsGraphsComponent implements OnChanges {
     if (this.restoredHistory && this.restoredHistory.hash !== this.hash) {
       this.restoreGraph();
     }
+
+    setTimeout(this.prepareGuillocheExport(), 1000);
   }
 
   private restoreGraph() {
@@ -273,10 +275,8 @@ export class NlsGraphsComponent implements OnChanges {
     }
   }
 
-  public prepareGuillocheExport(guillocheElement) {
-    if (this.genLoadedAllGraphs.next().value) {
-      this.svgChange.emit(this.svgElementRef);
-    }
+  public prepareGuillocheExport(): void {
+    this.svgChange.emit(this.svgElementRef);
   }
 
   private *countLoadedGraphs() {

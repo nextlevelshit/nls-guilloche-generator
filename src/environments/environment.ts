@@ -18,7 +18,6 @@ export const environment = {
   production: false,
   debug: false,
   animation: false,
-  animationInterval: 30,
   config: {
     colors: {
       secondary: '#F8485E',
@@ -28,10 +27,9 @@ export const environment = {
   formDefaults: {
     debug: false,
     margin: {
-      x: 20,
+      x: 283,
       y: 0
     },
-    scale: 1.4,
     overlap: 0.7,
     vectors: {
       start: 1,
