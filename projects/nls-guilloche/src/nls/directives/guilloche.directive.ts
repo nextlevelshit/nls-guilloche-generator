@@ -68,8 +68,8 @@ export class NlsGuillocheDirective implements OnChanges, OnDestroy {
     this.spreadInitialCurve(); // Spread generated curve to many
 
     if (this.animation) {
-      const duration = this.math.randomInt(1600, 2000);
-      const amplitude = this.math.randomInt(20, 80);
+      const duration = this.math.randomInt(800, 1600);
+      const amplitude = this.math.randomInt(30, 120);
       const shift = this.math.randomFloat(0, 2);
 
       if (!this.pathList) {

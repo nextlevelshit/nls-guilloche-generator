@@ -1,4 +1,3 @@
-import { OnChanges } from '@angular/core';
 /**
  * Copyright (C) 2018 Michael Czechowski <mail@dailysh.it>
  * This program is free software; you can redistribute it and/or modify it
@@ -25,6 +24,9 @@ import 'moment/min/locales';
 import { environment as env } from '../environments/environment';
 import { NlsHistoryService } from 'projects/nls-guilloche/src/public_api';
 
+export enum KEY_CODE {
+  ESCAPE = 27
+}
 
 @Component({
   selector: 'app-root',
@@ -40,6 +42,14 @@ export class AppComponent implements OnInit {
   public showList: boolean;
   public restoredHistory: any;
   public animationActive: boolean;
+  public isFullscreen: boolean;
+
+  @HostListener('window:keyup', ['$event'])
+  keyEvent(event: KeyboardEvent) {
+    if (event.keyCode === KEY_CODE.ESCAPE) {
+      this.disableFullscreen();
+    }
+  }
 
   constructor(
     private historyService: NlsHistoryService,
@@ -53,6 +63,7 @@ export class AppComponent implements OnInit {
     this.configForm = ConfigForm;
     this.list = [];
     this.showList = false;
+    this.isFullscreen = false;
     this.animationActive = env.animation;
   }
 
@@ -103,8 +114,20 @@ export class AppComponent implements OnInit {
     document.body.removeChild(link);
   }
 
-  public toggleList() {
+  public toggleList(): void {
     this.showList = !this.showList;
+  }
+
+  public enableFullscreen(): void {
+    this.isFullscreen = true;
+    document.body.classList.add('fullscreen');
+    this.updateGraphs();
+  }
+
+  public disableFullscreen(): void {
+    this.isFullscreen = false;
+    document.body.classList.remove('fullscreen');
+    this.updateGraphs();
   }
 
   public restoreGraph(history) {

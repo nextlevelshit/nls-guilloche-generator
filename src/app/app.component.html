@@ -1,4 +1,4 @@
-<div class="canvas">
+<div class="canvas" (click)="updateGraphs()">
   <div class="canvas-inner">
     <nls-graphs [config]="config" [restoredHistory]="restoredHistory" (svgChange)="prepareSvgExport($event)" [animation]="animationActive"></nls-graphs>
   </div>
@@ -148,11 +148,22 @@
         <label class="form-control-label">
           Animation
         </label>
-        <div class="btn-group" role="group" aria-label="Basic example">
+        <div class="btn-group" role="group" aria-label="">
           <button type="button" class="btn" (click)="startAnimation()" [ngClass]="{'btn-outline-primary': !animationActive, 'btn-primary': animationActive}">An</button>
           <button type="button" class="btn" (click)="stopAnimation()" [ngClass]="{'btn-outline-primary': animationActive, 'btn-primary': !animationActive}">Aus</button>
         </div>
       </div>
+
+      <div class="form-group d-flex flex-colmn justify-content-between align-items-center mb-4">
+        <label class="form-control-label">
+          Vollbild
+        </label>
+        <div class="btn-group" role="group" aria-label="">
+          <button type="button" class="btn" (click)="enableFullscreen()" [ngClass]="{'btn-outline-primary': !isFullscreen, 'btn-primary': isFullscreen}">An</button>
+          <button type="button" class="btn" (click)="disableFullscreen()" [ngClass]="{'btn-outline-primary': isFullscreen, 'btn-primary': !isFullscreen}">Aus</button>
+        </div>
+      </div>
+
       <div class="dropdown-divider mb-4"></div>
       <button type="submit" class="btn btn-lg btn-primary btn-block" [disabled]="configForm.invalid || animationActive">Aktualisieren</button>
       <div class="dropdown-divider mt-4"></div>

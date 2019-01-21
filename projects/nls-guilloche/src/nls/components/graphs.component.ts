@@ -81,8 +81,6 @@ export class NlsGraphsComponent implements OnChanges {
     this.canvas = this.adjustCanvas();
     this.matrix = this.calcMatrix();
 
-    console.log(this.matrix);
-
     if (changes.config) {
       this.updateGraphs();
     }

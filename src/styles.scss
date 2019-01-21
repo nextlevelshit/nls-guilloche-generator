@@ -50,7 +50,7 @@
 // @import "~bootstrap/scss/alert";
 // @import "~bootstrap/scss/progress";
 // @import "~bootstrap/scss/media";
-// @import "~bootstrap/scss/list-group";
+@import "~bootstrap/scss/list-group";
 // @import "~bootstrap/scss/close";
 // @import "~bootstrap/scss/modal";
 // @import "~bootstrap/scss/tooltip";
@@ -68,6 +68,19 @@ html, body {
 
   // background: #fbfcfd;
   // font-family: monospace;
+}
+
+body {
+
+  &.fullscreen {
+    .canvas-inner {
+      height: 100vh;
+      width: 100vw;
+    }
+    aside {
+      display: none;
+    }
+  }
 }
 
 app-root {

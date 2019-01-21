@@ -27,21 +27,21 @@ export const environment = {
   formDefaults: {
     debug: false,
     margin: {
-      x: 0,
+      x: 0.02,
       y: 0
     },
-    overlap: 0.7,
+    overlap: 0.9,
     vectors: {
       start: 1,
       end: 0,
-      range: 0.3,
-      spacing: 20
+      range: 0.5,
+      spacing: 5
     },
-    nodes: 6,
+    nodes: 8,
     stroke: 0.6,
     spread: {
-      amount: 30,
-      spacing: 13
+      amount: 60,
+      spacing: 30
     },
     interval: 3000
   }
