@@ -203,72 +203,22 @@ export class NlsGuillocheDirective implements OnChanges, OnDestroy {
         .attrTween('d', function(curve) {
           const interpolate = Interpolation.interpolateArray(curve.points, nextCurve);
 
-          // console.log(curve.points, nextCurve);
-          // console.log(interpolate(0), interpolate(1));
-
-        //   return false;
-
           return (t) => {
             curve.points = interpolate(t);
 
-            // console.log(interpolate(t));
-
             return Shape.line()
               .x(p => {
-
-                return Math.sin(t * 2 * Math.PI) * 10 + p.x;
-                // return p.x;
+                // return Math.sin(t * 2 * Math.PI) * 10 + p.x;
+                return p.x;
               })
               .y(p => {
-                // return p.y;
-                return Math.cos(t * 2 * Math.PI) * 10 + p.y;
+                // return Math.cos(t * 2 * Math.PI) * 10 + p.y;
+                return p.y;
               })
               .curve(CURVE_SHAPE)(curve.points);
           };
         });
     });
-
-    // return;
-
-    // for (let i = 0; i < this.graph.spread.amount; i++) {
-    //   const nextCurve = this.curveList[i];
-
-    //   this.pathList[i]
-    //     .transition()
-    //     .duration(2000)
-    //     // .ease(Ease.easeExpInOut)
-    //     // .attr('d', Shape.line()
-    //     //   .x(p => p.x)
-    //     //   .y(p => p.y)
-    //     //   .curve(CURVE_SHAPE)(this.curveList[i]));
-    //     .attrTween('d', function(curve) {
-    //       console.log(curve);
-
-    //       const interpolate = Interpolation.interpolate(curve, nextCurve);
-
-    //       return (t) => {
-    //         curve.points = interpolate(t);
-
-    //         return Shape.line()
-    //           .x(p => curve.points.x)
-    //           .y(p => curve.points.y)
-    //           .curve(CURVE_SHAPE);
-    //       };
-
-    //       // return function(t) {
-    //       //   return curve.points.map((point, index) => {
-    //       //     return nextCurve[index];
-    //       //   });
-    //       // };
-
-    //       //   return Shape.line()
-    //       //     .x(p => p.x)
-    //       //     .y(p => p.y)
-    //       //     .curve(CURVE_SHAPE);
-    //       // };
-    //       // return Interpolation.interpolate();
-    //     });
-    // }
   }
 
   private animatePath(path: any, curve: Point[], duration: number, amplitude: number, shift: number = 0): void {
@@ -322,8 +272,8 @@ export class NlsGuillocheDirective implements OnChanges, OnDestroy {
       ...curveCopy.map(point => this.graphService.shiftPoint(
         point,
         amplitude * sign.next().value,
-        shift * this.math.randomFloat(0, 1)
-        // shift
+        // shift * this.math.randomFloat(0, 1)
+        shift
       )),
       ...end
     ];

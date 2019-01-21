@@ -133,13 +133,13 @@
           <button type="button" class="btn" (click)="stopAnimation()" [ngClass]="{'btn-outline-primary': animationActive, 'btn-primary': !animationActive}">Aus</button>
         </div>
       </div>
-      <div class="dropdown-divider mb-4"></div>
+      <!-- <div class="dropdown-divider mb-4"></div>
       <button type="submit" class="btn btn-lg btn-primary btn-block" [disabled]="configForm.invalid || animationActive">Aktualisieren</button>
-      <div class="dropdown-divider mt-4"></div>
+      <div class="dropdown-divider mt-4"></div> -->
     </form>
 
     <div class="row mt-4">
-      <div class="col-sm">
+      <div class="col-sm mb-sm-3">
         <button class="btn btn-secondary btn-block" (click)="exportSvg()">Download SVG</button>
       </div>
       <div class="col-sm mt-xs-2 mt-sm-2 mt-md-0">

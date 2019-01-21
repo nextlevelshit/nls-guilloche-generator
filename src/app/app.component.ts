@@ -1,3 +1,4 @@
+import { OnChanges } from '@angular/core';
 /**
  * Copyright (C) 2018 Michael Czechowski <mail@dailysh.it>
  * This program is free software; you can redistribute it and/or modify it
@@ -58,6 +59,10 @@ export class AppComponent implements OnInit {
   ngOnInit() {
     this.resetForm();
     this.refreshHistory();
+
+    this.configForm.valueChanges.subscribe(() => {
+      this.updateGraphs();
+    });
   }
 
   private resetForm() {
