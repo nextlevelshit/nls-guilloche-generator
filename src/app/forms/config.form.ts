@@ -20,8 +20,14 @@ const fb = new FormBuilder();
 
 export let ConfigForm: FormGroup = fb.group({
   margin: fb.group({
-    x: fb.control('', Validators.min(0)),
-    y: fb.control('', Validators.min(0))
+    x: fb.control('', Validators.compose([
+      Validators.min(0),
+      Validators.max(1)
+    ])),
+    y: fb.control('', Validators.compose([
+      Validators.min(0),
+      Validators.max(1)
+    ]))
   }),
   vectors: fb.group({
     start: fb.control('', Validators.compose([

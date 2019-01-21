@@ -10,20 +10,7 @@
       <!-- <div class="pb-5">
         <h5>Grundfläche</h5>
         <hr>
-        <ng-container formGroupName="margin">
-          <div class="form-group mb-4">
-            <label class="form-control-label">
-              X-Achse
-            </label>
-            <input type="number" class="form-control" min="0" formControlName="x">
-          </div>
-          <div class="form-group mb-4">
-            <label class="form-control-label">
-              Y-Achse
-            </label>
-            <input type="number" class="form-control" formControlName="y">
-          </div>
-        </ng-container>
+
         <div class="form-group">
           <label class="form-control-label">
             Skalierung
@@ -32,22 +19,84 @@
         </div>
       </div> -->
       <div class="pb-5">
-        <h5>Vektorfläche</h5>
-        <hr/>
-        <div class="form-group">
-          <label class="form-control-label">
-            Ausdehnung: {{ configForm.value.overlap }}
-          </label>
-          <input type="range" class="form-control" formControlName="overlap" min="0" max="2" step="0.1">
-        </div>
+        <h5>Ausgangspunkte</h5>
+        <hr>
         <ng-container formGroupName="vectors">
+          <label class="form-control-label">
+            Vektorenrichtung
+          </label>
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group">
+                <select class="form-control" formControlName="start">
+                  <option value="1">&#x21d1; Oben</option>
+                  <option value="0.5">&#x21d2; Rechts</option>
+                  <!-- <option value="0">🠟 Unten</option>
+                  <option value="1.5">🠜 Links</option> -->
+                </select>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group">
+                <select class="form-control" formControlName="end">
+                  <!-- <option value="1">🠝 Oben</option>
+                  <option value="0.5">🠞 Rechts</option> -->
+                  <option value="0">&#x21d3; Unten</option>
+                  <option value="1.5">&#x21d0; Links</option>
+                </select>
+              </div>
+            </div>
+          </div>
           <div class="form-group">
             <label class="form-control-label">
               Vektorenstärke: {{ configForm.value.vectors.range }}
             </label>
-            <input type="range" class="form-control" formControlName="range" min="0" max="1" step="0.1">
+            <input type="range" class="custom-range" formControlName="range" min="0" max="1" step="0.1">
+          </div>
+          <div class="form-group mb-4">
+            <label class="form-control-label">
+              Linienabstand: {{ configForm.value.vectors.spacing }}
+            </label>
+            <input type="range" class="custom-range" formControlName="spacing" min="0" max="20" step="0.1">
           </div>
         </ng-container>
+      </div>
+
+      <div class="pb-5">
+        <h5>Ränder</h5>
+        <hr>
+        <ng-container formGroupName="margin">
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group">
+                <label class="form-control-label">
+                  Horizontal: {{ configForm.value.margin.x | percent }}
+                </label>
+                <input type="range" class="custom-range" min="0" max="1" step="0.01" formControlName="x">
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group">
+                <label class="form-control-label">
+                  Vertikal: {{ configForm.value.margin.y | percent }}
+                </label>
+                <input type="range" class="custom-range" min="0" max="1" step="0.01" formControlName="y">
+              </div>
+            </div>
+          </div>
+        </ng-container>
+      </div>
+
+      <div class="pb-5">
+        <h5>Guilloche</h5>
+        <hr/>
+        <div class="form-group">
+          <label class="form-control-label">
+            Proportion: {{ configForm.value.overlap }}
+          </label>
+          <input type="range" class="custom-range" formControlName="overlap" min="0" max="2" step="0.1">
+        </div>
+
       </div>
       <h5 class="mt-2">Graph</h5>
       <!-- <hr>
@@ -57,49 +106,20 @@
         <label class="form-control-label">
           Windungen: {{ configForm.value.nodes }}
         </label>
-        <input type="range" class="form-control" formControlName="nodes" min="1" max="20">
+        <input type="range" class="custom-range" formControlName="nodes" min="1" max="20">
       </div>
 
       <ng-container formGroupName="vectors">
-        <label class="form-control-label">
-          Vektorenrichtung
-        </label>
-        <div class="row">
-          <div class="col-md-6">
-            <div class="form-group">
-              <select class="form-control" formControlName="start">
-                <option value="1">🠝 Oben</option>
-                <option value="0.5">🠞 Rechts</option>
-                <option value="0">🠟 Unten</option>
-                <option value="1.5">🠜 Links</option>
-              </select>
-            </div>
-          </div>
-          <div class="col-md-6">
-            <div class="form-group">
-              <select class="form-control" formControlName="end">
-                <option value="1">🠝 Oben</option>
-                <option value="0.5">🠞 Rechts</option>
-                <option value="0">🠟 Unten</option>
-                <option value="1.5">🠜 Links</option>
-              </select>
-            </div>
-          </div>
-        </div>
 
-        <div class="form-group mb-4">
-          <label class="form-control-label">
-            Anfangsabstand: {{ configForm.value.vectors.spacing }}
-          </label>
-          <input type="range" class="form-control" formControlName="spacing" min="0" max="10" step="0.1">
-        </div>
+
+
       </ng-container>
 
       <!-- <div class="form-group">
         <label class="form-control-label">
           Linienstärke: {{ configForm.value.stroke }}
         </label>
-        <input type="range" class="form-control" formControlName="stroke" min="0.1" max="10" step="0.1">
+        <input type="range" class="custom-range" formControlName="stroke" min="0.1" max="10" step="0.1">
       </div> -->
 
       <ng-container formGroupName="spread">
@@ -107,13 +127,13 @@
           <label class="form-control-label">
             Linienanzahl:  {{ configForm.value.spread.amount }}
           </label>
-          <input type="range" class="form-control" min="1" formControlName="amount">
+          <input type="range" class="custom-range" min="1" formControlName="amount">
         </div>
         <div class="form-group mb-4">
           <label class="form-control-label">
             Linienabstände: {{ configForm.value.spread.spacing }}
           </label>
-          <input type="range" class="form-control" formControlName="spacing" min="0" max="50">
+          <input type="range" class="custom-range" formControlName="spacing" min="0" max="50">
         </div>
       </ng-container>
 
@@ -121,7 +141,7 @@
         <label class="form-control-label">
           Animationsinterval: {{ configForm.value.interval }}ms
         </label>
-        <input type="range" class="form-control" formControlName="interval" min="100" max="10000" step="100">
+        <input type="range" class="custom-range" formControlName="interval" min="100" max="10000" step="100">
       </div>
 
       <div class="form-group d-flex flex-colmn justify-content-between align-items-center mb-4">
@@ -133,9 +153,9 @@
           <button type="button" class="btn" (click)="stopAnimation()" [ngClass]="{'btn-outline-primary': animationActive, 'btn-primary': !animationActive}">Aus</button>
         </div>
       </div>
-      <!-- <div class="dropdown-divider mb-4"></div>
+      <div class="dropdown-divider mb-4"></div>
       <button type="submit" class="btn btn-lg btn-primary btn-block" [disabled]="configForm.invalid || animationActive">Aktualisieren</button>
-      <div class="dropdown-divider mt-4"></div> -->
+      <div class="dropdown-divider mt-4"></div>
     </form>
 
     <div class="row mt-4">

@@ -81,6 +81,8 @@ export class NlsGraphsComponent implements OnChanges {
     this.canvas = this.adjustCanvas();
     this.matrix = this.calcMatrix();
 
+    console.log(this.matrix);
+
     if (changes.config) {
       this.updateGraphs();
     }
@@ -227,17 +229,22 @@ export class NlsGraphsComponent implements OnChanges {
     const canvasHeight = this.canvas.getBoundingClientRect().height;
     const totalArea = Math.abs(canvasWidth * canvasHeight);
     const totalCenter = this.math.centerOfArea(canvasWidth, canvasHeight);
+    const marginY = this.config.margin.y * canvasHeight;
+    const marginX = this.config.margin.x * canvasWidth;
+    const lineSpacing = this.config.vectors.spacing;
+    const vectorStart = this.config.vectors.start;
+    const vectorEnd = this.config.vectors.end;
 
     return {
       start: {
-        x: this.config.margin.x,
+        x: (marginX + lineSpacing) * Math.abs(Math.cos(vectorStart * Math.PI)),
         // y: canvasHeight - this.config.vectors.spacing
-        y: canvasHeight - this.config.vectors.spacing - this.config.margin.y
+        y: canvasHeight - (marginY + lineSpacing) * Math.abs(Math.sin(vectorStart * Math.PI))
       },
       end: {
-        x: canvasWidth - this.config.vectors.spacing - this.config.margin.x,
+        x: canvasWidth - (marginX + lineSpacing) * Math.abs(Math.cos(vectorEnd * Math.PI)),
         // x: canvasWidth - this.config.vectors.spacing,
-        y: this.config.margin.y
+        y: (marginY + lineSpacing) * Math.abs(Math.sin(vectorEnd * Math.PI))
       },
       width: canvasWidth,
       height: canvasHeight,
@@ -261,8 +268,14 @@ export class NlsGraphsComponent implements OnChanges {
     while (true) {
       yield {
         point: {
-          x: Math.cos(Math.PI * vector) * genShiftX.next().value + point.x,
-          y: Math.sin(Math.PI * vector) * genShiftY.next().value + point.y,
+          x:
+            Math.cos(Math.PI * vector)
+            * genShiftX.next().value
+            + point.x,
+          y:
+            Math.sin(Math.PI * vector)
+            * genShiftY.next().value
+            + point.y,
         },
         vector: vector
       };

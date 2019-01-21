@@ -23,30 +23,26 @@ export const environment = {
       secondary: '#F8485E',
       primary: '#5CC0C7'
     },
-    autoHeight: false
   },
   formDefaults: {
+    debug: false,
     margin: {
-      x: 0,
+      x: 0.1,
       y: 0
     },
-    width: 10,
-    height: 16,
-    scale: 0.4,
-    overlap: 0.6,
+    overlap: 0.7,
     vectors: {
       start: 1,
       end: 0,
-      range: 0.4,
-      spacing: 10
+      range: 0.3,
+      spacing: 20
     },
-    nodes: 5,
-    stroke: 1,
+    nodes: 6,
+    stroke: 0.6,
     spread: {
-      amount: 28,
-      spacing: 16
+      amount: 30,
+      spacing: 13
     },
-    interval: 30,
-    debug: false
+    interval: 3000
   }
 };
