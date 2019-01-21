@@ -51,7 +51,7 @@ export class AppComponent implements OnInit {
     };
     this.configForm = ConfigForm;
     this.list = [];
-    this.showList = true;
+    this.showList = false;
     this.animationActive = env.animation;
   }
 

@@ -36,39 +36,16 @@
         <hr/>
         <div class="form-group">
           <label class="form-control-label">
-            Skalierung
+            Ausdehnung: {{ configForm.value.overlap }}
           </label>
-          <input type="number" class="form-control" formControlName="overlap" min="0" max="30" step="0.1">
+          <input type="range" class="form-control" formControlName="overlap" min="0" max="2" step="0.1">
         </div>
         <ng-container formGroupName="vectors">
           <div class="form-group">
             <label class="form-control-label">
-              Anfangsvektor
+              Vektorenstärke: {{ configForm.value.vectors.range }}
             </label>
-            <select class="form-control" formControlName="start">
-              <option value="1">Oben</option>
-              <option value="0.5">Rechts</option>
-              <option value="0">Unten</option>
-              <option value="1.5">Links</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label class="form-control-label">
-              Endvektor
-            </label>
-            <select class="form-control" formControlName="end">
-              <option value="1">Oben</option>
-              <option value="0.5">Rechts</option>
-              <option value="0">Unten</option>
-              <option value="1.5">Links</option>
-            </select>
-          </div>
-
-          <div class="form-group">
-            <label class="form-control-label">
-              Dehnung
-            </label>
-            <input type="number" class="form-control" formControlName="range" min="0" max="1" step="0.1">
+            <input type="range" class="form-control" formControlName="range" min="0" max="1" step="0.1">
           </div>
         </ng-container>
       </div>
@@ -78,47 +55,74 @@
       <hr>
       <div class="form-group mb-4">
         <label class="form-control-label">
-          Knotenpunkte
+          Windungen: {{ configForm.value.nodes }}
         </label>
-        <input type="number" class="form-control" formControlName="nodes" min="1" max="20">
+        <input type="range" class="form-control" formControlName="nodes" min="1" max="20">
       </div>
 
       <ng-container formGroupName="vectors">
-        <div class="form-group mb-4">
-          <label class="form-control-label">
-            Anfangsabstand
-          </label>
-          <input type="number" class="form-control" formControlName="spacing" min="0" max="10" step="0.1">
-        </div>
-      </ng-container>
-      <div class="form-group">
         <label class="form-control-label">
-          Linienstärke
+          Vektorenrichtung
         </label>
-        <input type="number" class="form-control" formControlName="stroke" min="0.1" max="10" step="0.1">
-      </div>
-
-      <ng-container formGroupName="spread">
-        <div class="form-group mb-4">
-          <label class="form-control-label">
-            Linienanzahl
-          </label>
-          <input type="number" class="form-control" min="1" formControlName="amount">
+        <div class="row">
+          <div class="col-md-6">
+            <div class="form-group">
+              <select class="form-control" formControlName="start">
+                <option value="1">🠝 Oben</option>
+                <option value="0.5">🠞 Rechts</option>
+                <option value="0">🠟 Unten</option>
+                <option value="1.5">🠜 Links</option>
+              </select>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="form-group">
+              <select class="form-control" formControlName="end">
+                <option value="1">🠝 Oben</option>
+                <option value="0.5">🠞 Rechts</option>
+                <option value="0">🠟 Unten</option>
+                <option value="1.5">🠜 Links</option>
+              </select>
+            </div>
+          </div>
         </div>
+
         <div class="form-group mb-4">
           <label class="form-control-label">
-            Lienienabstand
+            Anfangsabstand: {{ configForm.value.vectors.spacing }}
           </label>
-          <input type="number" class="form-control" formControlName="spacing">
+          <input type="range" class="form-control" formControlName="spacing" min="0" max="10" step="0.1">
         </div>
       </ng-container>
 
       <!-- <div class="form-group">
         <label class="form-control-label">
-          Animationsinterval
+          Linienstärke: {{ configForm.value.stroke }}
         </label>
-        <input type="number" class="form-control" formControlName="interval" min="0" max="1000" step="1">
+        <input type="range" class="form-control" formControlName="stroke" min="0.1" max="10" step="0.1">
       </div> -->
+
+      <ng-container formGroupName="spread">
+        <div class="form-group mb-4">
+          <label class="form-control-label">
+            Linienanzahl:  {{ configForm.value.spread.amount }}
+          </label>
+          <input type="range" class="form-control" min="1" formControlName="amount">
+        </div>
+        <div class="form-group mb-4">
+          <label class="form-control-label">
+            Linienabstände: {{ configForm.value.spread.spacing }}
+          </label>
+          <input type="range" class="form-control" formControlName="spacing" min="0" max="50">
+        </div>
+      </ng-container>
+
+      <div class="form-group">
+        <label class="form-control-label">
+          Animationsinterval: {{ configForm.value.interval }}ms
+        </label>
+        <input type="range" class="form-control" formControlName="interval" min="100" max="10000" step="100">
+      </div>
 
       <div class="form-group d-flex flex-colmn justify-content-between align-items-center mb-4">
         <label class="form-control-label">
@@ -136,11 +140,11 @@
 
     <div class="row mt-4">
       <div class="col-sm">
-        <button class="btn btn-secondary btn-block" (click)="exportSvg()">Download</button>
+        <button class="btn btn-secondary btn-block" (click)="exportSvg()">Download SVG</button>
       </div>
       <div class="col-sm mt-xs-2 mt-sm-2 mt-md-0">
         <button class="btn btn-secondary btn-block" (click)="toggleList()">
-          Chronik <span class="badge badge-light badge-pill">{{ list.length }}</span>
+          Verlauf <span class="badge badge-light badge-pill">{{ list.length }}</span>
         </button>
       </div>
     </div>

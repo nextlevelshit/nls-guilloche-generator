@@ -41,6 +41,7 @@ export interface Config {
     amount: number;
     spacing: number
   };
+  interval: number;
   nodes: any;
   stroke: any;
   overlap: any;

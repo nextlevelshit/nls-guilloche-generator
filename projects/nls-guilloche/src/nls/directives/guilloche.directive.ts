@@ -21,6 +21,7 @@ import * as Random from 'd3-random';
 import * as Drag from 'd3-drag';
 import * as Ease from 'd3-ease';
 import * as Timer from 'd3-timer';
+import * as Interpolation from 'd3-interpolate';
 import 'd3-transition';
 
 import { Graph } from './../models/graph.model';
@@ -30,6 +31,7 @@ import { NlsGraphService } from '../services/graph.service';
 
 // const CURVE_SHAPE = Shape.curveCardinal.tension(0.1);
 // const CURVE_SHAPE = Shape.curveCatmullRom.alpha(1);
+// const CURVE_SHAPE = Shape.curveBundle.beta(0.9);
 const CURVE_SHAPE = Shape.curveBundle.beta(0.9);
 // const CURVE_SHAPE = Shape.curveBasis;
 
@@ -66,8 +68,8 @@ export class NlsGuillocheDirective implements OnChanges, OnDestroy {
     this.spreadInitialCurve(); // Spread generated curve to many
 
     if (this.animation) {
-      const duration = this.math.randomInt(1800, 2000);
-      const amplitude = this.math.randomInt(20, 60);
+      const duration = this.math.randomInt(1600, 2000);
+      const amplitude = this.math.randomInt(20, 80);
       const shift = this.math.randomFloat(0, 2);
 
       if (!this.pathList) {
@@ -176,6 +178,7 @@ export class NlsGuillocheDirective implements OnChanges, OnDestroy {
     this.curveList.map(curve => {
       this.pathList.push(
         this.group.append('path')
+          .datum({points: curve})
           .attr('d', Shape.line()
             .x(p => p.x)
             .y(p => p.y)
@@ -189,16 +192,83 @@ export class NlsGuillocheDirective implements OnChanges, OnDestroy {
    * Update existing paths with transition
    */
   private updatePaths(): void {
-    for (let i = 0; i < this.graph.spread.amount; i++) {
-      this.pathList[i]
+
+    this.pathList.forEach((path, i) => {
+
+      const nextCurve = this.curveList[i];
+
+      path
         .transition()
-        .duration(2000)
-        .ease(Ease.easeExpInOut)
-        .attr('d', Shape.line()
-          .x(p => p.x)
-          .y(p => p.y)
-          .curve(CURVE_SHAPE)(this.curveList[i]));
-    }
+        .duration(this.graph.interval)
+        .attrTween('d', function(curve) {
+          const interpolate = Interpolation.interpolateArray(curve.points, nextCurve);
+
+          // console.log(curve.points, nextCurve);
+          // console.log(interpolate(0), interpolate(1));
+
+        //   return false;
+
+          return (t) => {
+            curve.points = interpolate(t);
+
+            // console.log(interpolate(t));
+
+            return Shape.line()
+              .x(p => {
+
+                return Math.sin(t * 2 * Math.PI) * 10 + p.x;
+                // return p.x;
+              })
+              .y(p => {
+                // return p.y;
+                return Math.cos(t * 2 * Math.PI) * 10 + p.y;
+              })
+              .curve(CURVE_SHAPE)(curve.points);
+          };
+        });
+    });
+
+    // return;
+
+    // for (let i = 0; i < this.graph.spread.amount; i++) {
+    //   const nextCurve = this.curveList[i];
+
+    //   this.pathList[i]
+    //     .transition()
+    //     .duration(2000)
+    //     // .ease(Ease.easeExpInOut)
+    //     // .attr('d', Shape.line()
+    //     //   .x(p => p.x)
+    //     //   .y(p => p.y)
+    //     //   .curve(CURVE_SHAPE)(this.curveList[i]));
+    //     .attrTween('d', function(curve) {
+    //       console.log(curve);
+
+    //       const interpolate = Interpolation.interpolate(curve, nextCurve);
+
+    //       return (t) => {
+    //         curve.points = interpolate(t);
+
+    //         return Shape.line()
+    //           .x(p => curve.points.x)
+    //           .y(p => curve.points.y)
+    //           .curve(CURVE_SHAPE);
+    //       };
+
+    //       // return function(t) {
+    //       //   return curve.points.map((point, index) => {
+    //       //     return nextCurve[index];
+    //       //   });
+    //       // };
+
+    //       //   return Shape.line()
+    //       //     .x(p => p.x)
+    //       //     .y(p => p.y)
+    //       //     .curve(CURVE_SHAPE);
+    //       // };
+    //       // return Interpolation.interpolate();
+    //     });
+    // }
   }
 
   private animatePath(path: any, curve: Point[], duration: number, amplitude: number, shift: number = 0): void {
@@ -252,7 +322,8 @@ export class NlsGuillocheDirective implements OnChanges, OnDestroy {
       ...curveCopy.map(point => this.graphService.shiftPoint(
         point,
         amplitude * sign.next().value,
-        shift
+        shift * this.math.randomFloat(0, 1)
+        // shift
       )),
       ...end
     ];

@@ -133,7 +133,8 @@ export class NlsGraphsComponent implements OnChanges {
       return {
         ...this.adjustGraph(graph),
         spread: this.config.spread,
-        debug: this.config.debug
+        debug: this.config.debug,
+        interval: this.config.interval
       };
     });
 
@@ -143,18 +144,22 @@ export class NlsGraphsComponent implements OnChanges {
   }
 
   private adjustGraph(graph: Graph): Graph {
+    const startDirection = this.genVectorPoint(graph.start.point, graph.start.vector);
+    const endDirection = this.genVectorPoint(graph.end.point, graph.end.vector);
+
     return {
       ...graph,
       start: {
         ...graph.start,
-        direction: this.genVectorPoint(graph.start.point, graph.start.vector)
+        direction: startDirection
       },
       end: {
         ...graph.end,
-        direction: this.genVectorPoint(graph.end.point, graph.end.vector)
+        direction: endDirection
       },
       nodes: this.genRandomPoints(this.config.nodes).sort((a: Point, b: Point) => {
         const start = graph.start.point;
+        // return this.math.Δ(a, startDirection) - this.math.Δ(b, startDirection);
         return this.math.Δ(a, start) - this.math.Δ(b, start);
         // return (graph.start.point.y - b.y) - (graph.start.point.y - a.y);
       })

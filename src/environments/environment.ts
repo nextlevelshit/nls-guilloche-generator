@@ -25,9 +25,9 @@ export const environment = {
     }
   },
   formDefaults: {
-    debug: false,
+    debug: true,
     margin: {
-      x: 283,
+      x: 30,
       y: 0
     },
     overlap: 0.7,
@@ -43,6 +43,6 @@ export const environment = {
       amount: 30,
       spacing: 13
     },
-    interval: 30
+    interval: 3000
   }
 };
