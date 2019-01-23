@@ -17,7 +17,6 @@
 export const environment = {
   production: true,
   debug: false,
-  animation: false,
   config: {
     colors: {
       secondary: '#F8485E',
@@ -43,6 +42,10 @@ export const environment = {
       amount: 30,
       spacing: 13
     },
-    interval: 3000
+    animation: {
+      enabled: false,
+      shift: 100,
+      interval: 1000
+    }
   }
 };

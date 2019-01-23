@@ -31,11 +31,14 @@ export interface Graph {
     direction?: Point;
     vector: number; // degree between 0 and 360
   };
+  animation?: {
+    shift: number;
+    interval: number;
+  };
   spread?: {
     amount: number;
     spacing: number
   };
-  interval?: number;
   stroke?: number; // stroke width
   nodes?: Point[]; // orientation points
   debug?: boolean;

@@ -73,6 +73,12 @@ html, body {
 body {
 
   &.fullscreen {
+    .canvas {
+      flex: 0 0 100%;
+      max-width: 100%;
+      padding: 0;
+    }
+
     .canvas-inner {
       height: 100vh;
       width: 100vw;

@@ -17,7 +17,6 @@
 export const environment = {
   production: false,
   debug: false,
-  animation: false,
   config: {
     colors: {
       secondary: '#F8485E',
@@ -30,19 +29,23 @@ export const environment = {
       x: 0.02,
       y: 0
     },
-    overlap: 0.9,
+    overlap: 0.6,
     vectors: {
       start: 1,
       end: 0,
       range: 0.5,
       spacing: 5
     },
-    nodes: 8,
+    nodes: 5,
     stroke: 0.6,
     spread: {
-      amount: 60,
-      spacing: 30
+      amount: 20,
+      spacing: 14
     },
-    interval: 3000
+    animation: {
+      enabled: false,
+      shift: 40,
+      interval: 6000
+    }
   }
 };

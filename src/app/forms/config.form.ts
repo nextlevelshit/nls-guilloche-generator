@@ -67,8 +67,15 @@ export let ConfigForm: FormGroup = fb.group({
       Validators.max(50)
     ])),
   }),
-  interval: fb.control('', Validators.compose([
-    Validators.min(100),
-    Validators.max(10000)
-  ]))
+  animation: fb.group({
+    interval: fb.control('', Validators.compose([
+      Validators.min(100),
+      Validators.max(10000)
+    ])),
+    shift: fb.control('', Validators.compose([
+      Validators.min(1),
+      Validators.max(100)
+    ]))
+  }),
+
 });

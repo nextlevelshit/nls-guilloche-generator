@@ -41,7 +41,7 @@ export class AppComponent implements OnInit {
   public list: any[];
   public showList: boolean;
   public restoredHistory: any;
-  public animationActive: boolean;
+  public animationEnabled: boolean;
   public isFullscreen: boolean;
 
   @HostListener('window:keyup', ['$event'])
@@ -64,7 +64,7 @@ export class AppComponent implements OnInit {
     this.list = [];
     this.showList = false;
     this.isFullscreen = false;
-    this.animationActive = env.animation;
+    this.animationEnabled = env.formDefaults.animation.enabled;
   }
 
   ngOnInit() {
@@ -136,10 +136,10 @@ export class AppComponent implements OnInit {
   }
 
   public startAnimation() {
-    this.animationActive = true;
+    this.animationEnabled = true;
   }
 
   public stopAnimation() {
-    this.animationActive = false;
+    this.animationEnabled = false;
   }
 }

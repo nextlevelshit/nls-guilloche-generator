@@ -46,6 +46,7 @@ export class NlsGuillocheDirective implements OnChanges, OnDestroy {
   private medianIndex: number; // generated from initialCurve
   private curveList: Point[][]; // generated from initialCurve
   private pathList: any; // generated from curveList
+  private interval: any;
 
   @Input() graph: Graph;
   @Input() animation: boolean;
@@ -68,24 +69,37 @@ export class NlsGuillocheDirective implements OnChanges, OnDestroy {
     this.spreadInitialCurve(); // Spread generated curve to many
 
     if (this.animation) {
-      const duration = this.math.randomInt(800, 1600);
-      const amplitude = this.math.randomInt(30, 120);
-      const shift = this.math.randomFloat(0, 2);
+      // const duration = this.math.randomInt(800, 1600);
+      // const amplitude = this.math.randomInt(30, 120);
+      // const shift = this.math.randomFloat(0, 2);
 
       if (!this.pathList) {
         this.clearSVG();
         this.drawPaths();
       }
 
-      for (let i = 0; i < this.graph.spread.amount; i++) {
-        this.animatePath(
-          this.pathList[i],
-          this.curveList[i],
-          duration,
-          amplitude,
-          shift
-        );
-      }
+      this.animateGraph();
+
+      this.interval = Timer.interval((t) => {
+        this.animateGraph();
+      }, this.graph.animation.interval * this.math.randomFloat(0.9, 1.1));
+
+      // console.log(this.graph.nodes);
+
+
+      // this.animateCurve(
+      //   this.pathList[0]
+      // );
+
+      // for (let i = 0; i < this.graph.spread.amount; i++) {
+      //   this.animatePath(
+      //     this.pathList[i],
+      //     this.curveList[i],
+      //     duration,
+      //     amplitude,
+      //     shift
+      //   );
+      // }
     } else {
       if (changes.graph
         && (changes.graph.firstChange
@@ -104,6 +118,26 @@ export class NlsGuillocheDirective implements OnChanges, OnDestroy {
     if (this.graph.debug) {
       this.group.selectAll('circle').remove();
       this.curveList.map(curve => this.debugGraph(curve));
+    }
+  }
+
+  private animateGraph(): void {
+    const nextNodes = this.graph.nodes.map(p => {
+      const n = {
+        x: p.x + Random.randomNormal(0)() * this.graph.animation.shift,
+        y: p.y + Random.randomNormal(0)() * this.graph.animation.shift,
+        ascent: (p.ascent) ? p.ascent : null
+      };
+      return n;
+    });
+    // console.log(this.graph.nodes);
+    this.initInitialCurve(nextNodes);
+    this.spreadInitialCurve();
+    // console.log(this.curveList);
+    this.updatePaths();
+
+    if (!this.animation) {
+      this.interval.stop();
     }
   }
 
@@ -137,11 +171,11 @@ export class NlsGuillocheDirective implements OnChanges, OnDestroy {
    * the median point and index for later usage to spread
    * curves on the axis of medians' ascent.
    */
-  private initInitialCurve(): void {
+  private initInitialCurve(nodes: Point[] = this.graph.nodes): void {
     this.initialCurve = [
       this.graph.start.point,
       this.graph.start.direction,
-      ...this.graph.nodes.slice(),
+      ...nodes.slice(),
       this.graph.end.direction,
       this.graph.end.point
     ];
@@ -193,26 +227,38 @@ export class NlsGuillocheDirective implements OnChanges, OnDestroy {
    */
   private updatePaths(): void {
 
-    this.pathList.forEach((path, i) => {
+    // const nodesCount = this.pathList.length;
 
+    this.pathList.forEach((path, i) => {
       const nextCurve = this.curveList[i];
 
       path
         .transition()
-        .duration(this.graph.interval)
+        .duration(this.graph.animation.interval)
+        .ease(Ease.easeSinInOut)
+        // .ease(Ease.easeBackInOut.overshoot(2))
         .attrTween('d', function(curve) {
-          const interpolate = Interpolation.interpolateArray(curve.points, nextCurve);
+          const interpolate = Interpolation.interpolateArray(
+            curve.points,
+            nextCurve
+          );
 
           return (t) => {
             curve.points = interpolate(t);
 
             return Shape.line()
-              .x(p => {
-                // return Math.sin(t * 2 * Math.PI) * 10 + p.x;
+              .x((p, index, arr) => {
+                // if (index < 1 || index > arr.length - 1) {
+                //   return p.x;
+                // }
+                // return 100 * Math.sin(t * 20 * Math.PI) + p.x;
                 return p.x;
               })
-              .y(p => {
-                // return Math.cos(t * 2 * Math.PI) * 10 + p.y;
+              .y((p, index, arr) => {
+                // if (index < 1 || index >= arr.length - 1) {
+                //   return p.y;
+                // }
+                // return rand * Math.sin(t * 20 * Math.PI) + p.y;
                 return p.y;
               })
               .curve(CURVE_SHAPE)(curve.points);
@@ -269,12 +315,15 @@ export class NlsGuillocheDirective implements OnChanges, OnDestroy {
 
     return [
       ...start,
-      ...curveCopy.map(point => this.graphService.shiftPoint(
-        point,
-        amplitude * sign.next().value,
-        // shift * this.math.randomFloat(0, 1)
-        shift
-      )),
+      ...curveCopy.map(point => {
+        // this.graphService.shiftPoint(
+        //   point,
+        //   amplitude * sign.next().value,
+        //   // shift * this.math.randomFloat(0, 1)
+        //   shift
+        // );
+        return point;
+      }),
       ...end
     ];
   }
