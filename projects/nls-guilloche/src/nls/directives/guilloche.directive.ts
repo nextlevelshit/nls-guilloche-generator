@@ -60,8 +60,7 @@ export class NlsGuillocheDirective implements OnChanges, OnDestroy {
   constructor(
     private el: ElementRef,
     private math: NlsMathService,
-    private graphService: NlsGraphService,
-    private mathService: NlsMathService
+    private graphService: NlsGraphService
   ) {
   }
 
