@@ -24,28 +24,28 @@ export const environment = {
     },
   },
   formDefaults: {
-    debug: false,
+    debug: true,
     margin: {
-      x: 0.1,
+      x: 0.02,
       y: 0
     },
-    overlap: 0.7,
+    overlap: 0.6,
     vectors: {
       start: 1,
       end: 0,
-      range: 0.3,
-      spacing: 20
+      range: 0.5,
+      spacing: 5
     },
-    nodes: 6,
+    nodes: 2,
     stroke: 0.6,
     spread: {
-      amount: 30,
-      spacing: 13
+      amount: 10,
+      spacing: 10
     },
     animation: {
       enabled: false,
-      shift: 100,
-      interval: 1000
+      shift: 24,
+      interval: 4000
     }
   }
 };

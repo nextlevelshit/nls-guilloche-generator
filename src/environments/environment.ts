@@ -24,7 +24,7 @@ export const environment = {
     }
   },
   formDefaults: {
-    debug: false,
+    debug: true,
     margin: {
       x: 0.02,
       y: 0
@@ -36,16 +36,16 @@ export const environment = {
       range: 0.5,
       spacing: 5
     },
-    nodes: 5,
+    nodes: 2,
     stroke: 0.6,
     spread: {
-      amount: 20,
-      spacing: 14
+      amount: 10,
+      spacing: 10
     },
     animation: {
       enabled: false,
-      shift: 40,
-      interval: 6000
+      shift: 24,
+      interval: 4000
     }
   }
 };

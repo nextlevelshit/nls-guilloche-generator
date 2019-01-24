@@ -82,7 +82,7 @@ export class NlsGuillocheDirective implements OnChanges, OnDestroy {
 
       this.interval = Timer.interval((t) => {
         this.animateGraph();
-      }, this.graph.animation.interval * this.math.randomFloat(0.9, 1.1));
+      }, this.graph.animation.interval);
 
       // console.log(this.graph.nodes);
 
@@ -135,6 +135,9 @@ export class NlsGuillocheDirective implements OnChanges, OnDestroy {
     this.spreadInitialCurve();
     // console.log(this.curveList);
     this.updatePaths();
+
+    this.group.selectAll('circle').remove();
+    this.curveList.map(curve => this.debugGraph(curve));
 
     if (!this.animation) {
       this.interval.stop();
@@ -235,7 +238,8 @@ export class NlsGuillocheDirective implements OnChanges, OnDestroy {
       path
         .transition()
         .duration(this.graph.animation.interval)
-        .ease(Ease.easeSinInOut)
+        .ease(Ease.easePolyInOut)
+        // .ease(Ease.easeSinInOut)
         // .ease(Ease.easeBackInOut.overshoot(2))
         .attrTween('d', function(curve) {
           const interpolate = Interpolation.interpolateArray(
