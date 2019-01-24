@@ -38,7 +38,7 @@ export let ConfigForm: FormGroup = fb.group({
       Validators.min(0),
       Validators.max(2)
     ])),
-    range: fb.control('', Validators.compose([
+    tension: fb.control('', Validators.compose([
       Validators.min(0),
       Validators.max(1)
     ])),
@@ -74,7 +74,7 @@ export let ConfigForm: FormGroup = fb.group({
     ])),
     shift: fb.control('', Validators.compose([
       Validators.min(1),
-      Validators.max(100)
+      Validators.max(30)
     ]))
   }),
 

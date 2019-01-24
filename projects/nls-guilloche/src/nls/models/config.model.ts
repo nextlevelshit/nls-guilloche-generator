@@ -31,7 +31,7 @@ export interface Config {
     spacing: number;
     start: any;
     end: any;
-    range: any;
+    tension: any;
   };
   colors: {
     primary: string;

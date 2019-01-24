@@ -29,11 +29,17 @@ import { Point } from './../models/point.model';
 import { NlsMathService } from './../services/math.service';
 import { NlsGraphService } from '../services/graph.service';
 
+const CURVE_SHAPE = Shape.curveBundle.beta(0.9);
 // const CURVE_SHAPE = Shape.curveCardinal.tension(0.1);
 // const CURVE_SHAPE = Shape.curveCatmullRom.alpha(1);
 // const CURVE_SHAPE = Shape.curveBundle.beta(0.9);
-const CURVE_SHAPE = Shape.curveBundle.beta(0.9);
 // const CURVE_SHAPE = Shape.curveBasis;
+const DEFAULT_DURATION = 1200;
+const DEFAULT_EASE = Ease.easePolyInOut;
+const ANIMATION_EASE = Ease.easePolyInOut.exponent(1.6);
+// const ANIMATION_EASE = Ease.easeBackInOut.overshoot(2);
+// const ANIMATION_EASE = Ease.easeBackOut.overshoot(100);
+// const ANIMATION_EASE = Ease.easeSinInOut;
 
 @Directive({
   selector: '[nlsGuilloche]'
@@ -69,37 +75,12 @@ export class NlsGuillocheDirective implements OnChanges, OnDestroy {
     this.spreadInitialCurve(); // Spread generated curve to many
 
     if (this.animation) {
-      // const duration = this.math.randomInt(800, 1600);
-      // const amplitude = this.math.randomInt(30, 120);
-      // const shift = this.math.randomFloat(0, 2);
-
       if (!this.pathList) {
         this.clearSVG();
-        this.drawPaths();
+        this.appendPaths();
       }
-
-      this.animateGraph();
-
-      this.interval = Timer.interval((t) => {
-        this.animateGraph();
-      }, this.graph.animation.interval);
-
-      // console.log(this.graph.nodes);
-
-
-      // this.animateCurve(
-      //   this.pathList[0]
-      // );
-
-      // for (let i = 0; i < this.graph.spread.amount; i++) {
-      //   this.animatePath(
-      //     this.pathList[i],
-      //     this.curveList[i],
-      //     duration,
-      //     amplitude,
-      //     shift
-      //   );
-      // }
+      this.initFirstAnimation();
+      this.setAnimationInterval();
     } else {
       if (changes.graph
         && (changes.graph.firstChange
@@ -110,38 +91,47 @@ export class NlsGuillocheDirective implements OnChanges, OnDestroy {
         )
       ) {
         this.clearSVG();
-        this.drawPaths();
+        this.appendPaths();
       } else {
-        this.updatePaths();
+        if (this.interval) {
+          this.interval.stop();
+        }
+        this.refreshPaths();
       }
-    }
-    if (this.graph.debug) {
-      this.group.selectAll('circle').remove();
-      this.curveList.map(curve => this.debugGraph(curve));
     }
   }
 
+  private setAnimationInterval(): void {
+    this.interval = Timer.interval((t) => {
+      this.animateGraph();
+    }, this.graph.animation.interval);
+  }
+
+  private initFirstAnimation(): void {
+    this.prepareNextAnimationStep();
+    this.animateGraph();
+  }
+
   private animateGraph(): void {
+    this.refreshPaths(
+      this.graph.animation.interval,
+      ANIMATION_EASE
+    );
+    this.prepareNextAnimationStep();
+    this.debugGraph();
+  }
+
+  private prepareNextAnimationStep(): void {
     const nextNodes = this.graph.nodes.map(p => {
       const n = {
-        x: p.x + Random.randomNormal(0)() * this.graph.animation.shift,
-        y: p.y + Random.randomNormal(0)() * this.graph.animation.shift,
+        x: p.x + Random.randomNormal(1, 2)() * this.graph.animation.shift,
+        y: p.y + Random.randomNormal(0.3, 3)() * this.graph.animation.shift,
         ascent: (p.ascent) ? p.ascent : null
       };
       return n;
     });
-    // console.log(this.graph.nodes);
     this.initInitialCurve(nextNodes);
     this.spreadInitialCurve();
-    // console.log(this.curveList);
-    this.updatePaths();
-
-    this.group.selectAll('circle').remove();
-    this.curveList.map(curve => this.debugGraph(curve));
-
-    if (!this.animation) {
-      this.interval.stop();
-    }
   }
 
   private clearSVG(): void {
@@ -211,7 +201,7 @@ export class NlsGuillocheDirective implements OnChanges, OnDestroy {
    * Iterate through generated curve list and append for
    * each curve a new path to the SVG group.
    */
-  private drawPaths(): void {
+  private appendPaths(): void {
     this.curveList.map(curve => {
       this.pathList.push(
         this.group.append('path')
@@ -228,122 +218,47 @@ export class NlsGuillocheDirective implements OnChanges, OnDestroy {
   /**
    * Update existing paths with transition
    */
-  private updatePaths(): void {
-
-    // const nodesCount = this.pathList.length;
-
+  private refreshPaths(
+    duration = DEFAULT_DURATION,
+    ease = DEFAULT_EASE
+  ): void {
     this.pathList.forEach((path, i) => {
       const nextCurve = this.curveList[i];
 
       path
         .transition()
-        .duration(this.graph.animation.interval)
-        .ease(Ease.easePolyInOut)
-        // .ease(Ease.easeSinInOut)
-        // .ease(Ease.easeBackInOut.overshoot(2))
-        .attrTween('d', function(curve) {
-          const interpolate = Interpolation.interpolateArray(
-            curve.points,
-            nextCurve
-          );
+        .duration(duration)
+        .ease(ease)
+          .attrTween('d', function(curve) {
+            const interpolate = Interpolation.interpolateArray(
+              curve.points,
+              nextCurve
+            );
 
-          return (t) => {
-            curve.points = interpolate(t);
+            return (t) => {
+              curve.points = interpolate(t);
 
-            return Shape.line()
-              .x((p, index, arr) => {
-                // if (index < 1 || index > arr.length - 1) {
-                //   return p.x;
-                // }
-                // return 100 * Math.sin(t * 20 * Math.PI) + p.x;
-                return p.x;
-              })
-              .y((p, index, arr) => {
-                // if (index < 1 || index >= arr.length - 1) {
-                //   return p.y;
-                // }
-                // return rand * Math.sin(t * 20 * Math.PI) + p.y;
-                return p.y;
-              })
-              .curve(CURVE_SHAPE)(curve.points);
-          };
-        });
+              return Shape.line()
+                .x((p, index, arr) => {
+                  return p.x;
+                })
+                .y((p, index, arr) => {
+                  return p.y;
+                })
+                .curve(CURVE_SHAPE)(curve.points);
+            };
+          });
     });
   }
 
-  private animatePath(path: any, curve: Point[], duration: number, amplitude: number, shift: number = 0): void {
-    const easeIn = Ease.easeQuadIn;
-    const easeOut = Ease.easeQuadOut;
-
-    path
-      .transition()
-      .duration(duration)
-      .ease(easeOut)
-      .attr('d', Shape.line()
-        .x(p => p.x)
-        .y(p => p.y)
-        .curve(CURVE_SHAPE)(this.shiftCurve(curve, amplitude, shift)))
-      .transition()
-      .duration(duration)
-      .ease(easeIn)
-      .attr('d', Shape.line()
-        .x(p => p.x)
-        .y(p => p.y)
-        .curve(CURVE_SHAPE)(this.shiftCurve(curve, 0, shift)))
-      .transition()
-      .ease(easeOut)
-      .duration(duration)
-      .attr('d', Shape.line()
-        .x(p => p.x)
-        .y(p => p.y)
-        .curve(CURVE_SHAPE)(this.shiftCurve(curve, -amplitude, shift)))
-      .transition()
-      .ease(easeIn)
-      .duration(duration)
-      .attr('d', Shape.line()
-        .x(p => p.x)
-        .y(p => p.y)
-        .curve(CURVE_SHAPE)(this.shiftCurve(curve, 0, shift)))
-      .on('end', () => {
-        if (this.animation) {
-          this.animatePath(path, curve, duration, amplitude, shift);
-        }
-      });
+  private debugGraph(): void {
+    if (this.graph.debug) {
+      this.group.selectAll('circle').remove();
+      this.curveList.map(curve => this.debugCurve(curve));
+    }
   }
 
-  private shiftCurve(curve: Point[], amplitude: number, shift: number = 0): Point[] {
-    const curveCopy = Object.assign([], curve);
-    const sign = this.math.flipSign();
-    const start = curveCopy.splice(0, 2);
-    const end = curveCopy.splice(-2, 2);
-
-    return [
-      ...start,
-      ...curveCopy.map(point => {
-        // this.graphService.shiftPoint(
-        //   point,
-        //   amplitude * sign.next().value,
-        //   // shift * this.math.randomFloat(0, 1)
-        //   shift
-        // );
-        return point;
-      }),
-      ...end
-    ];
-  }
-
-  private drawGraph(points: Point[]): void {
-    this.pathList.push(
-      this.group.append('path')
-        .attr('d', Shape.line()
-          .x(p => p.x)
-          .y(p => p.y)
-          .curve(CURVE_SHAPE)(points)
-        )
-      );
-  }
-
-  private debugGraph(points: Point[]) {
+  private debugCurve(points: Point[]) {
     points.forEach((point, index) => this.debugPoint(point));
   }
 

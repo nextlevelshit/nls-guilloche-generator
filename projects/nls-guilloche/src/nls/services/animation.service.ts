@@ -27,7 +27,7 @@ export class NlsAnimationService {
 
   public graphs: Graph[];
   public speed: number;
-  public range: number;
+  public tension: number;
   // public genAnimation: any;
   // private timer: Observable<number>;
   // private subscribtion: any;

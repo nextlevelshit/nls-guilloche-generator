@@ -89,14 +89,15 @@ export class NlsMathService {
   }
 
   public medianOfCurve(curve: Point[]) {
-    const genMedian = this.medianPoint(curve);
-    const p1 = genMedian.next().value;
-    const p2 = genMedian.next().value;
-    const p3 = genMedian.next().value;
-    const radians = this.angleRadians(p2, p3);
-    // const radians = Math.round(Math.random() * 10000) / 1000;
-    // @todo if nodes are less than 5 error occures
-    return Object.assign(p1, { ascent: radians });
+    // const genMedian = this.medianPoint(curve);
+    // const p1 = genMedian.next().value;
+    // const p2 = genMedian.next().value;
+    // const p3 = genMedian.next().value;
+    // const radians = this.angleRadians(p2, p3);
+    return {
+      ...curve[this.medianIndex(curve)],
+      ascent: this.randomFloat(0, 2)
+    };
   }
 
   public angleRadians(p1: Point, p2: Point) {
@@ -129,7 +130,7 @@ export class NlsMathService {
    * @param start 0 indicates to initiate with positive numbers, 1 indicates to
    * start with negative numbers first
    * @param amplitude default to 1 indicates the amplitude in positive as well
-   * in negative range
+   * in negative tension
    * @param decimals amount of decimal places
    */
 

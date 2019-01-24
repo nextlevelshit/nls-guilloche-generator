@@ -33,7 +33,7 @@ export const environment = {
     vectors: {
       start: 1,
       end: 0,
-      range: 0.5,
+      tension: 0.5,
       spacing: 5
     },
     nodes: 2,

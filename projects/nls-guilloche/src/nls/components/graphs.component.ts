@@ -16,8 +16,6 @@
 
 import { ViewChild, Component, Input, Output, SimpleChanges, OnChanges, EventEmitter, HostListener } from '@angular/core';
 import { Observable, interval } from 'rxjs';
-import * as Selection from 'd3-selection';
-import * as Shape from 'd3-shape';
 import * as Random from 'd3-random';
 
 import { Graph } from './../models/graph.model';
@@ -134,7 +132,10 @@ export class NlsGraphsComponent implements OnChanges {
         ...this.adjustGraph(graph),
         spread: this.config.spread,
         debug: this.config.debug,
-        animation: this.config.animation
+        animation: {
+          ...this.config.animation,
+          interval: this.config.animation.interval * this.math.randomFloat(0.9, 1.1)
+        }
       };
     });
 
@@ -158,10 +159,11 @@ export class NlsGraphsComponent implements OnChanges {
         direction: endDirection
       },
       nodes: this.genRandomPoints(this.config.nodes).sort((a: Point, b: Point) => {
-        const start = graph.start.point;
-        // return this.math.Δ(a, startDirection) - this.math.Δ(b, startDirection);
-        return this.math.Δ(a, start) - this.math.Δ(b, start);
-        // return (graph.start.point.y - b.y) - (graph.start.point.y - a.y);
+        const orientation = graph.start.point;
+        // return this.math.Δ(a, orientation) - this.math.Δ(b, orientation);
+        return this.math.Δ(b, orientation) - this.math.Δ(a, orientation);
+        // return (orientation.x - b.x) - (orientation.x - a.x);
+        // return (orientation.y - b.y) - (orientation.y - a.y);
       })
     };
   }
@@ -251,11 +253,11 @@ export class NlsGraphsComponent implements OnChanges {
   }
 
   private genVectorPoint(point: Point, vector: number): Point {
-    const range = this.math.Δ(this.matrix.start, this.matrix.end) * this.config.vectors.range;
+    const tension = this.math.Δ(this.matrix.start, this.matrix.end) * this.config.vectors.tension;
 
     return {
-      x: range * Math.sin(Math.PI * vector) + point.x,
-      y: range * Math.cos(Math.PI * vector) + point.y
+      x: tension * Math.sin(Math.PI * vector) + point.x,
+      y: tension * Math.cos(Math.PI * vector) + point.y
     };
   }
 
