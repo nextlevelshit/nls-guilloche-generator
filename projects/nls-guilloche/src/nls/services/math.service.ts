@@ -109,7 +109,7 @@ export class NlsMathService {
   }
 
   public medianIndex(list: any): number {
-    return Math.floor(list.length * 0.5);
+    return Math.round(list.length * 0.5);
   }
 
   public *medianPoint(points: Point[]) {

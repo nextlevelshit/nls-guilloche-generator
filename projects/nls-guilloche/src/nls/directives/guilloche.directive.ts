@@ -53,6 +53,7 @@ export class NlsGuillocheDirective implements OnChanges, OnDestroy {
   private curveList: Point[][]; // generated from initialCurve
   private pathList: any; // generated from curveList
   private interval: any;
+  private ascent: number;
 
   @Input() graph: Graph;
   @Input() animation: boolean;
@@ -62,6 +63,7 @@ export class NlsGuillocheDirective implements OnChanges, OnDestroy {
     private math: NlsMathService,
     private graphService: NlsGraphService
   ) {
+    this.ascent = this.math.randomFloat(0, 2);
   }
 
   ngOnDestroy() {
@@ -109,15 +111,6 @@ export class NlsGuillocheDirective implements OnChanges, OnDestroy {
   private initFirstAnimation(): void {
     this.prepareNextAnimationStep();
     this.animateGraph();
-  }
-
-  private animateGraph(): void {
-    this.refreshPaths(
-      this.graph.animation.interval,
-      ANIMATION_EASE
-    );
-    this.prepareNextAnimationStep();
-    this.debugGraph();
   }
 
   private prepareNextAnimationStep(): void {
@@ -182,16 +175,39 @@ export class NlsGuillocheDirective implements OnChanges, OnDestroy {
    */
   private spreadInitialCurve(): void {
     const spreadCurveList = [];
-    const shiftedMedians = [];
-    const genshiftedMedians = this.graphService.spreadOrthogonal(this.medianPoint, this.graph.spread.spacing);
+    const medians = [];
+    const preMedians = [];
+    const postMedians = [];
+
+    const shiftMedian = this.graphService.spreadOrthogonal(
+      this.initialCurve[this.medianIndex],
+      this.graph.spread.spacing,
+      this.ascent * Random.randomNormal(1, 0.05)()
+    );
+    const shiftPreMedian = this.graphService.spreadOrthogonal(
+      this.initialCurve[this.medianIndex - 1],
+      this.graph.spread.spacing * 0.5,
+      this.ascent * Random.randomNormal(1, 0.05)()
+    );
+    const shiftPostMedian = this.graphService.spreadOrthogonal(
+      this.initialCurve[this.medianIndex + 1],
+      this.graph.spread.spacing * 0.5,
+      this.ascent * Random.randomNormal(1, 0.05)()
+    );
 
     for (let i = 0; i < this.graph.spread.amount; i++) {
-      shiftedMedians.push(genshiftedMedians.next().value);
+      medians.push(shiftMedian.next().value);
+      preMedians.push(shiftPreMedian.next().value);
+      postMedians.push(shiftPostMedian.next().value);
     }
 
-    this.curveList = shiftedMedians.map(median => {
+    this.curveList = medians.map((median, i) => {
       const shiftedPoints = this.initialCurve.slice();
+
       shiftedPoints.splice(this.medianIndex, 1, median);
+      shiftedPoints.splice(this.medianIndex - 1, 1, preMedians[i]);
+      shiftedPoints.splice(this.medianIndex + 1, 1, postMedians[i]);
+
       return shiftedPoints;
     });
   }
@@ -248,6 +264,15 @@ export class NlsGuillocheDirective implements OnChanges, OnDestroy {
             };
           });
     });
+  }
+
+  private animateGraph(): void {
+    this.refreshPaths(
+      this.graph.animation.interval,
+      ANIMATION_EASE
+    );
+    this.prepareNextAnimationStep();
+    this.debugGraph();
   }
 
   private debugGraph(): void {

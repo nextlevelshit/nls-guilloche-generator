@@ -134,7 +134,7 @@ export class NlsGraphsComponent implements OnChanges {
         debug: this.config.debug,
         animation: {
           ...this.config.animation,
-          interval: this.config.animation.interval * this.math.randomFloat(0.9, 1.1)
+          interval: this.config.animation.interval * this.math.randomFloat(0.8, 1.2)
         }
       };
     });
@@ -158,13 +158,14 @@ export class NlsGraphsComponent implements OnChanges {
         ...graph.end,
         direction: endDirection
       },
-      nodes: this.genRandomPoints(this.config.nodes).sort((a: Point, b: Point) => {
-        const orientation = graph.start.point;
-        // return this.math.Δ(a, orientation) - this.math.Δ(b, orientation);
-        return this.math.Δ(b, orientation) - this.math.Δ(a, orientation);
-        // return (orientation.x - b.x) - (orientation.x - a.x);
-        // return (orientation.y - b.y) - (orientation.y - a.y);
-      })
+      nodes: this.genRandomPoints(this.config.nodes)
+      // nodes: this.genRandomPoints(this.config.nodes).sort((a: Point, b: Point) => {
+      //   const orientation = graph.start.point;
+      //   // return this.math.Δ(a, orientation) - this.math.Δ(b, orientation);
+      //   return this.math.Δ(b, orientation) - this.math.Δ(a, orientation);
+      //   // return (orientation.x - b.x) - (orientation.x - a.x);
+      //   // return (orientation.y - b.y) - (orientation.y - a.y);
+      // })
     };
   }
 
