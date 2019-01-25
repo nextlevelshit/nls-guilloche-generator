@@ -51,12 +51,12 @@ export class NlsMathService {
 
   public randomPoint(matrix: any, overlap: number): Point {
     const x = {
-      min: matrix.center.x - matrix.width * overlap,
-      max: matrix.center.x + matrix.width * overlap
+      min: matrix.center.x - matrix.width * 0.5 * overlap,
+      max: matrix.center.x + matrix.width * 0.5 * overlap
     };
     const y = {
-      min: matrix.center.y - matrix.height * overlap,
-      max: matrix.center.y + matrix.height * overlap
+      min: matrix.center.y - matrix.height * 0.5 * overlap,
+      max: matrix.center.y + matrix.height * 0.5 * overlap
     };
 
     return {

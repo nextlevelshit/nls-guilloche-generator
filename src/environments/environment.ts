@@ -18,25 +18,29 @@ export const environment = {
   production: false,
   debug: false,
   config: {
+  },
+  formDefaults: {
     colors: {
       secondary: '#F8485E',
       primary: '#5CC0C7'
-    }
-  },
-  formDefaults: {
+    },
     debug: true,
+    canvas: {
+      width: 85,
+      height: 50,
+    },
     margin: {
       x: 0.02,
-      y: 0
+      y: 0.03
     },
-    overlap: 0.6,
+    overlap: 1.8,
     vectors: {
-      start: 1,
+      start: 0.5,
       end: 0,
-      tension: 0.5,
+      tension: 0.8,
       spacing: 5
     },
-    nodes: 6,
+    nodes: 4,
     stroke: 0.6,
     spread: {
       amount: 30,

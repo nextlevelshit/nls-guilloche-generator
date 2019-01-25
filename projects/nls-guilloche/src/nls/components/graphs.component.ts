@@ -35,6 +35,10 @@ const RESIZING_TIMEOUT = 800;
   styleUrls: ['./graphs.component.scss']
 })
 export class NlsGraphsComponent implements OnChanges {
+  private genShiftPoint: any | null;
+  private genLoadedAllGraphs: any | null;
+  private hash: string;
+  private resizingWindow: any;
 
   public canvas: any | null;
   public matrix: any | null;
@@ -42,10 +46,6 @@ export class NlsGraphsComponent implements OnChanges {
   public windowHeight: number | null;
   public windowWidth: number | null;
 
-  private genShiftPoint: any | null;
-  private genLoadedAllGraphs: any | null;
-  private hash: string;
-  private resizingWindow: any;
 
   @Input() config: Config;
   @Input() restoredHistory: any;
@@ -79,12 +79,14 @@ export class NlsGraphsComponent implements OnChanges {
     this.canvas = this.adjustCanvas();
     this.matrix = this.calcMatrix();
 
-    if (changes.config) {
-      this.updateGraphs();
-    }
+    // this.updateGraphs();
+
+
 
     if (this.restoredHistory && this.restoredHistory.hash !== this.hash) {
       this.restoreGraph();
+    } else {
+      this.updateGraphs();
     }
 
     setTimeout(this.prepareGuillocheExport(), 1000);
@@ -220,7 +222,7 @@ export class NlsGraphsComponent implements OnChanges {
 
   private adjustCanvas(): void {
     this.canvasService.set(this.canvas);
-    this.canvasService.adjustToWindow();
+    // this.canvasService.adjustToWindow();
 
     return this.svgElementRef.nativeElement;
   }

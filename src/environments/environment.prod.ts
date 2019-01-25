@@ -24,6 +24,8 @@ export const environment = {
     },
   },
   formDefaults: {
+    width: 1.41,
+    height: 1,
     debug: true,
     margin: {
       x: 0.02,

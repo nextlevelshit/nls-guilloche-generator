@@ -1,3 +1,4 @@
+
 /**
  * Copyright (C) 2018 Michael Czechowski <mail@dailysh.it>
  * This program is free software; you can redistribute it and/or modify it
@@ -13,9 +14,8 @@
  * this program; if not, write to the Free Software Foundation, Inc., 51
  * Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
-
 import { ConfigForm } from './forms/config.form';
-import { Component, OnInit, HostListener } from '@angular/core';
+import { Component, OnInit, HostListener, ViewChild, ElementRef } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import * as moment from 'moment';
@@ -28,12 +28,19 @@ export enum KEY_CODE {
   ESCAPE = 27
 }
 
+export enum CANVAS {
+  MARGIN = 100,
+  TIMEOUT = 400
+}
+
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent implements OnInit {
+
+  private resizingWindow: any;
 
   public config: any | null;
   public configForm: FormGroup;
@@ -44,6 +51,9 @@ export class AppComponent implements OnInit {
   public animationEnabled: boolean;
   public isFullscreen: boolean;
 
+  @ViewChild('canvasRef', { read: ElementRef }) canvasRef: ElementRef;
+  @ViewChild('containerRef', { read: ElementRef }) containerRef: ElementRef;
+
   @HostListener('window:keyup', ['$event'])
   keyEvent(event: KeyboardEvent) {
     if (event.keyCode === KEY_CODE.ESCAPE) {
@@ -51,15 +61,20 @@ export class AppComponent implements OnInit {
     }
   }
 
+  @HostListener('window:resize', ['$event'])
+  onResize(event) {
+    clearTimeout(this.resizingWindow);
+
+    this.resizingWindow = setTimeout(() => {
+      this.resetCanvas(this.configForm.value.canvas);
+    }, CANVAS.TIMEOUT);
+  }
+
   constructor(
     private historyService: NlsHistoryService,
   ) {
     moment.locale('de');
 
-    this.config = {
-      ...env.config,
-      ...env.formDefaults
-    };
     this.configForm = ConfigForm;
     this.list = [];
     this.showList = false;
@@ -68,16 +83,67 @@ export class AppComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.resetForm();
     this.refreshHistory();
+    this.resetCanvas(env.formDefaults.canvas);
+    this.resetForm();
 
     this.configForm.valueChanges.subscribe(() => {
+      this.resetCanvas(this.configForm.value.canvas);
       this.updateGraphs();
     });
   }
 
   private resetForm() {
+    this.config = {
+      ...env.formDefaults
+    };
     this.configForm.reset({...this.config});
+  }
+
+  private resetCanvas(dimensions: { width: number, height: number}): void {
+    const container = {
+      el: this.containerRef.nativeElement,
+      width: this.containerRef.nativeElement.clientWidth,
+      height: this.containerRef.nativeElement.clientHeight,
+      aspectRatio: function() {
+        return this.width / this.height;
+      }
+    };
+    const canvas = {
+      el: this.canvasRef.nativeElement,
+      width: dimensions.width,
+      height: dimensions.height,
+      // width: this.canvasRef.nativeElement.clientWidth,
+      // height: this.canvasRef.nativeElement.clientHeight,
+      aspectRatio: function() {
+        return this.width / this.height;
+      }
+    };
+    let unit = 1;
+
+    console.log(container, container.aspectRatio());
+    console.log(canvas, canvas.aspectRatio());
+    // container.aspectRatio = container.width / container.height;
+
+    if (container.aspectRatio() > canvas.aspectRatio()) {
+      // fit canvas by height to conainter
+      unit = container.height / canvas.height;
+    } else {
+      // fit canvas by width to container
+      unit = container.width / canvas.width;
+    }
+
+    canvas.el.style.width =
+      canvas.width *
+      unit -
+      CANVAS.MARGIN +
+      'px';
+
+    canvas.el.style.height =
+      canvas.height *
+      unit -
+      CANVAS.MARGIN +
+      'px';
   }
 
   private refreshHistory() {
@@ -119,15 +185,19 @@ export class AppComponent implements OnInit {
   }
 
   public enableFullscreen(): void {
-    this.isFullscreen = true;
-    document.body.classList.add('fullscreen');
-    this.updateGraphs();
+    if (!this.isFullscreen) {
+      this.isFullscreen = true;
+      document.body.classList.add('fullscreen');
+      this.updateGraphs();
+    }
   }
 
   public disableFullscreen(): void {
-    this.isFullscreen = false;
-    document.body.classList.remove('fullscreen');
-    this.updateGraphs();
+    if (this.isFullscreen) {
+      this.isFullscreen = false;
+      document.body.classList.remove('fullscreen');
+      this.updateGraphs();
+    }
   }
 
   public restoreGraph(history) {

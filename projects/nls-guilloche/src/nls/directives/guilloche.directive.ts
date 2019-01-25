@@ -184,6 +184,7 @@ export class NlsGuillocheDirective implements OnChanges, OnDestroy {
       this.graph.spread.spacing,
       this.ascent * Random.randomNormal(1, 0.05)()
     );
+
     const shiftPreMedian = this.graphService.spreadOrthogonal(
       this.initialCurve[this.medianIndex - 1],
       this.graph.spread.spacing * 0.5,
@@ -197,16 +198,22 @@ export class NlsGuillocheDirective implements OnChanges, OnDestroy {
 
     for (let i = 0; i < this.graph.spread.amount; i++) {
       medians.push(shiftMedian.next().value);
-      preMedians.push(shiftPreMedian.next().value);
-      postMedians.push(shiftPostMedian.next().value);
+
+      if (this.graph.nodes.length > 3) {
+        preMedians.push(shiftPreMedian.next().value);
+        postMedians.push(shiftPostMedian.next().value);
+      }
     }
 
     this.curveList = medians.map((median, i) => {
       const shiftedPoints = this.initialCurve.slice();
 
       shiftedPoints.splice(this.medianIndex, 1, median);
-      shiftedPoints.splice(this.medianIndex - 1, 1, preMedians[i]);
-      shiftedPoints.splice(this.medianIndex + 1, 1, postMedians[i]);
+
+      if (this.graph.nodes.length > 3) {
+        shiftedPoints.splice(this.medianIndex - 1, 1, preMedians[i]);
+        shiftedPoints.splice(this.medianIndex + 1, 1, postMedians[i]);
+      }
 
       return shiftedPoints;
     });

@@ -19,6 +19,14 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 const fb = new FormBuilder();
 
 export let ConfigForm: FormGroup = fb.group({
+  canvas: fb.group({
+    width: fb.control('', Validators.required),
+    height: fb.control('', Validators.required)
+  }),
+  colors: fb.group({
+    primary: fb.control('', Validators.required),
+    secondary: fb.control('', Validators.required)
+  }),
   margin: fb.group({
     x: fb.control('', Validators.compose([
       Validators.min(0),
@@ -48,7 +56,7 @@ export let ConfigForm: FormGroup = fb.group({
     ])),
   }),
   nodes: fb.control('', Validators.compose([
-    Validators.min(1),
+    Validators.min(2),
     Validators.max(20)
   ])),
   scale: fb.control('', Validators.compose([
