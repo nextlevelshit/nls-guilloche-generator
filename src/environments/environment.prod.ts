@@ -24,30 +24,32 @@ export const environment = {
     },
   },
   formDefaults: {
-    width: 1.41,
-    height: 1,
-    debug: true,
-    margin: {
-      x: 0.02,
-      y: 0
+    debug: false,
+    canvas: {
+      width: 1,
+      height: 1.41,
     },
-    overlap: 0.6,
+    margin: {
+      x: 0.0282,
+      y: 0.02
+    },
+    overlap: 0.9,
     vectors: {
-      start: 1,
+      start: 0.5,
       end: 0,
-      tension: 0.5,
+      tension: 0.2,
       spacing: 5
     },
-    nodes: 2,
+    nodes: 4,
     stroke: 0.6,
     spread: {
-      amount: 10,
+      amount: 30,
       spacing: 10
     },
     animation: {
       enabled: false,
-      shift: 24,
-      interval: 4000
+      shift: 8,
+      interval: 6000
     }
   }
 };

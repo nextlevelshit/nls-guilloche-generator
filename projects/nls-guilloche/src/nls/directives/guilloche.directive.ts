@@ -29,11 +29,14 @@ import { Point } from './../models/point.model';
 import { NlsMathService } from './../services/math.service';
 import { NlsGraphService } from '../services/graph.service';
 
-const CURVE_SHAPE = Shape.curveBundle.beta(0.9);
-// const CURVE_SHAPE = Shape.curveCardinal.tension(0.1);
-// const CURVE_SHAPE = Shape.curveCatmullRom.alpha(1);
+// const CURVE_SHAPE = Shape.curveMonotoneY;
+// const CURVE_SHAPE = Shape.curveBundle;
 // const CURVE_SHAPE = Shape.curveBundle.beta(0.9);
-// const CURVE_SHAPE = Shape.curveBasis;
+// const CURVE_SHAPE = Shape.curveCardinal.tension(0);
+// const CURVE_SHAPE = Shape.curveCatmullRom;
+// const CURVE_SHAPE = Shape.curveCatmullRom.alpha(0);
+// const CURVE_SHAPE = Shape.curveBundle.beta(0.9);
+const CURVE_SHAPE = Shape.curveBasis;
 const DEFAULT_DURATION = 1200;
 const DEFAULT_EASE = Ease.easePolyInOut;
 const ANIMATION_EASE = Ease.easePolyInOut.exponent(1.6);

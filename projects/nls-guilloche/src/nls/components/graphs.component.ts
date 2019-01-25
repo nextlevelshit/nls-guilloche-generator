@@ -59,8 +59,8 @@ export class NlsGraphsComponent implements OnChanges {
     clearTimeout(this.resizingWindow);
 
     this.resizingWindow = setTimeout(() => {
-      this.canvas = this.adjustCanvas();
-      this.matrix = this.calcMatrix();
+      this.adjustCanvas();
+      this.calcMatrix();
       this.updateGraphs();
     }, RESIZING_TIMEOUT);
   }
@@ -76,8 +76,8 @@ export class NlsGraphsComponent implements OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges) {
-    this.canvas = this.adjustCanvas();
-    this.matrix = this.calcMatrix();
+    this.adjustCanvas();
+    this.calcMatrix();
 
     if ('config' in changes) {
       this.updateGraphs();
@@ -145,8 +145,12 @@ export class NlsGraphsComponent implements OnChanges {
   }
 
   private adjustGraph(graph: Graph): Graph {
+    console.log(graph.color, graph.start.point.x);
+
     const startDirection = this.genVectorPoint(graph.start.point, graph.start.vector);
     const endDirection = this.genVectorPoint(graph.end.point, graph.end.vector);
+
+    console.log(graph.color, startDirection.x);
 
     return {
       ...graph,
@@ -220,12 +224,10 @@ export class NlsGraphsComponent implements OnChanges {
 
   private adjustCanvas(): void {
     this.canvasService.set(this.canvas);
-    // this.canvasService.adjustToWindow();
-
-    return this.svgElementRef.nativeElement;
+    this.canvas = this.svgElementRef.nativeElement;
   }
 
-  private calcMatrix() {
+  private calcMatrix(): void {
     const canvasWidth = this.canvas.getBoundingClientRect().width;
     const canvasHeight = this.canvas.getBoundingClientRect().height;
     const totalArea = Math.abs(canvasWidth * canvasHeight);
@@ -236,16 +238,16 @@ export class NlsGraphsComponent implements OnChanges {
     const vectorStart = this.config.vectors.start;
     const vectorEnd = this.config.vectors.end;
 
-    return {
+    this.matrix = {
       start: {
-        x: (marginX + lineSpacing) * Math.abs(Math.cos(vectorStart * Math.PI)),
+        x: Math.round(1000 * ((marginX + lineSpacing) * Math.abs(Math.cos(vectorStart * Math.PI)))) / 1000,
         // y: canvasHeight - this.config.vectors.spacing
-        y: canvasHeight - (marginY + lineSpacing) * Math.abs(Math.sin(vectorStart * Math.PI))
+        y: Math.round(1000 * ((canvasHeight - (marginY + lineSpacing) * Math.abs(Math.sin(vectorStart * Math.PI))))) / 1000
       },
       end: {
-        x: canvasWidth - (marginX + lineSpacing) * Math.abs(Math.cos(vectorEnd * Math.PI)),
+        x: Math.round(1000 * ((canvasWidth - (marginX + lineSpacing) * Math.abs(Math.cos(vectorEnd * Math.PI))))) / 1000,
         // x: canvasWidth - this.config.vectors.spacing,
-        y: (marginY + lineSpacing) * Math.abs(Math.sin(vectorEnd * Math.PI))
+        y: Math.round(1000 * ((marginY + lineSpacing) * Math.abs(Math.sin(vectorEnd * Math.PI)))) / 1000
       },
       width: canvasWidth,
       height: canvasHeight,
@@ -253,14 +255,15 @@ export class NlsGraphsComponent implements OnChanges {
     };
   }
 
-  private genVectorPoint(point: Point, vector: number): Point {
+  private genVectorPoint(
+    point: Point,
+    vector: number
+  ): Point {
     const tension = this.math.Δ(this.matrix.start, this.matrix.end) * this.config.vectors.tension;
 
-    console.log(point);
-
     return {
-      x: tension * Math.sin(Math.PI * vector) + point.x,
-      y: tension * Math.cos(Math.PI * vector) + point.y
+      x: Math.round(1000 * (tension * Math.sin(Math.PI * vector) + point.x)) / 1000,
+      y: Math.round(1000 * (tension * Math.cos(Math.PI * vector) + point.y)) / 1000
     };
   }
 

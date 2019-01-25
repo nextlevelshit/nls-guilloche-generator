@@ -26,14 +26,14 @@ export const environment = {
     },
     debug: false,
     canvas: {
-      width: 85,
-      height: 50,
+      width: 1,
+      height: 1.41,
     },
     margin: {
-      x: 0.02,
-      y: 0.03
+      x: 0.0282,
+      y: 0.02
     },
-    overlap: 1.8,
+    overlap: 0.9,
     vectors: {
       start: 0.5,
       end: 0,
@@ -48,8 +48,8 @@ export const environment = {
     },
     animation: {
       enabled: false,
-      shift: 5,
-      interval: 5000
+      shift: 8,
+      interval: 6000
     }
   }
 };
