@@ -17,14 +17,12 @@
 export const environment = {
   production: true,
   debug: false,
-  config: {
+  formDefaults: {
+    debug: false,
     colors: {
       secondary: '#F8485E',
       primary: '#5CC0C7'
     },
-  },
-  formDefaults: {
-    debug: false,
     canvas: {
       width: 1,
       height: 1.41,
