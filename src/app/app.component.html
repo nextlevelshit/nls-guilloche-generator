@@ -7,55 +7,84 @@
 
   <aside class="col-sm-4 col-lg-3 col-xl-3">
     <div class="aside-inner">
+
+      <h5>Zeichenfläche</h5>
+      <hr>
+
       <form [formGroup]="presetForm" novalidate>
         <fieldset [disabled]="animationEnabled">
-
-          <div class="pb-5">
-            <h5>Vorauswahl</h5>
-            <hr>
-            <div class="form-group" *ngIf="presets.canvas">
-              <label class="form-control-label">
-                Zeichenfläche
-              </label>
-              <select class="form-control" formControlName="canvas">
-                <option value="null">Keine Auswahl</option>
-                <option [value]="i" *ngFor="let preset of presets.canvas; let i = index">
-                  {{ preset.title }}
-                </option>
-              </select>
-            </div>
+          <div class="form-group" *ngIf="presets.canvas">
+            <label class="form-control-label">
+              Vorauswahl:
+            </label>
+            <select class="form-control" formControlName="canvas">
+              <option value="null">Keine Auswahl</option>
+              <option [value]="i" *ngFor="let preset of presets.canvas; let i = index">
+                {{ preset.title }}
+              </option>
+            </select>
           </div>
-
         </fieldset>
       </form>
 
       <form [formGroup]="configForm" (ngSubmit)="updateGraphs()" novalidate>
         <fieldset [disabled]="animationEnabled">
 
-          <div class="pb-5">
-            <h5>Zeichenfläche</h5>
-            <hr>
-            <ng-container formGroupName="canvas">
-              <div class="row">
-                <div class="col-md-6">
-                  <div class="form-group">
-                    <label class="form-control-label">
-                      Breite
-                    </label>
-                    <input type="number" class="form-control" formControlName="width" min="1" step="0.01"/>
+            <div class="pb-5">
+                <div class="row">
+                  <div class="col-md-6">
+                    <div class="form-group">
+
+                      <ng-container formGroupName="canvas">
+                        <label class="form-control-label">
+                          Breite:
+                        </label>
+                        <input type="number" class="form-control" formControlName="width" min="1" step="0.01"/>
+                      </ng-container>
+
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="form-group">
+
+                      <ng-container formGroupName="margin">
+                        <label class="form-control-label">
+                          Rand horizontal:
+                        </label>
+                        <input type="name" class="form-control" min="0" max="1" step="0.01" formControlName="x">
+                      </ng-container>
+
+                    </div>
                   </div>
                 </div>
-                <div class="col-md-6">
-                  <div class="form-group">
-                    <label class="form-control-label">
-                      Höhe
-                    </label>
-                    <input type="number" class="form-control" formControlName="height" min="1" step="0.01"/>
+
+                <div class="row">
+                  <div class="col-md-6">
+                    <div class="form-group">
+
+                      <ng-container formGroupName="canvas">
+                        <label class="form-control-label">
+                          Höhe:
+                        </label>
+                        <input type="number" class="form-control" formControlName="height" min="1" step="0.01"/>
+                      </ng-container>
+
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="form-group">
+
+                      <ng-container formGroupName="margin">
+                        <label class="form-control-label">
+                          Rand vertikal:
+                        </label>
+                        <input type="number" class="form-control" min="0" max="1" step="0.01" formControlName="y">
+                      </ng-container>
+
+                    </div>
                   </div>
                 </div>
               </div>
-            </ng-container>
-          </div>
 
           <div class="pb-5">
             <h5>Ausgangspunkte</h5>
@@ -101,73 +130,48 @@
             </ng-container>
           </div>
 
-          <div class="pb-5">
-            <h5>Rand zur Zeichenfläche</h5>
-            <hr>
-            <ng-container formGroupName="margin">
-              <div class="row">
-                <div class="col-md-6">
-                  <div class="form-group">
-                    <label class="form-control-label">
-                      Horizontal: {{ configForm.value.margin.x | percent:'1.2-2' }}
-                    </label>
-                    <input type="range" class="custom-range" min="0" max="1" step="0.01" formControlName="x">
-                  </div>
-                </div>
-                <div class="col-md-6">
-                  <div class="form-group">
-                    <label class="form-control-label">
-                      Vertikal: {{ configForm.value.margin.y | percent:'1.2-2' }}
-                    </label>
-                    <input type="range" class="custom-range" min="0" max="1" step="0.01" formControlName="y">
-                  </div>
-                </div>
-              </div>
-            </ng-container>
-          </div>
 
           <div class="pb-5">
-            <h5>Guilloche</h5>
-            <hr/>
+            <h5>Graph</h5>
+            <!-- <hr>
+            <small>Anzahl der Schwingungen mittels Knotenpunkten bestimmen und die Skalierung auf der Leinwand einstellen.</small> -->
+            <hr>
             <div class="form-group">
               <label class="form-control-label">
-                Proportion zur Zeichenfläche: {{ configForm.value.overlap }}
+                Verteilung: {{ configForm.value.overlap | percent }}
               </label>
               <input type="range" class="custom-range" formControlName="overlap" min="0" max="2" step="0.1">
             </div>
-          </div>
-          <h5 class="mt-2">Graph</h5>
-          <!-- <hr>
-          <small>Anzahl der Schwingungen mittels Knotenpunkten bestimmen und die Skalierung auf der Leinwand einstellen.</small> -->
-          <hr>
-          <div class="form-group mb-4">
-            <label class="form-control-label">
-              Windungen: {{ configForm.value.nodes }}
-            </label>
-            <input type="range" class="custom-range" formControlName="nodes" min="1" max="20">
-          </div>
 
-          <!-- <div class="form-group">
-            <label class="form-control-label">
-              Linienstärke: {{ configForm.value.stroke }}
-            </label>
-            <input type="range" class="custom-range" formControlName="stroke" min="0.1" max="10" step="0.1">
-          </div> -->
-
-          <ng-container formGroupName="spread">
             <div class="form-group mb-4">
               <label class="form-control-label">
-                Linienanzahl:  {{ configForm.value.spread.amount }}
+                Windungen: {{ configForm.value.nodes }}
               </label>
-              <input type="range" class="custom-range" min="1" formControlName="amount">
+              <input type="range" class="custom-range" formControlName="nodes" min="1" max="20">
             </div>
-            <div class="form-group mb-4">
+
+            <!-- <div class="form-group">
               <label class="form-control-label">
-                Linienabstände: {{ configForm.value.spread.spacing }}
+                Linienstärke: {{ configForm.value.stroke }}
               </label>
-              <input type="range" class="custom-range" formControlName="spacing" min="0" max="50">
-            </div>
-          </ng-container>
+              <input type="range" class="custom-range" formControlName="stroke" min="0.1" max="10" step="0.1">
+            </div> -->
+
+            <ng-container formGroupName="spread">
+              <div class="form-group mb-4">
+                <label class="form-control-label">
+                  Linienanzahl:  {{ configForm.value.spread.amount }}
+                </label>
+                <input type="range" class="custom-range" min="1" formControlName="amount">
+              </div>
+              <div class="form-group mb-4">
+                <label class="form-control-label">
+                  Linienabstände: {{ configForm.value.spread.spacing }}
+                </label>
+                <input type="range" class="custom-range" formControlName="spacing" min="0" max="50">
+              </div>
+            </ng-container>
+          </div>
 
           <ng-container formGroupName="animation">
             <h5 class="mt-2">Animation</h5>
