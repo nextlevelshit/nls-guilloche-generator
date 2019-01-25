@@ -79,14 +79,12 @@ export class NlsGraphsComponent implements OnChanges {
     this.canvas = this.adjustCanvas();
     this.matrix = this.calcMatrix();
 
-    // this.updateGraphs();
-
-
+    if ('config' in changes) {
+      this.updateGraphs();
+    }
 
     if (this.restoredHistory && this.restoredHistory.hash !== this.hash) {
       this.restoreGraph();
-    } else {
-      this.updateGraphs();
     }
 
     setTimeout(this.prepareGuillocheExport(), 1000);
@@ -257,6 +255,8 @@ export class NlsGraphsComponent implements OnChanges {
 
   private genVectorPoint(point: Point, vector: number): Point {
     const tension = this.math.Δ(this.matrix.start, this.matrix.end) * this.config.vectors.tension;
+
+    console.log(point);
 
     return {
       x: tension * Math.sin(Math.PI * vector) + point.x,

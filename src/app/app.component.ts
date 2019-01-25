@@ -15,11 +15,13 @@
  * Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 import { ConfigForm } from './forms/config.form';
+import { PresetForm } from './forms/preset.form';
 import { Component, OnInit, HostListener, ViewChild, ElementRef } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import * as moment from 'moment';
 import 'moment/min/locales';
+import { CanvasPresets } from './presets/canvas.preset';
 
 import { environment as env } from '../environments/environment';
 import { NlsHistoryService } from 'projects/nls-guilloche/src/public_api';
@@ -50,6 +52,8 @@ export class AppComponent implements OnInit {
   public restoredHistory: any;
   public animationEnabled: boolean;
   public isFullscreen: boolean;
+  public presetForm: FormGroup;
+  public presets: any;
 
   @ViewChild('canvasRef', { read: ElementRef }) canvasRef: ElementRef;
   @ViewChild('containerRef', { read: ElementRef }) containerRef: ElementRef;
@@ -76,6 +80,10 @@ export class AppComponent implements OnInit {
     moment.locale('de');
 
     this.configForm = ConfigForm;
+    this.presetForm = PresetForm;
+    this.presets = {
+      canvas: CanvasPresets
+    };
     this.list = [];
     this.showList = false;
     this.isFullscreen = false;
@@ -86,15 +94,34 @@ export class AppComponent implements OnInit {
     this.refreshHistory();
     this.resetCanvas(env.formDefaults.canvas);
     this.resetForm();
+    this.resetPresetForm();
 
     this.configForm.valueChanges.subscribe(() => {
+      this.presetForm.value.canvas = null;
       this.resetCanvas(this.configForm.value.canvas);
       this.updateGraphs();
     });
+
+    this.presetForm.valueChanges.subscribe(() => {
+      if (this.presetForm.value.canvas !== null) {
+        this.config = {
+          ...this.config,
+          ...this.presets.canvas[this.presetForm.value.canvas].defaults
+        };
+        this.configForm.reset({...this.config});
+      }
+    });
   }
 
-  private resetForm() {
+  private resetPresetForm(): void {
+    this.presetForm.reset({
+      canvas: null
+    });
+  }
+
+  private resetForm(): void {
     this.config = {
+      ...this.config,
       ...env.formDefaults
     };
     this.configForm.reset({...this.config});
@@ -113,17 +140,11 @@ export class AppComponent implements OnInit {
       el: this.canvasRef.nativeElement,
       width: dimensions.width,
       height: dimensions.height,
-      // width: this.canvasRef.nativeElement.clientWidth,
-      // height: this.canvasRef.nativeElement.clientHeight,
       aspectRatio: function() {
         return this.width / this.height;
       }
     };
     let unit = 1;
-
-    console.log(container, container.aspectRatio());
-    console.log(canvas, canvas.aspectRatio());
-    // container.aspectRatio = container.width / container.height;
 
     if (container.aspectRatio() > canvas.aspectRatio()) {
       // fit canvas by height to conainter

@@ -14,42 +14,10 @@
  * Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
-export const environment = {
-  production: false,
-  debug: false,
-  config: {
-  },
-  formDefaults: {
-    colors: {
-      secondary: '#F8485E',
-      primary: '#5CC0C7'
-    },
-    debug: false,
-    canvas: {
-      width: 85,
-      height: 50,
-    },
-    margin: {
-      x: 0.02,
-      y: 0.03
-    },
-    overlap: 1.8,
-    vectors: {
-      start: 0.5,
-      end: 0,
-      tension: 0.2,
-      spacing: 5
-    },
-    nodes: 4,
-    stroke: 0.6,
-    spread: {
-      amount: 30,
-      spacing: 10
-    },
-    animation: {
-      enabled: false,
-      shift: 5,
-      interval: 5000
-    }
-  }
-};
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+
+const fb = new FormBuilder();
+
+export let PresetForm: FormGroup = fb.group({
+  canvas: fb.control('')
+});

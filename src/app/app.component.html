@@ -7,6 +7,28 @@
 
   <aside class="col-sm-4 col-lg-3 col-xl-3">
     <div class="aside-inner">
+      <form [formGroup]="presetForm" novalidate>
+        <fieldset [disabled]="animationEnabled">
+
+          <div class="pb-5">
+            <h5>Vorauswahl</h5>
+            <hr>
+            <div class="form-group" *ngIf="presets.canvas">
+              <label class="form-control-label">
+                Zeichenfläche
+              </label>
+              <select class="form-control" formControlName="canvas">
+                <option value="null">Keine Auswahl</option>
+                <option [value]="i" *ngFor="let preset of presets.canvas; let i = index">
+                  {{ preset.title }}
+                </option>
+              </select>
+            </div>
+          </div>
+
+        </fieldset>
+      </form>
+
       <form [formGroup]="configForm" (ngSubmit)="updateGraphs()" novalidate>
         <fieldset [disabled]="animationEnabled">
 
@@ -87,7 +109,7 @@
                 <div class="col-md-6">
                   <div class="form-group">
                     <label class="form-control-label">
-                      Horizontal: {{ configForm.value.margin.x | percent }}
+                      Horizontal: {{ configForm.value.margin.x | percent:'1.2-2' }}
                     </label>
                     <input type="range" class="custom-range" min="0" max="1" step="0.01" formControlName="x">
                   </div>
@@ -95,7 +117,7 @@
                 <div class="col-md-6">
                   <div class="form-group">
                     <label class="form-control-label">
-                      Vertikal: {{ configForm.value.margin.y | percent }}
+                      Vertikal: {{ configForm.value.margin.y | percent:'1.2-2' }}
                     </label>
                     <input type="range" class="custom-range" min="0" max="1" step="0.01" formControlName="y">
                   </div>
