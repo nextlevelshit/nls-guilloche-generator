@@ -57,7 +57,6 @@ export class NlsGuillocheDirective implements OnChanges, OnDestroy {
   private curveList: Point[][]; // generated from initialCurve
   private pathList: any; // generated from curveList
   private interval: any;
-  private ascent: number;
 
   @Input() graph: Graph;
   @Input() animation: boolean;
@@ -70,42 +69,40 @@ export class NlsGuillocheDirective implements OnChanges, OnDestroy {
   ) {
   }
 
-  ngOnDestroy() {
-    this.clearSVG();
-  }
-
   ngOnChanges(changes: SimpleChanges) {
     this.initSVG(); // Prepare canvas and group
     this.initInitialCurve(); // Generate curve from graph
     this.spreadInitialCurve(); // Spread generated curve to many
-    this.ascent = this.math.randomFloat(0, 2);
 
-    if (this.animation) {
-      if (!this.pathList) {
-        this.clearSVG();
-        this.appendPaths();
-      }
-      this.initFirstAnimation();
-      this.setAnimationInterval();
-    } else {
-      if (changes.graph
-        && (changes.graph.firstChange
-          || this.graphNodesChanged(
-            changes.graph.previousValue,
-            changes.graph.currentValue
-          )
-        )
-      ) {
+    if (this.pathList) {
+      const graphNodesChanged = this.graphNodesChanged(
+        changes.graph.previousValue,
+        changes.graph.currentValue
+      );
+
+      if (graphNodesChanged) {
         this.clearSVG();
         this.appendPaths();
       } else {
-        if (this.interval) {
-          this.interval.stop();
-        }
         this.refreshPaths();
       }
+    } else {
+      this.clearSVG();
+      this.appendPaths();
+    }
+
+    if (this.animation) {
+      this.initFirstAnimation();
+      this.setAnimationInterval();
+    } else if (this.interval) {
+      this.interval.stop();
     }
   }
+
+  ngOnDestroy() {
+    this.clearSVG();
+  }
+
 
   private setAnimationInterval(): void {
     this.interval = Timer.interval((t) => {
@@ -138,7 +135,7 @@ export class NlsGuillocheDirective implements OnChanges, OnDestroy {
 
   private graphNodesChanged(prev, current): boolean {
     return prev.nodes.length !== current.nodes.length
-      || prev.spread.amount !== current.spread.amount;
+        || prev.spread.amount !== current.spread.amount;
   }
 
   /**
@@ -187,18 +184,18 @@ export class NlsGuillocheDirective implements OnChanges, OnDestroy {
     const shiftMedian = this.graphService.spreadOrthogonal(
       this.initialCurve[this.medianIndex],
       this.graph.spread.spacing,
-      this.ascent * Random.randomNormal(1, 0.05)()
+      this.graph.ascent * Random.randomNormal(1, 0.05)()
     );
 
     const shiftPreMedian = this.graphService.spreadOrthogonal(
       this.initialCurve[this.medianIndex - 1],
       this.graph.spread.spacing * 0.5,
-      this.ascent * Random.randomNormal(1, 0.05)()
+      this.graph.ascent * Random.randomNormal(1, 0.05)()
     );
     const shiftPostMedian = this.graphService.spreadOrthogonal(
       this.initialCurve[this.medianIndex + 1],
       this.graph.spread.spacing * 0.5,
-      this.ascent * Random.randomNormal(1, 0.05)()
+      this.graph.ascent * Random.randomNormal(1, 0.05)()
     );
 
     for (let i = 0; i < this.graph.spread.amount; i++) {
@@ -229,6 +226,8 @@ export class NlsGuillocheDirective implements OnChanges, OnDestroy {
    * each curve a new path to the SVG group.
    */
   private appendPaths(): void {
+    const transitionFinished = this.transitionFinished();
+
     this.curveList.map(curve => {
       this.pathList.push(
         this.group.append('path')
@@ -239,6 +238,7 @@ export class NlsGuillocheDirective implements OnChanges, OnDestroy {
             .curve(CURVE_SHAPE)(curve)
           )
       );
+      transitionFinished.next();
     });
   }
 

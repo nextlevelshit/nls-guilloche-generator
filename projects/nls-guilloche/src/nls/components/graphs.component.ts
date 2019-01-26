@@ -79,14 +79,13 @@ export class NlsGraphsComponent implements OnChanges {
     this.adjustCanvas();
     this.calcMatrix();
 
-    // TODO
-
-    if ('config' in changes) {
-      this.updateGraphs();
-    }
-
-    if (this.restoredHistory && this.restoredHistory.hash !== this.hash) {
+    if (
+      'restoredHistory' in changes
+      && !changes.restoredHistory.firstChange
+    ) {
       this.restoreGraph();
+    } else {
+      this.updateGraphs();
     }
   }
 
@@ -97,15 +96,13 @@ export class NlsGraphsComponent implements OnChanges {
   private restoreGraph() {
     this.graphs = this.restoredHistory.graphs;
     this.hash = this.restoredHistory.hash;
-  }
-
-  private saveHistory() {
-    this.hash = this.historyService.hash(this.graphs);
-    this.historyService.save(this.graphs, this.config);
+    this.config = this.restoredHistory.config;
   }
 
   private saveGraph() {
     this.graphService.set(this.graphs);
+    this.hash = this.historyService.hash(this.graphs);
+    this.historyService.save(this.graphs, this.config);
   }
 
   private updateGraphs(): void {
@@ -128,7 +125,7 @@ export class NlsGraphsComponent implements OnChanges {
         color: this.config.colors.secondary,
         start: genShiftEnd.next().value,
         end: genShiftStart.next().value
-      }
+      },
     ];
 
     this.graphs = graphList.map(graph => {
@@ -136,6 +133,7 @@ export class NlsGraphsComponent implements OnChanges {
         ...this.adjustGraph(graph),
         spread: this.config.spread,
         debug: this.config.debug,
+        ascent: this.math.randomFloat(0, 360),
         animation: {
           ...this.config.animation,
           interval: this.config.animation.interval * this.math.randomFloat(0.8, 1.2)
@@ -143,8 +141,6 @@ export class NlsGraphsComponent implements OnChanges {
       };
     });
 
-    this.hash = this.historyService.hash(this.graphs);
-    this.saveHistory();
     this.saveGraph();
   }
 
