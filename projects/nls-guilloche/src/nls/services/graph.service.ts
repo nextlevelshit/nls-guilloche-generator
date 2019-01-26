@@ -62,15 +62,16 @@ export class NlsGraphService {
 
     ascent = (ascent)
       ? ascent
-      : this.math.randomFloat(0, 2);
+      : (point.ascent)
+        ? point.ascent
+        : this.math.randomFloat(0, 2);
+
 
     while (true) {
       const nextSpacing = sign.next().value * spacing * i;
-      // point = this.shiftPoint(point, nextSpacing, start.ascent);
+
       point = this.shiftPoint(point, nextSpacing, ascent);
-
       yield point;
-
       i++;
     }
   }

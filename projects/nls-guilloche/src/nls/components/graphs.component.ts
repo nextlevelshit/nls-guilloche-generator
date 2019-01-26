@@ -136,6 +136,7 @@ export class NlsGraphsComponent implements OnChanges {
         ascent: this.math.randomFloat(0, 360),
         animation: {
           ...this.config.animation,
+          shift: this.config.animation.shift * this.matrix.unit,
           interval: this.config.animation.interval * this.math.randomFloat(0.8, 1.2)
         }
       };
@@ -158,14 +159,14 @@ export class NlsGraphsComponent implements OnChanges {
         ...graph.end,
         direction: endDirection
       },
-      // nodes: this.genRandomPoints(this.config.nodes)
-      nodes: this.genRandomPoints(this.config.nodes).sort((a: Point, b: Point) => {
-        const orientation = startDirection;
-        return this.math.Δ(a, orientation) - this.math.Δ(b, orientation);
-        // return this.math.Δ(b, orientation) - this.math.Δ(a, orientation);
-        // return (orientation.x - b.x) - (orientation.x - a.x);
-        // return (orientation.y - b.y) - (orientation.y - a.y);
-      })
+      nodes: this.genRandomPoints(startDirection, endDirection)
+      // nodes: this.genRandomPoints(startDirection, endDirection).sort((a: Point, b: Point) => {
+      //   const orientation = startDirection;
+      //   return this.math.Δ(a, orientation) - this.math.Δ(b, orientation);
+      //   // return this.math.Δ(b, orientation) - this.math.Δ(a, orientation);
+      //   // return (orientation.x - b.x) - (orientation.x - a.x);
+      //   // return (orientation.y - b.y) - (orientation.y - a.y);
+      // })
     };
   }
 
@@ -203,10 +204,14 @@ export class NlsGraphsComponent implements OnChanges {
    * und verspüre überhaupt keinen Druck mehr Großartiges leisten zu müssen.
    */
 
-  private genRandomPoints(num: number): Point[] {
+  private genRandomPoints(
+    start: Point,
+    end: Point
+  ): Point[] {
     const generatedPoints: Point[] = [];
 
-    for (let i = 1; i <= this.config.nodes; i++) {
+    for (let i = 0; i < this.config.nodes; i++) {
+
       generatedPoints.push(
         this.math.randomPoint(
           this.matrix,
@@ -215,7 +220,21 @@ export class NlsGraphsComponent implements OnChanges {
       );
     }
 
-    return generatedPoints;
+    return generatedPoints.map((point, i, allPoints) => {
+      let prev = allPoints[i - 1];
+      let next = allPoints[i + 1];
+
+      if (i === 0) {
+        prev = start;
+      }
+      if (i === allPoints.length - 1) {
+        next = end;
+      }
+      return {
+        ...point,
+        ascent: this.math.angleRadians(prev, next)
+      };
+    });
   }
 
   private adjustCanvas(): void {
@@ -247,7 +266,11 @@ export class NlsGraphsComponent implements OnChanges {
       },
       width: canvasWidth,
       height: canvasHeight,
-      center: totalCenter
+      center: totalCenter,
+      unit: Math.max(
+        canvasHeight / canvasWidth,
+        canvasWidth / canvasHeight
+      )
     };
   }
 

@@ -18,11 +18,11 @@ export const environment = {
   production: true,
   debug: false,
   formDefaults: {
-    debug: false,
     colors: {
       secondary: '#F8485E',
       primary: '#5CC0C7'
     },
+    debug: false,
     canvas: {
       width: 1,
       height: 1.41,
@@ -31,7 +31,7 @@ export const environment = {
       x: 0.0282,
       y: 0.02
     },
-    overlap: 0.9,
+    overlap: 1.3,
     vectors: {
       start: 0.5,
       end: 0,
@@ -41,12 +41,12 @@ export const environment = {
     nodes: 4,
     stroke: 0.6,
     spread: {
-      amount: 30,
-      spacing: 10
+      amount: 22,
+      spacing: 22
     },
     animation: {
       enabled: false,
-      shift: 8,
+      shift: 14,
       interval: 6000
     }
   }

@@ -37,6 +37,7 @@ import { NlsGraphService } from '../services/graph.service';
 // const CURVE_SHAPE = Shape.curveCatmullRom;
 // const CURVE_SHAPE = Shape.curveCatmullRom.alpha(0);
 // const CURVE_SHAPE = Shape.curveBundle.beta(0.9);
+// const CURVE_SHAPE = Shape.curveStep;
 const CURVE_SHAPE = Shape.curveBasis;
 const DEFAULT_DURATION = 1200;
 const DEFAULT_EASE = Ease.easePolyInOut;
@@ -118,8 +119,16 @@ export class NlsGuillocheDirective implements OnChanges, OnDestroy {
   private prepareNextAnimationStep(): void {
     const nextNodes = this.graph.nodes.map(p => {
       const n = {
-        x: p.x + Random.randomNormal(1, 2)() * this.graph.animation.shift,
-        y: p.y + Random.randomNormal(0.3, 3)() * this.graph.animation.shift,
+        x:
+          p.x
+          * Random.randomNormal(1, 2)
+          + Random.randomNormal(1, 2)()
+          * this.graph.animation.shift,
+        y:
+          p.y
+          * Random.randomNormal(1, 2)
+          + Random.randomNormal(0.3, 3)()
+          * this.graph.animation.shift,
         ascent: (p.ascent) ? p.ascent : null
       };
       return n;
@@ -184,18 +193,18 @@ export class NlsGuillocheDirective implements OnChanges, OnDestroy {
     const shiftMedian = this.graphService.spreadOrthogonal(
       this.initialCurve[this.medianIndex],
       this.graph.spread.spacing,
-      this.graph.ascent * Random.randomNormal(1, 0.05)()
+      // this.graph.ascent * Random.randomNormal(1, 0.05)()
     );
 
     const shiftPreMedian = this.graphService.spreadOrthogonal(
       this.initialCurve[this.medianIndex - 1],
       this.graph.spread.spacing * 0.5,
-      this.graph.ascent * Random.randomNormal(1, 0.05)()
+      // this.graph.ascent * Random.randomNormal(1, 0.05)()
     );
     const shiftPostMedian = this.graphService.spreadOrthogonal(
       this.initialCurve[this.medianIndex + 1],
       this.graph.spread.spacing * 0.5,
-      this.graph.ascent * Random.randomNormal(1, 0.05)()
+      // this.graph.ascent * Random.randomNormal(1, 0.05)()
     );
 
     for (let i = 0; i < this.graph.spread.amount; i++) {
