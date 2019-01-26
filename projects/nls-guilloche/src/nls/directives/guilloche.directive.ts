@@ -1,3 +1,4 @@
+import { Output, EventEmitter } from '@angular/core';
 /**
  * Copyright (C) 2018 Michael Czechowski <mail@dailysh.it>
  * This program is free software; you can redistribute it and/or modify it
@@ -60,13 +61,13 @@ export class NlsGuillocheDirective implements OnChanges, OnDestroy {
 
   @Input() graph: Graph;
   @Input() animation: boolean;
+  @Output() updated = new EventEmitter();
 
   constructor(
     private el: ElementRef,
     private math: NlsMathService,
     private graphService: NlsGraphService
   ) {
-    this.ascent = this.math.randomFloat(0, 2);
   }
 
   ngOnDestroy() {
@@ -77,6 +78,7 @@ export class NlsGuillocheDirective implements OnChanges, OnDestroy {
     this.initSVG(); // Prepare canvas and group
     this.initInitialCurve(); // Generate curve from graph
     this.spreadInitialCurve(); // Spread generated curve to many
+    this.ascent = this.math.randomFloat(0, 2);
 
     if (this.animation) {
       if (!this.pathList) {
@@ -247,6 +249,8 @@ export class NlsGuillocheDirective implements OnChanges, OnDestroy {
     duration = DEFAULT_DURATION,
     ease = DEFAULT_EASE
   ): void {
+    const transitionFinished = this.transitionFinished();
+
     this.pathList.forEach((path, i) => {
       const nextCurve = this.curveList[i];
 
@@ -254,25 +258,28 @@ export class NlsGuillocheDirective implements OnChanges, OnDestroy {
         .transition()
         .duration(duration)
         .ease(ease)
-          .attrTween('d', function(curve) {
-            const interpolate = Interpolation.interpolateArray(
-              curve.points,
-              nextCurve
-            );
+        .attrTween('d', function(curve) {
+          const interpolate = Interpolation.interpolateArray(
+            curve.points,
+            nextCurve
+          );
 
-            return (t) => {
-              curve.points = interpolate(t);
+          return (t) => {
+            curve.points = interpolate(t);
 
-              return Shape.line()
-                .x((p, index, arr) => {
-                  return p.x;
-                })
-                .y((p, index, arr) => {
-                  return p.y;
-                })
-                .curve(CURVE_SHAPE)(curve.points);
-            };
-          });
+            return Shape.line()
+              .x((p, index, arr) => {
+                return p.x;
+              })
+              .y((p, index, arr) => {
+                return p.y;
+              })
+              .curve(CURVE_SHAPE)(curve.points);
+          };
+        })
+        .on('end', () => {
+          transitionFinished.next();
+        });
     });
   }
 
@@ -283,6 +290,17 @@ export class NlsGuillocheDirective implements OnChanges, OnDestroy {
     );
     this.prepareNextAnimationStep();
     this.debugGraph();
+  }
+
+  private *transitionFinished() {
+    let cycle = 1;
+
+    while (true) {
+      if (cycle % this.curveList.length === 0) {
+        this.updated.emit(true);
+      }
+      yield cycle++;
+    }
   }
 
   private debugGraph(): void {

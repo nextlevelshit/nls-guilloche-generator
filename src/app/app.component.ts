@@ -222,6 +222,8 @@ export class AppComponent implements OnInit {
   }
 
   public restoreGraph(history) {
+    console.log(history);
+
     this.configForm.reset({...history.config});
     this.restoredHistory = history;
   }

@@ -36,7 +36,7 @@ const RESIZING_TIMEOUT = 800;
 })
 export class NlsGraphsComponent implements OnChanges {
   private genShiftPoint: any | null;
-  private genLoadedAllGraphs: any | null;
+  private genAllGraphsLoaded: any | null;
   private hash: string;
   private resizingWindow: any;
 
@@ -71,13 +71,15 @@ export class NlsGraphsComponent implements OnChanges {
     private math: NlsMathService,
     private graphService: NlsGraphService
   ) {
-    this.genLoadedAllGraphs = this.countLoadedGraphs();
+    this.genAllGraphsLoaded = this.allGraphsLoaded();
     this.resizingWindow = false;
   }
 
   ngOnChanges(changes: SimpleChanges) {
     this.adjustCanvas();
     this.calcMatrix();
+
+    // TODO
 
     if ('config' in changes) {
       this.updateGraphs();
@@ -86,8 +88,10 @@ export class NlsGraphsComponent implements OnChanges {
     if (this.restoredHistory && this.restoredHistory.hash !== this.hash) {
       this.restoreGraph();
     }
+  }
 
-    setTimeout(this.prepareGuillocheExport(), 1000);
+  private get graphsPreparedForExport(): boolean {
+    return this.genAllGraphsLoaded.next().value;
   }
 
   private restoreGraph() {
@@ -145,12 +149,8 @@ export class NlsGraphsComponent implements OnChanges {
   }
 
   private adjustGraph(graph: Graph): Graph {
-    console.log(graph.color, graph.start.point.x);
-
     const startDirection = this.genVectorPoint(graph.start.point, graph.start.vector);
     const endDirection = this.genVectorPoint(graph.end.point, graph.end.vector);
-
-    console.log(graph.color, startDirection.x);
 
     return {
       ...graph,
@@ -162,14 +162,14 @@ export class NlsGraphsComponent implements OnChanges {
         ...graph.end,
         direction: endDirection
       },
-      nodes: this.genRandomPoints(this.config.nodes)
-      // nodes: this.genRandomPoints(this.config.nodes).sort((a: Point, b: Point) => {
-      //   const orientation = graph.start.point;
-      //   // return this.math.Δ(a, orientation) - this.math.Δ(b, orientation);
-      //   return this.math.Δ(b, orientation) - this.math.Δ(a, orientation);
-      //   // return (orientation.x - b.x) - (orientation.x - a.x);
-      //   // return (orientation.y - b.y) - (orientation.y - a.y);
-      // })
+      // nodes: this.genRandomPoints(this.config.nodes)
+      nodes: this.genRandomPoints(this.config.nodes).sort((a: Point, b: Point) => {
+        const orientation = startDirection;
+        return this.math.Δ(a, orientation) - this.math.Δ(b, orientation);
+        // return this.math.Δ(b, orientation) - this.math.Δ(a, orientation);
+        // return (orientation.x - b.x) - (orientation.x - a.x);
+        // return (orientation.y - b.y) - (orientation.y - a.y);
+      })
     };
   }
 
@@ -288,6 +288,12 @@ export class NlsGraphsComponent implements OnChanges {
     }
   }
 
+  public prepareExport(): void {
+    if (this.graphsPreparedForExport) {
+      this.svgChange.emit(this.svgElementRef);
+    }
+  }
+
   private *shiftNumber(space: number, vector: number, startPositive: boolean = true) {
     let current = 0;
     let index = 0;
@@ -298,22 +304,16 @@ export class NlsGraphsComponent implements OnChanges {
       index++;
     }
   }
-
-  public prepareGuillocheExport(): void {
-    this.svgChange.emit(this.svgElementRef);
-  }
-
-  private *countLoadedGraphs() {
+  private *allGraphsLoaded() {
     let cycles = 1;
 
     while (true) {
-      if (cycles < this.graphs.length) {
-        yield false;
-        cycles++;
-      } else {
+      if (cycles % this.graphs.length === 0) {
         yield true;
-        cycles = 1;
+      } else {
+        yield false;
       }
+      cycles++;
     }
   }
 }
