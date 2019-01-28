@@ -1,4 +1,3 @@
-import { Validators } from '@angular/forms';
 /**
  * Copyright (C) 2018 Michael Czechowski <mail@dailysh.it>
  * This program is free software; you can redistribute it and/or modify it
@@ -49,6 +48,18 @@ export class NlsGraphService {
 
   public stopAnimation() {
     this.animation = false;
+  }
+
+  public getById(graphId: string): Graph | undefined {
+    return this.graphs.find(graph => {
+      return graph.id === graphId;
+    });
+  }
+
+  public getIndexById(graphId: string): number {
+    return this.graphs.findIndex(graph => {
+      return graph.id === graphId;
+    });
   }
 
   public *spreadOrthogonal(

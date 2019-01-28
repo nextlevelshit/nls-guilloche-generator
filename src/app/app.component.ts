@@ -35,6 +35,10 @@ export enum CANVAS {
   TIMEOUT = 400
 }
 
+export enum DELAY {
+  INPUT = 200
+}
+
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
@@ -43,6 +47,7 @@ export enum CANVAS {
 export class AppComponent implements OnInit {
 
   private resizingWindow: any;
+  private inputDelay: any;
 
   public config: any | null;
   public configForm: FormGroup;
@@ -50,7 +55,6 @@ export class AppComponent implements OnInit {
   public list: any[];
   public showList: boolean;
   public restoredHistory: any;
-  public animationEnabled: boolean;
   public isFullscreen: boolean;
   public presetForm: FormGroup;
   public presets: any;
@@ -70,7 +74,8 @@ export class AppComponent implements OnInit {
     clearTimeout(this.resizingWindow);
 
     this.resizingWindow = setTimeout(() => {
-      this.resetCanvas(this.configForm.value.canvas);
+      this.resetCanvas();
+      this.updateGraphs();
     }, CANVAS.TIMEOUT);
   }
 
@@ -87,22 +92,26 @@ export class AppComponent implements OnInit {
     this.list = [];
     this.showList = false;
     this.isFullscreen = false;
-    this.animationEnabled = env.formDefaults.animation.enabled;
   }
 
   ngOnInit() {
     this.refreshHistory();
-    this.resetCanvas(env.formDefaults.canvas);
     this.resetForm();
+    this.resetCanvas();
     this.resetPresetForm();
 
-    this.configForm.valueChanges.subscribe(() => {
-      this.presetForm.value.canvas = null;
-      this.resetCanvas(this.configForm.value.canvas);
-      this.updateGraphs();
+    this.configForm.valueChanges.subscribe((res) => {
+      if (this.inputDelay) {
+        clearTimeout(this.inputDelay);
+      }
+      this.inputDelay = setTimeout(() => {
+        this.presetForm.value.canvas = null;
+        this.resetCanvas();
+        this.updateGraphs();
+      }, DELAY.INPUT);
     });
 
-    this.presetForm.valueChanges.subscribe(() => {
+    this.presetForm.valueChanges.subscribe((res) => {
       if (this.presetForm.value.canvas !== null) {
         this.config = {
           ...this.config,
@@ -127,7 +136,8 @@ export class AppComponent implements OnInit {
     this.configForm.reset({...this.config});
   }
 
-  private resetCanvas(dimensions: { width: number, height: number}): void {
+  private resetCanvas(): void {
+    const dimensions = this.configForm.value.canvas;
     const container = {
       el: this.containerRef.nativeElement,
       width: this.containerRef.nativeElement.clientWidth,
@@ -167,11 +177,11 @@ export class AppComponent implements OnInit {
       'px';
   }
 
-  private refreshHistory() {
+  private refreshHistory(): void {
     this.list = this.historyService.list();
   }
 
-  public updateGraphs() {
+  public updateGraphs(): void {
     this.config = Object.assign(
       {
         ...this.config,
@@ -184,7 +194,7 @@ export class AppComponent implements OnInit {
     this.refreshHistory();
   }
 
-  public prepareSvgExport(svg) {
+  public prepareSvgExport(svg): void {
     const blob = new Blob(
       [svg.nativeElement.outerHTML],
       {type: 'image/svg+xml;charset=utf-8'}
@@ -192,7 +202,7 @@ export class AppComponent implements OnInit {
     this.url = URL.createObjectURL(blob);
   }
 
-  public exportSvg() {
+  public exportSvg(): void {
     const link = document.createElement('a');
     link.href = this.url;
     link.download = 'guilloche.svg';
@@ -221,18 +231,12 @@ export class AppComponent implements OnInit {
     }
   }
 
-  public restoreGraph(history) {
-    // console.log(history);
-
-    this.configForm.reset({...history.config});
+  public restoreGraph(history): void {
+    this.configForm.reset({...history.config}, {emitEvent: false});
     this.restoredHistory = history;
   }
 
-  public startAnimation() {
-    this.animationEnabled = true;
-  }
-
-  public stopAnimation() {
-    this.animationEnabled = false;
+  public get animationEnabled(): boolean {
+    return this.config.animation.enabled;
   }
 }

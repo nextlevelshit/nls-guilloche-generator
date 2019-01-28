@@ -40,7 +40,9 @@ import { NlsGraphService } from '../services/graph.service';
 // const CURVE_SHAPE = Shape.curveStep;
 const CURVE_SHAPE = Shape.curveBasis;
 const DEFAULT_DURATION = 1200;
-const DEFAULT_EASE = Ease.easePolyInOut;
+const DEFAULT_EASE = Ease.easePolyInOut.exponent(1.2);
+// const DEFAULT_EASE = Ease.easeLinear;
+// const DEFAULT_EASE = Ease.easePolyInOut;
 const ANIMATION_EASE = Ease.easePolyInOut.exponent(1.6);
 // const ANIMATION_EASE = Ease.easeBackInOut.overshoot(2);
 // const ANIMATION_EASE = Ease.easeBackOut.overshoot(100);
@@ -57,11 +59,9 @@ export class NlsGuillocheDirective implements OnChanges, OnDestroy {
   private medianIndex: number; // generated from initialCurve
   private curveList: Point[][]; // generated from initialCurve
   private pathList: any; // generated from curveList
-  private interval: any;
 
   @Input() graph: Graph;
-  @Input() animation: boolean;
-  @Output() updated = new EventEmitter();
+  @Output() refreshed = new EventEmitter();
 
   constructor(
     private el: ElementRef,
@@ -76,27 +76,16 @@ export class NlsGuillocheDirective implements OnChanges, OnDestroy {
     this.spreadInitialCurve(); // Spread generated curve to many
 
     if (this.pathList) {
-      const graphNodesChanged = this.graphNodesChanged(
-        changes.graph.previousValue,
-        changes.graph.currentValue
-      );
+      const currentSpread = changes.graph.currentValue.spread;
+      const previousSpread = changes.graph.previousValue.spread;
 
-      if (graphNodesChanged) {
-        this.clearSVG();
-        this.appendPaths();
+      if (currentSpread !== previousSpread) {
+        this.initPaths();
       } else {
         this.refreshPaths();
       }
-    } else {
-      this.clearSVG();
-      this.appendPaths();
-    }
-
-    if (this.animation) {
-      this.initFirstAnimation();
-      this.setAnimationInterval();
-    } else if (this.interval) {
-      this.interval.stop();
+     } else {
+      this.initPaths();
     }
   }
 
@@ -104,37 +93,9 @@ export class NlsGuillocheDirective implements OnChanges, OnDestroy {
     this.clearSVG();
   }
 
-
-  private setAnimationInterval(): void {
-    this.interval = Timer.interval((t) => {
-      this.animateGraph();
-    }, this.graph.animation.interval);
-  }
-
-  private initFirstAnimation(): void {
-    this.prepareNextAnimationStep();
-    this.animateGraph();
-  }
-
-  private prepareNextAnimationStep(): void {
-    const nextNodes = this.graph.nodes.map(p => {
-      const n = {
-        x:
-          p.x
-          * Random.randomNormal(1, 2)
-          + Random.randomNormal(1, 2)()
-          * this.graph.animation.shift,
-        y:
-          p.y
-          * Random.randomNormal(1, 2)
-          + Random.randomNormal(0.3, 3)()
-          * this.graph.animation.shift,
-        ascent: (p.ascent) ? p.ascent : null
-      };
-      return n;
-    });
-    this.initInitialCurve(nextNodes);
-    this.spreadInitialCurve();
+  private initPaths(): void {
+    this.clearSVG();
+    this.appendPaths();
   }
 
   private clearSVG(): void {
@@ -192,19 +153,16 @@ export class NlsGuillocheDirective implements OnChanges, OnDestroy {
 
     const shiftMedian = this.graphService.spreadOrthogonal(
       this.initialCurve[this.medianIndex],
-      this.graph.spread.spacing,
-      // this.graph.ascent * Random.randomNormal(1, 0.05)()
+      this.graph.spread.spacing
     );
 
     const shiftPreMedian = this.graphService.spreadOrthogonal(
       this.initialCurve[this.medianIndex - 1],
-      this.graph.spread.spacing * 0.5,
-      // this.graph.ascent * Random.randomNormal(1, 0.05)()
+      this.graph.spread.spacing * 0.4
     );
     const shiftPostMedian = this.graphService.spreadOrthogonal(
       this.initialCurve[this.medianIndex + 1],
-      this.graph.spread.spacing * 0.5,
-      // this.graph.ascent * Random.randomNormal(1, 0.05)()
+      this.graph.spread.spacing * 0.4
     );
 
     for (let i = 0; i < this.graph.spread.amount; i++) {
@@ -254,11 +212,12 @@ export class NlsGuillocheDirective implements OnChanges, OnDestroy {
   /**
    * Update existing paths with transition
    */
-  private refreshPaths(
-    duration = DEFAULT_DURATION,
-    ease = DEFAULT_EASE
-  ): void {
+  private refreshPaths(): void {
     const transitionFinished = this.transitionFinished();
+    const duration = (this.graph.animation.enabled)
+      ? this.graph.animation.interval * Random.randomNormal(1, 0.2)()
+      : 0;
+    const ease = DEFAULT_EASE;
 
     this.pathList.forEach((path, i) => {
       const nextCurve = this.curveList[i];
@@ -267,38 +226,15 @@ export class NlsGuillocheDirective implements OnChanges, OnDestroy {
         .transition()
         .duration(duration)
         .ease(ease)
-        .attrTween('d', function(curve) {
-          const interpolate = Interpolation.interpolateArray(
-            curve.points,
-            nextCurve
-          );
-
-          return (t) => {
-            curve.points = interpolate(t);
-
-            return Shape.line()
-              .x((p, index, arr) => {
-                return p.x;
-              })
-              .y((p, index, arr) => {
-                return p.y;
-              })
-              .curve(CURVE_SHAPE)(curve.points);
-          };
-        })
+        .attr('d', Shape.line()
+          .x(p => p.x)
+          .y(p => p.y)
+          .curve(CURVE_SHAPE)(nextCurve)
+        )
         .on('end', () => {
           transitionFinished.next();
         });
     });
-  }
-
-  private animateGraph(): void {
-    this.refreshPaths(
-      this.graph.animation.interval,
-      ANIMATION_EASE
-    );
-    this.prepareNextAnimationStep();
-    this.debugGraph();
   }
 
   private *transitionFinished() {
@@ -306,7 +242,7 @@ export class NlsGuillocheDirective implements OnChanges, OnDestroy {
 
     while (true) {
       if (cycle % this.curveList.length === 0) {
-        this.updated.emit(true);
+        this.refreshed.emit(this.graph.id);
       }
       yield cycle++;
     }

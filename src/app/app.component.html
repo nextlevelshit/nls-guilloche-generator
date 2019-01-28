@@ -1,7 +1,7 @@
 <div>
   <div class="canvas col-sm-8 col-lg-9 col-xl-9" (click)="updateGraphs()" #containerRef>
     <div class="canvas-inner" #canvasRef>
-      <nls-graphs [config]="config" [restoredHistory]="restoredHistory" (svgChange)="prepareSvgExport($event)" [animation]="animationEnabled" *ngIf="config"></nls-graphs>
+      <nls-graphs [config]="config" [restoredHistory]="restoredHistory" (svgChange)="prepareSvgExport($event)" *ngIf="config"></nls-graphs>
     </div>
   </div>
 
@@ -130,11 +130,8 @@
             </ng-container>
           </div>
 
-
           <div class="pb-5">
             <h5>Graph</h5>
-            <!-- <hr>
-            <small>Anzahl der Schwingungen mittels Knotenpunkten bestimmen und die Skalierung auf der Leinwand einstellen.</small> -->
             <hr>
             <div class="form-group">
               <label class="form-control-label">
@@ -180,28 +177,27 @@
               <label class="form-control-label">
                 Interval: {{ configForm.value.animation.interval }} ms
               </label>
-              <input type="range" class="custom-range" formControlName="interval" min="100" max="10000" step="100">
+              <input type="range" class="custom-range" formControlName="interval" min="50" max="10000" step="50">
             </div>
             <div class="form-group">
               <label class="form-control-label">
                 Amplitude: {{ configForm.value.animation.shift }}
               </label>
-              <input type="range" class="custom-range" formControlName="shift" min="1" max="30" step="1">
+              <input type="range" class="custom-range" formControlName="shift" min="0.1" max="20" step="0.1">
             </div>
           </ng-container>
         </fieldset>
 
         <div class="form-group d-flex flex-colmn justify-content-between align-items-center mb-4">
-          <label class="form-control-label">
-            Animation
-          </label>
-          <div class="btn-group" role="group" aria-label="">
-            <button type="button" class="btn" (click)="startAnimation()" [ngClass]="{'btn-outline-primary': !animationEnabled, 'btn-primary': animationEnabled}">An</button>
-            <button type="button" class="btn" (click)="stopAnimation()" [ngClass]="{'btn-outline-primary': animationEnabled, 'btn-primary': !animationEnabled}">Aus</button>
+          <div class="custom-control custom-checkbox" formGroupName="animation">
+            <input type="checkbox" class="custom-control-input" id="animationEnabled" formControlName="enabled">
+            <label class="custom-control-label" for="animationEnabled">
+              Animation aktivieren
+            </label>
           </div>
         </div>
 
-        <div class="form-group d-flex flex-colmn justify-content-between align-items-center mb-4">
+        <!-- <div class="form-group d-flex flex-colmn justify-content-between align-items-center mb-4">
           <label class="form-control-label">
             Vollbild
           </label>
@@ -209,11 +205,11 @@
             <button type="button" class="btn" (click)="enableFullscreen()" [ngClass]="{'btn-outline-primary': !isFullscreen, 'btn-primary': isFullscreen}">An</button>
             <button type="button" class="btn" (click)="disableFullscreen()" [ngClass]="{'btn-outline-primary': isFullscreen, 'btn-primary': !isFullscreen}">Aus</button>
           </div>
-        </div>
+        </div> -->
 
         <fieldset [disabled]="animationEnabled">
           <div class="dropdown-divider mb-4"></div>
-          <button type="submit" class="btn btn-lg btn-primary btn-block" [disabled]="configForm.invalid || animationEnabled">Aktualisieren</button>
+          <button type="submit" class="btn btn-lg btn-primary btn-block">Aktualisieren</button>
           <div class="dropdown-divider mt-4"></div>
         </fieldset>
       </form>

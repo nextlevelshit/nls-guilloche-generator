@@ -34,6 +34,7 @@ export interface Graph {
   animation?: {
     shift: number;
     interval: number;
+    enabled: boolean;
   };
   spread?: {
     amount: number;

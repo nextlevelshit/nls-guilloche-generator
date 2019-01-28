@@ -32,7 +32,13 @@ export class NlsHistoryService {
     this.history.push({
       date: new Date(),
       graphs: graphs,
-      config: config,
+      config: {
+        ...config,
+        animation: {
+          ...config.animation,
+          enabled: false
+        }
+      },
       hash: this.hash(graphs)
     });
   }

@@ -77,13 +77,14 @@ export let ConfigForm: FormGroup = fb.group({
   }),
   animation: fb.group({
     interval: fb.control('', Validators.compose([
-      Validators.min(100),
+      Validators.min(50),
       Validators.max(10000)
     ])),
     shift: fb.control('', Validators.compose([
-      Validators.min(1),
-      Validators.max(30)
-    ]))
+      Validators.min(0.1),
+      Validators.max(20)
+    ])),
+    enabled: fb.control('')
   }),
 
 });

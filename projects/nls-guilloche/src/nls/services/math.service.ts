@@ -49,7 +49,12 @@ export class NlsMathService {
     }
   }
 
-  public randomPoint(matrix: any, overlap: number): Point {
+  public randomPoint(
+    matrix: any,
+    overlap: number,
+    orientation?: Point,
+    radius?: number
+  ): Point {
     const x = {
       min: matrix.center.x - matrix.width * 0.5 * overlap,
       max: matrix.center.x + matrix.width * 0.5 * overlap
@@ -59,10 +64,23 @@ export class NlsMathService {
       max: matrix.center.y + matrix.height * 0.5 * overlap
     };
 
-    return {
-      x: Random.randomUniform(x.min, x.max)(),
-      y: Random.randomUniform(y.min, y.max)()
-    };
+    if (orientation && radius) {
+      return {
+        x:
+          orientation.x
+          + Random.randomNormal(0, 2)()
+          * radius,
+        y:
+          orientation.y
+          + Random.randomNormal(0, 3)()
+          * radius
+      };
+    } else {
+      return {
+        x: Random.randomUniform(x.min, x.max)(),
+        y: Random.randomUniform(y.min, y.max)()
+      };
+    }
   }
 
   public centerOfArea(width, height): Point {

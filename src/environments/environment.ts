@@ -44,7 +44,7 @@ export const environment = {
     stroke: 0.6,
     spread: {
       amount: 22,
-      spacing: 22
+      spacing: 10
     },
     animation: {
       enabled: false,

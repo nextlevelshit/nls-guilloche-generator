@@ -44,6 +44,7 @@ export interface Config {
   animation: {
     interval: number;
     shift: number;
+    enabled: boolean;
   };
   nodes: any;
   stroke: any;
