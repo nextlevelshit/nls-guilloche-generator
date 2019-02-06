@@ -44,6 +44,10 @@ export interface Config {
   animation: {
     interval: number;
     shift: number;
+    amplitude: number;
+    ticksTotal: number;
+    radius: number;
+    frequency: number;
     enabled: boolean;
   };
   nodes: any;

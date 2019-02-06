@@ -84,6 +84,22 @@ export let ConfigForm: FormGroup = fb.group({
       Validators.min(0.1),
       Validators.max(200)
     ])),
+    amplitude: fb.control('', Validators.compose([
+      Validators.min(0),
+      Validators.max(3)
+    ])),
+    ticksTotal: fb.control('', Validators.compose([
+      Validators.min(50),
+      Validators.max(3000)
+    ])),
+    frequency: fb.control('', Validators.compose([
+      Validators.min(2),
+      Validators.max(100)
+    ])),
+    radius: fb.control('', Validators.compose([
+      Validators.min(0.01),
+      Validators.max(1)
+    ])),
     enabled: fb.control('')
   }),
 

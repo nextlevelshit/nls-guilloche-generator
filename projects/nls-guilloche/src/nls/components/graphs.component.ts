@@ -170,7 +170,6 @@ export class NlsGraphsComponent implements OnChanges {
       return {
         ...graph,
         nodes: this.refreshRandomPoints(graph),
-        // previousNodes:
         animation: {
           ...this.config.animation,
           interval: this.animationInterval,
@@ -181,7 +180,6 @@ export class NlsGraphsComponent implements OnChanges {
   }
 
   private refreshRandomPoints(graph: Graph): Point[] {
-    // console.log(this.animationShift);
     const nextNodes = graph.nodes.map(node => {
       return this.math.randomPoint(
         this.matrix,
@@ -190,8 +188,6 @@ export class NlsGraphsComponent implements OnChanges {
         graph.animation.shift
       );
     });
-
-    // return nextNodes;
 
     return this.calculateNodesradians({
       ...graph,
@@ -215,14 +211,7 @@ export class NlsGraphsComponent implements OnChanges {
           graph.end.point,
           graph.end.vector
         )
-      },
-      // nodes: this.generateRandomPoints(startDirection, endDirection).sort((a: Point, b: Point) => {
-      //   const orientation = startDirection;
-      //   return this.math.Δ(a, orientation) - this.math.Δ(b, orientation);
-      //   // return this.math.Δ(b, orientation) - this.math.Δ(a, orientation);
-      //   // return (orientation.x - b.x) - (orientation.x - a.x);
-      //   // return (orientation.y - b.y) - (orientation.y - a.y);
-      // })
+      }
     };
 
     const center = this.math.centerOfPoints(
@@ -232,54 +221,15 @@ export class NlsGraphsComponent implements OnChanges {
 
     graph.nodes = this.generateRandomPoints();
     graph.nodes = this.calculateNodesradians(graph);
-    // console.log(graph.nodes);
-    // graph.nodes.sort((a: Point, b: Point) => {
-    //   return this.math.Δ(a, center) - this.math.Δ(b, center);
-    //   // return this.math.Δ(a, this.matrix.center) - this.math.Δ(b, this.matrix.center);
+
     graph.nodes = graph.nodes.slice().sort((a: Point, b: Point) => {
-      //return b.distanceToCenter - a.distanceToCenter;
       return this.math.Δ(b, graph.start.direction) - this.math.Δ(a, graph.start.direction);
     }).reduceRight((acc, val, i) => {
       return i % 2 === 0 ? [...acc, val] : [val, ...acc];
     }, []);
-    // console.log(graph.nodes);
 
     return graph;
   }
-
-  /**
-   * BERLIN, 12.01.2019
-   *
-   * Manchmal kostet es einen doch ein größeres Stück Arbeit als sonst, seine
-   * Tage zu „nutzen“. Was schadet einem schon ein verlorener Tag? Sollte man
-   * diese nicht lieber anerkennen und besonders behutsam sein? Wenn ich an
-   * solchen Tagen einfach weniger zulasse und selber Entscheidungen übernehme,
-   * kann ich niemanden anderen dafür zur Verantwortung ziehen. Auf diese
-   * Weise bleibe ich selbstwirksam und werde gezwungen mir Raum und Zeit für
-   * mich einzufordern. Nicht nur von mir, sondern auch von meinem Umfeld.
-   * Ich bin alleinig in der Verantwortung meinen Schwermut zu äußern ohne
-   * gleichzeitig einzufordern, dass mein Gegenüber Bescheid weiß wie er auf
-   * mich zu reagieren hat. Paradoxerweise wünsche ich mir in solchen
-   * Situationen, dass ich von einer empathischen und loyalen Wärme umarmt
-   * werde, in der mir einfach Verständnis entgegengebracht wird, quasi am
-   * kleinen Finger geführte werde.
-   *
-   * In Zeiten der Rumtriebigkeit^[Typische Anzeichen für *Rumtriebigkeit*:
-   * - Viele Dinge anfangen und nicht zu Ende bringen
-   * -
-   * ] und zu großen Komforts^[Typische Anzeichen:
-   * - Fehlende kreative Betätigung
-   * - Fehlende körperliche Betätigung
-   * - Fehlende Muße zu Ordnung
-   * - Lethargie
-   * - Häufige Schlemmereien (Nachos, Eis, Süßes im Allgemeinen etc.)
-   * ]
-   * Der einfachste Ausweg aus der Lethargie wäre es schon einmal die un-
-   * gewünschten Aufgaben sich so angenehm wie möglich zu gestalten. Ich
-   * bspw. kiffe einfach gerne einen dabei und lasse mal meine grauen
-   * Zellen für mich arbeiten. Ich bekomme ein angenehmes Körpergefühl
-   * und verspüre überhaupt keinen Druck mehr Großartiges leisten zu müssen.
-   */
 
   private generateRandomPoints(): Point[] {
     const generatedPoints: Point[] = [];
@@ -331,12 +281,10 @@ export class NlsGraphsComponent implements OnChanges {
     this.matrix = {
       start: {
         x: (marginX + lineSpacing) * Math.abs(Math.cos(vectorStart * Math.PI)),
-        // y: canvasHeight - this.config.vectors.spacing
         y: canvasHeight - (marginY + lineSpacing) * Math.abs(Math.sin(vectorStart * Math.PI))
       },
       end: {
         x: canvasWidth - (marginX + lineSpacing) * Math.abs(Math.cos(vectorEnd * Math.PI)),
-        // x: canvasWidth - this.config.vectors.spacing,
         y: (marginY + lineSpacing) * Math.abs(Math.sin(vectorEnd * Math.PI))
       },
       width: canvasWidth,

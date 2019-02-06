@@ -46,8 +46,12 @@ export const environment = {
     },
     animation: {
       enabled: false,
-      shift: 14,
-      interval: 6000
+      shift: 50,
+      interval: 7000,
+      radius: 0.3,
+      amplitude: 0.6,
+      frequency: 15,
+      ticksTotal: 1250
     }
   }
 };
