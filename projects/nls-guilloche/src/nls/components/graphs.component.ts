@@ -17,6 +17,7 @@ import { ViewChild, Component, Input, Output, SimpleChanges, OnChanges, EventEmi
 import { Observable, interval } from 'rxjs';
 import * as Random from 'd3-random';
 import * as Timer from 'd3-timer';
+import * as Array from 'd3-array';
 
 import { Graph } from './../models/graph.model';
 import { Config } from './../models/config.model';
@@ -39,7 +40,6 @@ export class NlsGraphsComponent implements OnChanges {
   private genShiftPoint: any | null;
   private genAllGraphsLoaded: any | null;
   private resizingWindow: any;
-  private animationInterval: any;
 
   public canvas: any | null;
   public matrix: any | null;
@@ -149,11 +149,16 @@ export class NlsGraphsComponent implements OnChanges {
         debug: this.config.debug,
         animation: {
           shift: this.animationShift,
-          interval: this.config.animation.interval,
+          interval: this.animationInterval,
           enabled: this.config.animation.enabled
         }
       };
     });
+  }
+
+  private get animationInterval(): number {
+    const random = Random.randomLogNormal(0, 0.2)();
+    return this.config.animation.interval * random;
   }
 
   private get animationShift(): number {
@@ -165,8 +170,10 @@ export class NlsGraphsComponent implements OnChanges {
       return {
         ...graph,
         nodes: this.refreshRandomPoints(graph),
+        // previousNodes:
         animation: {
           ...this.config.animation,
+          interval: this.animationInterval,
           shift: this.animationShift
         }
       };
@@ -174,21 +181,22 @@ export class NlsGraphsComponent implements OnChanges {
   }
 
   private refreshRandomPoints(graph: Graph): Point[] {
+    // console.log(this.animationShift);
     const nextNodes = graph.nodes.map(node => {
       return this.math.randomPoint(
         this.matrix,
         this.config.overlap,
         node,
-        this.animationShift
+        graph.animation.shift
       );
     });
 
-    return nextNodes;
+    // return nextNodes;
 
-    // return this.calculateNodesAscent({
-    //   ...graph,
-    //   nodes: nextNodes
-    // });
+    return this.calculateNodesradians({
+      ...graph,
+      nodes: nextNodes
+    });
   }
 
   private adjustGraph(graph: Graph): Graph {
@@ -217,11 +225,24 @@ export class NlsGraphsComponent implements OnChanges {
       // })
     };
 
+    const center = this.math.centerOfPoints(
+      graph.start.direction,
+      graph.end.direction
+    );
+
     graph.nodes = this.generateRandomPoints();
-    graph.nodes = this.calculateNodesAscent(graph);
-    graph.nodes = graph.nodes.sort((a: Point, b: Point) => {
-      return this.math.Δ(a, graph.start.direction) - this.math.Δ(b, graph.start.direction);
-    });
+    graph.nodes = this.calculateNodesradians(graph);
+    // console.log(graph.nodes);
+    // graph.nodes.sort((a: Point, b: Point) => {
+    //   return this.math.Δ(a, center) - this.math.Δ(b, center);
+    //   // return this.math.Δ(a, this.matrix.center) - this.math.Δ(b, this.matrix.center);
+    graph.nodes = graph.nodes.slice().sort((a: Point, b: Point) => {
+      //return b.distanceToCenter - a.distanceToCenter;
+      return this.math.Δ(b, graph.start.direction) - this.math.Δ(a, graph.start.direction);
+    }).reduceRight((acc, val, i) => {
+      return i % 2 === 0 ? [...acc, val] : [val, ...acc];
+    }, []);
+    // console.log(graph.nodes);
 
     return graph;
   }
@@ -263,19 +284,15 @@ export class NlsGraphsComponent implements OnChanges {
   private generateRandomPoints(): Point[] {
     const generatedPoints: Point[] = [];
 
-    for (let i = 0; i < this.config.nodes; i++) {
-      generatedPoints.push(
-        this.math.randomPoint(
-          this.matrix,
-          this.config.overlap
-        )
+    return Array.range(this.config.nodes).map((d, i) => {
+      return this.math.randomPoint(
+        this.matrix,
+        this.config.overlap
       );
-    }
-
-    return generatedPoints;
+    });
   }
 
-  private calculateNodesAscent(
+  private calculateNodesradians(
     graph: Graph
   ): Point[] {
     return graph.nodes.map((point, i, allNodes) => {
@@ -290,7 +307,7 @@ export class NlsGraphsComponent implements OnChanges {
       }
       return {
         ...point,
-        ascent: this.math.angleRadians(prev, next)
+        radians: this.math.angleRadians(prev, next)
       };
     });
   }
@@ -313,14 +330,14 @@ export class NlsGraphsComponent implements OnChanges {
 
     this.matrix = {
       start: {
-        x: Math.round(1000 * ((marginX + lineSpacing) * Math.abs(Math.cos(vectorStart * Math.PI)))) / 1000,
+        x: (marginX + lineSpacing) * Math.abs(Math.cos(vectorStart * Math.PI)),
         // y: canvasHeight - this.config.vectors.spacing
-        y: Math.round(1000 * ((canvasHeight - (marginY + lineSpacing) * Math.abs(Math.sin(vectorStart * Math.PI))))) / 1000
+        y: canvasHeight - (marginY + lineSpacing) * Math.abs(Math.sin(vectorStart * Math.PI))
       },
       end: {
-        x: Math.round(1000 * ((canvasWidth - (marginX + lineSpacing) * Math.abs(Math.cos(vectorEnd * Math.PI))))) / 1000,
+        x: canvasWidth - (marginX + lineSpacing) * Math.abs(Math.cos(vectorEnd * Math.PI)),
         // x: canvasWidth - this.config.vectors.spacing,
-        y: Math.round(1000 * ((marginY + lineSpacing) * Math.abs(Math.sin(vectorEnd * Math.PI)))) / 1000
+        y: (marginY + lineSpacing) * Math.abs(Math.sin(vectorEnd * Math.PI))
       },
       width: canvasWidth,
       height: canvasHeight,
@@ -339,8 +356,8 @@ export class NlsGraphsComponent implements OnChanges {
     const tension = this.math.Δ(this.matrix.start, this.matrix.end) * this.config.vectors.tension;
 
     return {
-      x: Math.round(1000 * (tension * Math.sin(Math.PI * vector) + point.x)) / 1000,
-      y: Math.round(1000 * (tension * Math.cos(Math.PI * vector) + point.y)) / 1000
+      x: tension * Math.sin(Math.PI * vector) + point.x,
+      y: tension * Math.cos(Math.PI * vector) + point.y
     };
   }
 

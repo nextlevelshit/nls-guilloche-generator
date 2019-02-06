@@ -82,7 +82,7 @@ export let ConfigForm: FormGroup = fb.group({
     ])),
     shift: fb.control('', Validators.compose([
       Validators.min(0.1),
-      Validators.max(20)
+      Validators.max(200)
     ])),
     enabled: fb.control('')
   }),

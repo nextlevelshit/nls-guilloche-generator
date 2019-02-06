@@ -40,7 +40,7 @@ export interface Graph {
     amount: number;
     spacing: number
   };
-  ascent?: number;
+  radians?: number;
   stroke?: number; // stroke width
   nodes?: Point[]; // orientation points
   debug?: boolean;

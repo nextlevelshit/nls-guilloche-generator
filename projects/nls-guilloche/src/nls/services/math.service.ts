@@ -21,8 +21,31 @@ import * as Random from 'd3-random';
 import { Point } from './../models/point.model';
 import { Graph } from './../models/graph.model';
 
+export enum DEFAULTS {
+  ENTROPY = 0.8
+}
+
 @Injectable()
 export class NlsMathService {
+
+  private randomRadians(): number {
+    return this.randomFloat(0, 2 * Math.PI);
+  }
+
+  private relatedRadians(parentRadians: number): number {
+    return Random.randomNormal(parentRadians, DEFAULTS.ENTROPY)();
+  }
+
+  private calcAcceleration(
+    childRadians: number,
+    parentRadians: number
+  ): number {
+    return 1 - this.minimumDifference(childRadians, parentRadians) / Math.PI;
+  }
+
+  private minimumDifference(a: number, b: number): number {
+    return Math.min((2 * Math.PI) - Math.abs(a - b), Math.abs(a - b));
+  }
 
   /**
    * Calculate distance between to points with coordinates.
@@ -52,35 +75,31 @@ export class NlsMathService {
   public randomPoint(
     matrix: any,
     overlap: number,
-    orientation?: Point,
+    parent?: Point,
     radius?: number
   ): Point {
-    const x = {
-      min: matrix.center.x - matrix.width * 0.5 * overlap,
-      max: matrix.center.x + matrix.width * 0.5 * overlap
-    };
-    const y = {
-      min: matrix.center.y - matrix.height * 0.5 * overlap,
-      max: matrix.center.y + matrix.height * 0.5 * overlap
-    };
+    let point: Point;
 
-    if (orientation && radius) {
-      return {
-        x:
-          orientation.x
-          + Random.randomNormal(0, 2)()
-          * radius,
-        y:
-          orientation.y
-          + Random.randomNormal(0, 3)()
-          * radius
+    if (parent && radius) {
+      const radians = this.relatedRadians(parent.radians);
+      const acceleration = this.calcAcceleration(radians, parent.radians);
+      const velocity = radius * acceleration;
+
+      point = {
+        x: Math.sin(radians * Math.PI) * velocity + parent.x,
+        y: Math.cos(radians * Math.PI) * velocity + parent.y
       };
     } else {
-      return {
-        x: Random.randomUniform(x.min, x.max)(),
-        y: Random.randomUniform(y.min, y.max)()
+      point = {
+        x: Random.randomNormal(matrix.center.x, matrix.width * 0.5 * overlap)(),
+        y: Random.randomNormal(matrix.center.y, matrix.height * 0.5 * overlap)()
       };
     }
+
+    return {
+      ...point,
+      distanceToCenter: this.Δ(point, matrix.center)
+    };
   }
 
   public centerOfArea(width, height): Point {
@@ -103,7 +122,7 @@ export class NlsMathService {
     const p2 = genMedian.next().value;
     const radians = this.angleRadians(p1, p2);
 
-    return Object.assign(this.centerOfPoints(p1, p2), { ascent: radians });
+    return Object.assign(this.centerOfPoints(p1, p2), { radians: radians });
   }
 
   public medianOfCurve(curve: Point[]) {
@@ -114,7 +133,7 @@ export class NlsMathService {
     // const radians = this.angleRadians(p2, p3);
     return {
       ...curve[this.medianIndex(curve)],
-      ascent: this.randomFloat(0, 2)
+      radians: this.randomFloat(0, 2)
     };
   }
 

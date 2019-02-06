@@ -1,4 +1,3 @@
-import { Output, EventEmitter } from '@angular/core';
 /**
  * Copyright (C) 2018 Michael Czechowski <mail@dailysh.it>
  * This program is free software; you can redistribute it and/or modify it
@@ -15,7 +14,7 @@ import { Output, EventEmitter } from '@angular/core';
  * Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
-import { ElementRef, HostListener, Input, Directive, OnChanges, OnDestroy, SimpleChanges } from '@angular/core';
+import { ElementRef, HostListener, Input, Directive, OnChanges, OnDestroy, SimpleChanges, Output, EventEmitter } from '@angular/core';
 import * as Selection from 'd3-selection';
 import * as Shape from 'd3-shape';
 import * as Random from 'd3-random';
@@ -40,8 +39,12 @@ import { NlsGraphService } from '../services/graph.service';
 // const CURVE_SHAPE = Shape.curveStep;
 const CURVE_SHAPE = Shape.curveBasis;
 const DEFAULT_DURATION = 1200;
-const DEFAULT_EASE = Ease.easePolyInOut.exponent(1.2);
+// const DEFAULT_EASE = Ease.easePolyInOut.exponent(1.2);
 // const DEFAULT_EASE = Ease.easeLinear;
+// const DEFAULT_EASE = Ease.easePolyInOut.exponent(1.6);
+const DEFAULT_EASE = Ease.easeBackInOut.overshoot(1.4);
+// const DEFAULT_EASE = Ease.easePolyInOut.exponent(1.6);
+// const DEFAULT_EASE = Ease.easeBackInOut.overshoot(5);
 // const DEFAULT_EASE = Ease.easePolyInOut;
 const ANIMATION_EASE = Ease.easePolyInOut.exponent(1.6);
 // const ANIMATION_EASE = Ease.easeBackInOut.overshoot(2);
@@ -126,7 +129,7 @@ export class NlsGuillocheDirective implements OnChanges, OnDestroy {
    * Initiate the initial curve from handed in graph.
    * Gather all points in the right order and calculate
    * the median point and index for later usage to spread
-   * curves on the axis of medians' ascent.
+   * curves on the axis of medians' radians.
    */
   private initInitialCurve(nodes: Point[] = this.graph.nodes): void {
     this.initialCurve = [
@@ -142,7 +145,7 @@ export class NlsGuillocheDirective implements OnChanges, OnDestroy {
 
   /**
    * Take graph and spread median points orthogonal to medians
-   * ascent by specific amount of times. Amount of spreaded
+   * radians by specific amount of times. Amount of spreaded
    * curves can be set inside graph parameters.
    */
   private spreadInitialCurve(): void {
@@ -151,6 +154,11 @@ export class NlsGuillocheDirective implements OnChanges, OnDestroy {
     const preMedians = [];
     const postMedians = [];
 
+    // this.initialCurve[this.medianIndex] = this.math.centerOfPoints(
+    //   this.initialCurve[this.medianIndex - 1],
+    //   this.initialCurve[this.medianIndex + 1]
+    // );
+
     const shiftMedian = this.graphService.spreadOrthogonal(
       this.initialCurve[this.medianIndex],
       this.graph.spread.spacing
@@ -158,11 +166,11 @@ export class NlsGuillocheDirective implements OnChanges, OnDestroy {
 
     const shiftPreMedian = this.graphService.spreadOrthogonal(
       this.initialCurve[this.medianIndex - 1],
-      this.graph.spread.spacing * 0.4
+      this.graph.spread.spacing * 0.5
     );
     const shiftPostMedian = this.graphService.spreadOrthogonal(
       this.initialCurve[this.medianIndex + 1],
-      this.graph.spread.spacing * 0.4
+      this.graph.spread.spacing * 0.5
     );
 
     for (let i = 0; i < this.graph.spread.amount; i++) {
@@ -215,7 +223,7 @@ export class NlsGuillocheDirective implements OnChanges, OnDestroy {
   private refreshPaths(): void {
     const transitionFinished = this.transitionFinished();
     const duration = (this.graph.animation.enabled)
-      ? this.graph.animation.interval * Random.randomNormal(1, 0.2)()
+      ? this.graph.animation.interval
       : 0;
     const ease = DEFAULT_EASE;
 
@@ -269,3 +277,4 @@ export class NlsGuillocheDirective implements OnChanges, OnDestroy {
       .attr('fill', this.graph.color);
   }
 }
+

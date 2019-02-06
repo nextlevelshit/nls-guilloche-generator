@@ -33,23 +33,23 @@ export const environment = {
       x: 0.0282,
       y: 0.02
     },
-    overlap: 1.3,
+    overlap: 0.5,
     vectors: {
       start: 0.5,
       end: 0,
-      tension: 0.2,
+      tension: 0.6,
       spacing: 5
     },
-    nodes: 4,
+    nodes: 6,
     stroke: 0.6,
     spread: {
-      amount: 22,
-      spacing: 10
+      amount: 30,
+      spacing: 20
     },
     animation: {
       enabled: false,
-      shift: 14,
-      interval: 6000
+      shift: 50,
+      interval: 7000
     }
   }
 };

@@ -18,5 +18,8 @@ export interface Point {
   x: number;
   y: number;
   color?: string;
-  ascent?: number;
+  radians?: number;
+  distanceToCenter?: number;
+  acceleration?: number;
+  velocity?: number;
 }
