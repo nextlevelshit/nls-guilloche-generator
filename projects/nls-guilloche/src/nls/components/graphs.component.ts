@@ -332,17 +332,17 @@ export class NlsGraphsComponent implements OnChanges {
   }
 
   public finishedRefresh(graphId: string): void {
-    if (this.config.animation.enabled) {
-      const i = this.graphService.getIndexById(graphId);
-       if (i >= 0) {
-         const graph = this.graphs[i];
+    // if (this.config.animation.enabled) {
+    //   const i = this.graphService.getIndexById(graphId);
+    //    if (i >= 0) {
+    //      const graph = this.graphs[i];
 
-         this.graphs[i] = {
-           ...graph,
-           nodes: this.refreshRandomPoints(graph)
-         };
-       }
-    }
+    //      this.graphs[i] = {
+    //        ...graph,
+    //        nodes: this.refreshRandomPoints(graph)
+    //      };
+    //    }
+    // }
 
     if (this.graphsPreparedForExport) {
       this.svgChange.emit(this.svgElementRef);
