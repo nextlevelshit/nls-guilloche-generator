@@ -56,6 +56,16 @@ export class NlsGraphService {
     });
   }
 
+  public getCurve(graph: Graph): Point[] {
+    return [
+      graph.start.point,
+      graph.start.direction,
+      ...graph.nodes,
+      graph.end.direction,
+      graph.end.point
+    ];
+  }
+
   public getIndexById(graphId: string): number {
     return this.graphs.findIndex(graph => {
       return graph.id === graphId;

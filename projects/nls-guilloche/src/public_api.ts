@@ -6,7 +6,6 @@ export * from './nls/components/graphs.component';
 export * from './nls/directives/guilloche.directive';
 export * from './nls/models/config.model';
 export * from './nls/models/graph.model';
-export * from './nls/models/param.model';
 export * from './nls/models/point.model';
 export * from './nls/services/animation.service';
 export * from './nls/services/canvas.service';

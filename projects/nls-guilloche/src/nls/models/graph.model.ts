@@ -33,7 +33,11 @@ export interface Graph {
   };
   animation?: {
     shift: number;
-    interval: number;
+    interval?: number;
+    amplitude: number;
+    ticksTotal: number;
+    radius: number;
+    frequency: number;
     enabled: boolean;
   };
   spread?: {

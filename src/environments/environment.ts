@@ -33,14 +33,14 @@ export const environment = {
       x: 0.0282,
       y: 0.02
     },
-    overlap: 0.5,
+    overlap: 0.6,
     vectors: {
       start: 0.5,
       end: 0,
       tension: 0.6,
       spacing: 5
     },
-    nodes: 6,
+    nodes: 4,
     stroke: 0.6,
     spread: {
       amount: 30,

@@ -62,8 +62,10 @@ export class NlsGuillocheDirective implements OnChanges, OnDestroy {
   private medianIndex: number; // generated from initialCurve
   private curveList: Point[][]; // generated from initialCurve
   private pathList: any; // generated from curveList
+  private timer: any;
 
   @Input() graph: Graph;
+  @Input() animationEnabled: boolean;
   @Output() refreshed = new EventEmitter();
 
   constructor(
@@ -76,19 +78,30 @@ export class NlsGuillocheDirective implements OnChanges, OnDestroy {
   ngOnChanges(changes: SimpleChanges) {
     this.initSVG(); // Prepare canvas and group
     this.initInitialCurve(); // Generate curve from graph
+    this.calculateMedian(); // Calculate median of graph
     this.spreadInitialCurve(); // Spread generated curve to many
+    this.initPaths(); // Render SVG paths
 
-    if (this.pathList) {
-      const currentSpread = changes.graph.currentValue.spread;
-      const previousSpread = changes.graph.previousValue.spread;
-
-      if (currentSpread !== previousSpread) {
-        this.initPaths();
+    if (this.graph.animation.enabled) {
+      if (this.timer) {
+        this.timer.restart();
       } else {
-        this.refreshPaths();
+        this.timer = Timer.timer(this.refreshPaths());
       }
-     } else {
-      this.initPaths();
+    //   const currentSpread = changes.graph.currentValue.spread;
+    //   const previousSpread = changes.graph.previousValue.spread;
+
+    //   if (currentSpread !== previousSpread) {
+    //     this.initPaths();
+    //   } else {
+    //     this.refreshPaths();
+    //   }
+    //  } else {
+    //   this.initPaths();
+    } else {
+      if (this.timer) {
+        this.timer.stop();
+      }
     }
   }
 
@@ -126,19 +139,16 @@ export class NlsGuillocheDirective implements OnChanges, OnDestroy {
   }
 
   /**
-   * Initiate the initial curve from handed in graph.
+   * Initiate the curve from graph input.
    * Gather all points in the right order and calculate
    * the median point and index for later usage to spread
    * curves on the axis of medians' radians.
    */
-  private initInitialCurve(nodes: Point[] = this.graph.nodes): void {
-    this.initialCurve = [
-      this.graph.start.point,
-      this.graph.start.direction,
-      ...nodes.slice(),
-      this.graph.end.direction,
-      this.graph.end.point
-    ];
+  private initInitialCurve(): void {
+    this.initialCurve = this.graphService.getCurve(this.graph);
+  }
+
+  private calculateMedian(): void {
     this.medianPoint = this.math.medianOfCurve(this.initialCurve);
     this.medianIndex = this.math.medianIndex(this.initialCurve);
   }
@@ -153,11 +163,6 @@ export class NlsGuillocheDirective implements OnChanges, OnDestroy {
     const medians = [];
     const preMedians = [];
     const postMedians = [];
-
-    // this.initialCurve[this.medianIndex] = this.math.centerOfPoints(
-    //   this.initialCurve[this.medianIndex - 1],
-    //   this.initialCurve[this.medianIndex + 1]
-    // );
 
     const shiftMedian = this.graphService.spreadOrthogonal(
       this.initialCurve[this.medianIndex],
@@ -206,7 +211,6 @@ export class NlsGuillocheDirective implements OnChanges, OnDestroy {
     this.curveList.map(curve => {
       this.pathList.push(
         this.group.append('path')
-          .datum({points: curve})
           .attr('d', Shape.line()
             .x(p => p.x)
             .y(p => p.y)
@@ -221,28 +225,36 @@ export class NlsGuillocheDirective implements OnChanges, OnDestroy {
    * Update existing paths with transition
    */
   private refreshPaths(): void {
-    const transitionFinished = this.transitionFinished();
+    /*const transitionFinished = this.transitionFinished();
     const duration = (this.graph.animation.enabled)
       ? this.graph.animation.interval
       : 0;
-    const ease = DEFAULT_EASE;
+    const ease = DEFAULT_EASE;*/
 
     this.pathList.forEach((path, i) => {
-      const nextCurve = this.curveList[i];
-
       path
-        .transition()
-        .duration(duration)
-        .ease(ease)
         .attr('d', Shape.line()
           .x(p => p.x)
           .y(p => p.y)
-          .curve(CURVE_SHAPE)(nextCurve)
-        )
-        .on('end', () => {
-          transitionFinished.next();
-        });
+          .curve(CURVE_SHAPE)(this.curveGeneratorList[i].next().value)
+        );
+        // .on('end', () => {
+        //   transitionFinished.next();
+        // });
     });
+  }
+
+  private curveGeneratorList() {
+    return this.curveList.map(curve => {
+      this.generateCurve(curve);
+    });
+  }
+
+  private *generateCurve(curve: Point[]) {
+    while (true) {
+      yield;
+
+    }
   }
 
   private *transitionFinished() {

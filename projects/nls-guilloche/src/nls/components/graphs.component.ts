@@ -82,24 +82,25 @@ export class NlsGraphsComponent implements OnChanges {
     ) {
       this.restoreGraphs();
     } else if ('config' in changes) {
-      if (this.graphs && this.config.animation.enabled) {
-        this.updateGraphs();
-      } else {
-        if (changes.config.firstChange) {
-          this.createGraphs();
-        } else {
-          const currentConfig = changes.config.currentValue.animation;
-          const previousConfig = changes.config.previousValue.animation;
+      this.createGraphs();
+      // if (this.graphs && this.config.animation.enabled) {
+      //   this.updateGraphs();
+      // } else {
+      //   if (changes.config.firstChange) {
+      //     this.createGraphs();
+      //   } else {
+      //     const currentConfig = changes.config.currentValue.animation;
+      //     const previousConfig = changes.config.previousValue.animation;
 
-          if (
-            previousConfig.interval === currentConfig.interval
-            && previousConfig.enabled === currentConfig.enabled
-            && previousConfig.shift === currentConfig.shift
-          ) {
-            this.createGraphs();
-          }
-        }
-      }
+      //     if (
+      //       previousConfig.interval === currentConfig.interval
+      //       && previousConfig.enabled === currentConfig.enabled
+      //       && previousConfig.shift === currentConfig.shift
+      //     ) {
+      //       this.createGraphs();
+      //     }
+      //   }
+      // }
       this.saveGraphs();
     }
   }
@@ -128,7 +129,7 @@ export class NlsGraphsComponent implements OnChanges {
       this.config.vectors.end
     );
 
-    const graphList: Graph[] = [
+    this.graphs = [
       {
         color: this.config.colors.primary,
         start: genShiftStart.next().value,
@@ -139,9 +140,7 @@ export class NlsGraphsComponent implements OnChanges {
         start: genShiftEnd.next().value,
         end: genShiftStart.next().value
       },
-    ];
-
-    this.graphs = graphList.map((graph, i) => {
+    ].map((graph, i) => {
       return {
         ...this.adjustGraph(graph),
         id: this.historyService.hash(graph),
@@ -149,51 +148,55 @@ export class NlsGraphsComponent implements OnChanges {
         debug: this.config.debug,
         animation: {
           shift: this.animationShift,
-          interval: this.animationInterval,
-          enabled: this.config.animation.enabled
+          // interval: this.animationInterval,
+          enabled: this.config.animation.enabled,
+          radius: this.config.animation.radius,
+          frequency: this.config.animation.frequency,
+          ticksTotal: this.config.animation.ticksTotal,
+          amplitude: this.config.animation.amplitude
         }
       };
     });
   }
 
-  private get animationInterval(): number {
-    const random = Random.randomLogNormal(0, 0.2)();
-    return this.config.animation.interval * random;
-  }
+  // private get animationInterval(): number {
+  //   const random = Random.randomLogNormal(0, 0.2)();
+  //   return this.config.animation.interval * random;
+  // }
 
   private get animationShift(): number {
     return this.config.animation.shift * this.matrix.unit;
   }
 
-  private updateGraphs(): void {
-    this.graphs = this.graphs.map(graph => {
-      return {
-        ...graph,
-        nodes: this.refreshRandomPoints(graph),
-        animation: {
-          ...this.config.animation,
-          interval: this.animationInterval,
-          shift: this.animationShift
-        }
-      };
-    });
-  }
+  // private updateGraphs(): void {
+  //   this.graphs = this.graphs.map(graph => {
+  //     return {
+  //       ...graph,
+  //       nodes: this.refreshRandomPoints(graph),
+  //       animation: {
+  //         ...this.config.animation,
+  //         interval: this.animationInterval,
+  //         shift: this.animationShift
+  //       }
+  //     };
+  //   });
+  // }
 
-  private refreshRandomPoints(graph: Graph): Point[] {
-    const nextNodes = graph.nodes.map(node => {
-      return this.math.randomPoint(
-        this.matrix,
-        this.config.overlap,
-        node,
-        graph.animation.shift
-      );
-    });
+  // private refreshRandomPoints(graph: Graph): Point[] {
+  //   const nextNodes = graph.nodes.map(node => {
+  //     return this.math.randomPoint(
+  //       this.matrix,
+  //       this.config.overlap,
+  //       node,
+  //       graph.animation.shift
+  //     );
+  //   });
 
-    return this.calculateNodesradians({
-      ...graph,
-      nodes: nextNodes
-    });
-  }
+  //   return this.calculateNodesradians({
+  //     ...graph,
+  //     nodes: nextNodes
+  //   });
+  // }
 
   private adjustGraph(graph: Graph): Graph {
     graph = {
@@ -214,10 +217,10 @@ export class NlsGraphsComponent implements OnChanges {
       }
     };
 
-    const center = this.math.centerOfPoints(
-      graph.start.direction,
-      graph.end.direction
-    );
+    // const center = this.math.centerOfPoints(
+    //   graph.start.direction,
+    //   graph.end.direction
+    // );
 
     graph.nodes = this.generateRandomPoints();
     graph.nodes = this.calculateNodesradians(graph);
@@ -242,9 +245,7 @@ export class NlsGraphsComponent implements OnChanges {
     });
   }
 
-  private calculateNodesradians(
-    graph: Graph
-  ): Point[] {
+  private calculateNodesradians(graph: Graph): Point[] {
     return graph.nodes.map((point, i, allNodes) => {
       let prev = allNodes[i - 1];
       let next = allNodes[i + 1];
@@ -270,7 +271,7 @@ export class NlsGraphsComponent implements OnChanges {
   private calcMatrix(): void {
     const canvasWidth = this.canvas.getBoundingClientRect().width;
     const canvasHeight = this.canvas.getBoundingClientRect().height;
-    const totalArea = Math.abs(canvasWidth * canvasHeight);
+    // const totalArea = Math.abs(canvasWidth * canvasHeight);
     const totalCenter = this.math.centerOfArea(canvasWidth, canvasHeight);
     const marginY = this.config.margin.y * canvasHeight;
     const marginX = this.config.margin.x * canvasWidth;
