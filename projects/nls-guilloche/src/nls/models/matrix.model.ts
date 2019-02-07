@@ -15,37 +15,12 @@
  */
 
 import { Point } from './point.model';
-import { Config } from './config.model';
 
-export interface Graph {
-  id?: string;
-  color: string; // can be set in enviroment
-  start: {
-    point: Point;
-    direction?: Point;
-    vector: number; // degree between 0 and 360
-  };
-  end: {
-    point: Point;
-    direction?: Point;
-    vector: number; // degree between 0 and 360
-  };
-  animation?: {
-    shift?: number;
-    interval?: number;
-    amplitude?: number;
-    ticksTotal?: number;
-    radius?: number;
-    frequency?: number;
-    enabled: boolean;
-  };
-  spread?: {
-    amount: number;
-    spacing: number
-  };
-  radians?: number;
-  stroke?: number; // stroke width
-  nodesGenerators?: any;
-  nodes?: Point[]; // orientation points
-  debug?: boolean;
+export interface Matrix {
+  start: Point;
+  end: Point;
+  center: Point;
+  width: number;
+  height: number;
+  unit?: number;
 }

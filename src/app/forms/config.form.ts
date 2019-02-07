@@ -52,7 +52,7 @@ export let ConfigForm: FormGroup = fb.group({
     ])),
     spacing: fb.control('', Validators.compose([
       Validators.min(0),
-      Validators.max(20)
+      Validators.max(100)
     ])),
   }),
   nodes: fb.control('', Validators.compose([

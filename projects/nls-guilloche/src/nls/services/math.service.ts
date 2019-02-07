@@ -97,7 +97,8 @@ export class NlsMathService {
     }
 
     return {
-      ...point,
+      x: point.x,
+      y: point.y,
       distanceToCenter: this.Δ(point, matrix.center)
     };
   }
@@ -131,10 +132,9 @@ export class NlsMathService {
     // const p2 = genMedian.next().value;
     // const p3 = genMedian.next().value;
     // const radians = this.angleRadians(p2, p3);
-    return {
-      ...curve[this.medianIndex(curve)],
-      radians: this.randomFloat(0, 2)
-    };
+    const index = this.medianIndex(curve);
+
+    return curve[index];
   }
 
   public angleRadians(p1: Point, p2: Point) {

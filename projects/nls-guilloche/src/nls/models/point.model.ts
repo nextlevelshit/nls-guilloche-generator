@@ -20,6 +20,4 @@ export interface Point {
   color?: string;
   radians?: number;
   distanceToCenter?: number;
-  acceleration?: number;
-  velocity?: number;
 }

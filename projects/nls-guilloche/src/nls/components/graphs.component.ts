@@ -18,7 +18,11 @@ import { Observable, interval } from 'rxjs';
 import * as Random from 'd3-random';
 import * as Timer from 'd3-timer';
 import * as Array from 'd3-array';
+import * as Shape from 'd3-shape';
+import * as Selection from 'd3-selection';
+import tooloud from 'tooloud';
 
+import { Matrix } from './../models/matrix.model';
 import { Graph } from './../models/graph.model';
 import { Config } from './../models/config.model';
 import { ConfigForm } from './../../../../../src/app/forms/config.form';
@@ -28,8 +32,10 @@ import { NlsHistoryService } from './../services/history.service';
 import { NlsMathService } from './../services/math.service';
 import { NlsGuillocheDirective } from './../directives/guilloche.directive';
 import { NlsGraphService } from './../services/graph.service';
+import { isAbsolute } from 'path';
 
 const RESIZING_TIMEOUT = 800;
+const { Simplex } = tooloud;
 
 @Component({
   selector: 'nls-graphs',
@@ -40,12 +46,14 @@ export class NlsGraphsComponent implements OnChanges {
   private genShiftPoint: any | null;
   private genAllGraphsLoaded: any | null;
   private resizingWindow: any;
+  private transition: any;
 
   public canvas: any | null;
-  public matrix: any | null;
+  public matrix: Matrix;
   public graphs: Graph[];
   public windowHeight: number | null;
   public windowWidth: number | null;
+  public renderedGraphs: Graph[];
 
   @Input() config: Config;
   @Input() restoredHistory: any;
@@ -82,7 +90,30 @@ export class NlsGraphsComponent implements OnChanges {
     ) {
       this.restoreGraphs();
     } else if ('config' in changes) {
-      this.createGraphs();
+
+      if (this.config.animation.enabled) {
+        // If transition is enabled, first check if
+        // any graphs already existing, otherwise
+        // start transition immediatly.
+        if (!this.graphs) {
+          this.createGraphs();
+        }
+        this.transition = Timer.timer(t => {
+          this.updateGraphs();
+        }, 120);
+      } else {
+        // If transition is running, just stop it,
+        // otherwise create complete new graphs.
+        if (this.transition) {
+          this.transition.stop();
+          this.transition = null;
+        } else {
+          this.createGraphs();
+        }
+      }
+
+
+
       // if (this.graphs && this.config.animation.enabled) {
       //   this.updateGraphs();
       // } else {
@@ -147,58 +178,113 @@ export class NlsGraphsComponent implements OnChanges {
         spread: this.config.spread,
         debug: this.config.debug,
         animation: {
-          shift: this.animationShift,
-          // interval: this.animationInterval,
-          enabled: this.config.animation.enabled,
-          radius: this.config.animation.radius,
-          frequency: this.config.animation.frequency,
-          ticksTotal: this.config.animation.ticksTotal,
-          amplitude: this.config.animation.amplitude
+          enabled: false
         }
+      };
+    });
+
+    this.renderedGraphs = this.graphs.map(graph => {
+      return {
+        start: graph.start,
+        end: graph.end,
+        spread: graph.spread,
+        color: graph.color,
+        stroke: graph.stroke,
+        nodes: graph.nodes,
+        animation: graph.animation
       };
     });
   }
 
-  // private get animationInterval(): number {
-  //   const random = Random.randomLogNormal(0, 0.2)();
-  //   return this.config.animation.interval * random;
-  // }
+  private adjustNoise(): any {
+    return Array.range(this.config.nodes).map(() => {
+      return Simplex.create(Math.floor(Math.random() * 10000));
+    });
+  }
+
+  private adjustNodes(): Point[] {
+    return this.generateRandomPoints();
+  }
+
+  private adjustSamplesList(simplexNoise: any, nodes: Point[]): Point[] {
+    return simplexNoise.map((simplex, i) => {
+      const start = nodes[i];
+      const unit = Math.min(this.matrix.width, this.matrix.height);
+      const scale = unit * (this.config.animation.radius + this.config.animation.radius * Random.randomNormal(0, 0.1)());
+      const frequency = this.config.animation.frequency + this.config.animation.frequency * Random.randomNormal(0, 0.1)();
+
+      return Array.range(frequency).map((sample, j) => {
+        const radians = j / frequency * Math.PI * 2;
+        const x = start.x + Math.sin(radians) * scale;
+        const y = start.y + Math.cos(radians) * scale;
+        const noisedScale = (simplex.noise(x, y, 0) * this.config.animation.amplitude * scale + scale);
+
+        return {
+          x: Math.sin(radians) * noisedScale + start.x,
+          y: Math.cos(radians) * noisedScale + start.y
+        };
+      });
+    });
+  }
+
+  private adjustNoisePathList(samplesList: Point[], group: any): any {
+    return samplesList.map(samples => {
+      return group
+        .append('path')
+        .attr('d', Shape.line()
+          .x(p => p.x)
+          .y(p => p.y)
+          .curve(Shape.curveBasisClosed)(samples)
+        );
+    });
+  }
+
+  private adjustNodesGeneratorList(noisePathList: any): any {
+    return noisePathList.map(noisePath => {
+      return this.graphService.pointsOnPath(noisePath.node(), this.config.animation.ticksTotal);
+    });
+  }
 
   private get animationShift(): number {
     return this.config.animation.shift * this.matrix.unit;
   }
 
-  // private updateGraphs(): void {
-  //   this.graphs = this.graphs.map(graph => {
-  //     return {
-  //       ...graph,
-  //       nodes: this.refreshRandomPoints(graph),
-  //       animation: {
-  //         ...this.config.animation,
-  //         interval: this.animationInterval,
-  //         shift: this.animationShift
-  //       }
-  //     };
-  //   });
-  // }
+  private updateGraphs(): void {
+    this.renderedGraphs = this.graphs.map(graph => {
+      graph = {
+        start : graph.start,
+        end : graph.end,
+        spread: graph.spread,
+        color: graph.color,
+        stroke: graph.stroke,
+        nodes: graph.nodesGenerators.map((generator) => {
+          return generator.next().value;
+        }),
+        animation: {
+          enabled: true
+        }
+      };
 
-  // private refreshRandomPoints(graph: Graph): Point[] {
-  //   const nextNodes = graph.nodes.map(node => {
-  //     return this.math.randomPoint(
-  //       this.matrix,
-  //       this.config.overlap,
-  //       node,
-  //       graph.animation.shift
-  //     );
-  //   });
-
-  //   return this.calculateNodesradians({
-  //     ...graph,
-  //     nodes: nextNodes
-  //   });
-  // }
+      return this.appendNodesradians(graph);
+    });
+  }
 
   private adjustGraph(graph: Graph): Graph {
+    const randomNodes = this.generateRandomPoints();
+    const simplexNoise = this.adjustNoise();
+    const samplesList = this.adjustSamplesList(simplexNoise, randomNodes);
+    const shadowGroup = this.createShadowGroup();
+    const noisePathList = this.adjustNoisePathList(samplesList, shadowGroup);
+    const nodesGeneratorList = this.adjustNodesGeneratorList(noisePathList)
+      .sort((a: Iterator<Point>, b: Iterator<Point>) => {
+        const deltaAtoCenter = this.math.Δ(a.next().value, this.matrix.center);
+        const deltaBtoCenter = this.math.Δ(b.next().value, this.matrix.center);
+
+        return a.next().value.distanceToCenter - b.next().value.distanceToCenter;
+      }).reduceRight((acc, val, i) => {
+        return i % 2 === 0 ? [...acc, val] : [val, ...acc];
+      }, []);
+
     graph = {
       ...graph,
       start: {
@@ -214,24 +300,25 @@ export class NlsGraphsComponent implements OnChanges {
           graph.end.point,
           graph.end.vector
         )
-      }
+      },
+      nodesGenerators: nodesGeneratorList,
+      nodes: nodesGeneratorList.map((generator: Iterator<Point>) => {
+        return generator.next().value;
+      }),
     };
 
-    // const center = this.math.centerOfPoints(
-    //   graph.start.direction,
-    //   graph.end.direction
-    // );
+    return this.appendNodesradians(graph);
+  }
 
-    graph.nodes = this.generateRandomPoints();
-    graph.nodes = this.calculateNodesradians(graph);
-
-    graph.nodes = graph.nodes.slice().sort((a: Point, b: Point) => {
-      return this.math.Δ(b, graph.start.direction) - this.math.Δ(a, graph.start.direction);
-    }).reduceRight((acc, val, i) => {
-      return i % 2 === 0 ? [...acc, val] : [val, ...acc];
-    }, []);
-
-    return graph;
+  private createShadowGroup(): any {
+    return Selection
+      .select(this.canvas)
+      .append('g')
+      .attr('fill', 'none')
+      .attr('fill-opacity', 0)
+      .attr('stroke-opacity', 0)
+      .attr('stroke-width', 1)
+      .attr('stroke', '#000');
   }
 
   private generateRandomPoints(): Point[] {
@@ -245,33 +332,37 @@ export class NlsGraphsComponent implements OnChanges {
     });
   }
 
-  private calculateNodesradians(graph: Graph): Point[] {
-    return graph.nodes.map((point, i, allNodes) => {
-      let prev = allNodes[i - 1];
-      let next = allNodes[i + 1];
+  private appendNodesradians(graph: Graph): Graph {
+    return {
+      ...graph,
+      nodes: graph.nodes.map((point: Point, i, allNodes) => {
+        let prev = allNodes[i - 1];
+        let next = allNodes[i + 1];
 
-      if (i === 0) {
-        prev = graph.start.direction;
-      }
-      if (i === allNodes.length - 1) {
-        next = graph.end.direction;
-      }
-      return {
-        ...point,
-        radians: this.math.angleRadians(prev, next)
-      };
-    });
+        if (i === 0) {
+          prev = graph.start.direction;
+        }
+        if (i === allNodes.length - 1) {
+          next = graph.end.direction;
+        }
+
+        return {
+          x: point.x,
+          y: point.y,
+          radians: this.math.angleRadians(prev, next)
+        };
+      })
+    };
   }
 
   private adjustCanvas(): void {
-    this.canvasService.set(this.canvas);
     this.canvas = this.svgElementRef.nativeElement;
+    this.canvasService.set(this.canvas);
   }
 
   private calcMatrix(): void {
     const canvasWidth = this.canvas.getBoundingClientRect().width;
     const canvasHeight = this.canvas.getBoundingClientRect().height;
-    // const totalArea = Math.abs(canvasWidth * canvasHeight);
     const totalCenter = this.math.centerOfArea(canvasWidth, canvasHeight);
     const marginY = this.config.margin.y * canvasHeight;
     const marginX = this.config.margin.x * canvasWidth;
@@ -332,18 +423,6 @@ export class NlsGraphsComponent implements OnChanges {
   }
 
   public finishedRefresh(graphId: string): void {
-    // if (this.config.animation.enabled) {
-    //   const i = this.graphService.getIndexById(graphId);
-    //    if (i >= 0) {
-    //      const graph = this.graphs[i];
-
-    //      this.graphs[i] = {
-    //        ...graph,
-    //        nodes: this.refreshRandomPoints(graph)
-    //      };
-    //    }
-    // }
-
     if (this.graphsPreparedForExport) {
       this.svgChange.emit(this.svgElementRef);
     }

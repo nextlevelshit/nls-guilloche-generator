@@ -16,6 +16,8 @@
 
 import { Inject, Injectable, Renderer2, RendererFactory2 } from '@angular/core';
 import * as Selection from 'd3-selection';
+import * as Random from 'd3-random';
+import * as Array from 'd3-array';
 
 import { NlsMathService } from './math.service';
 import { Graph } from './../models/graph.model';
@@ -72,6 +74,29 @@ export class NlsGraphService {
     });
   }
 
+  public *pointsOnPath(
+    path: any,
+    ticksAverage: number = 1200,
+    clockwise: boolean = Math.random() >= 0.5,
+    start: number = Math.random()
+  ) {
+    const totalLength = path.getTotalLength();
+    // const ticks = ticksAverage;
+    const ticks = Math.floor(ticksAverage + ticksAverage * Random.randomNormal(0, 0.2)());
+    const direction = (clockwise) ? totalLength : 0;
+
+    const pointsList = Array.range(ticks).map((i) => {
+      const step = i * totalLength / ticks;
+      return path.getPointAtLength(Math.abs(direction - step));
+    });
+
+    let i = Math.floor(start * totalLength);
+
+    while (true) {
+      yield pointsList[i++ % ticks];
+    }
+  }
+
   public *spreadOrthogonal(
     start: Point,
     spacing: number,
@@ -81,11 +106,13 @@ export class NlsGraphService {
     let point = start;
     let i = 0;
 
-    radians = (radians)
+    radians = (radians || radians === 0)
       ? radians
       : (point.radians)
         ? point.radians
         : this.math.randomFloat(0, 2);
+
+        // console.log(point.radians);
 
     // radians = this.math.randomFloat(0, 2);
 

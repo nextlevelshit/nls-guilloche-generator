@@ -29,27 +29,9 @@ import { Point } from './../models/point.model';
 import { NlsMathService } from './../services/math.service';
 import { NlsGraphService } from '../services/graph.service';
 
-// const CURVE_SHAPE = Shape.curveMonotoneY;
-// const CURVE_SHAPE = Shape.curveBundle;
-// const CURVE_SHAPE = Shape.curveBundle.beta(0.9);
-// const CURVE_SHAPE = Shape.curveCardinal.tension(0);
 // const CURVE_SHAPE = Shape.curveCatmullRom;
-// const CURVE_SHAPE = Shape.curveCatmullRom.alpha(0);
-// const CURVE_SHAPE = Shape.curveBundle.beta(0.9);
-// const CURVE_SHAPE = Shape.curveStep;
-const CURVE_SHAPE = Shape.curveBasis;
-// const DEFAULT_DURATION = 1200;
-// const DEFAULT_EASE = Ease.easePolyInOut.exponent(1.2);
-// const DEFAULT_EASE = Ease.easeLinear;
-// const DEFAULT_EASE = Ease.easePolyInOut.exponent(1.6);
-// const DEFAULT_EASE = Ease.easeBackInOut.overshoot(1.4);
-// const DEFAULT_EASE = Ease.easePolyInOut.exponent(1.6);
-// const DEFAULT_EASE = Ease.easeBackInOut.overshoot(5);
-// const DEFAULT_EASE = Ease.easePolyInOut;
-// const ANIMATION_EASE = Ease.easePolyInOut.exponent(1.6);
-// const ANIMATION_EASE = Ease.easeBackInOut.overshoot(2);
-// const ANIMATION_EASE = Ease.easeBackOut.overshoot(100);
-// const ANIMATION_EASE = Ease.easeSinInOut;
+const CURVE_SHAPE = Shape.curveBundle.beta(1);
+// const CURVE_SHAPE = Shape.curveBasis;
 
 @Directive({
   selector: '[nlsGuilloche]'
@@ -62,6 +44,7 @@ export class NlsGuillocheDirective implements OnChanges, OnDestroy {
   private medianIndex: number; // generated from initialCurve
   private curveList: Point[][]; // generated from initialCurve
   private pathList: any; // generated from curveList
+  private radians: number;
 
   @Input() graph: Graph;
   @Output() refreshed = new EventEmitter();
@@ -74,36 +57,28 @@ export class NlsGuillocheDirective implements OnChanges, OnDestroy {
   }
 
   ngOnChanges(changes: SimpleChanges) {
-    this.initSVG(); // Prepare canvas and group
-    this.initInitialCurve(); // Generate curve from graph
+    this.initGroup(); // Prepare canvas and group
+    this.initCurve(); // Generate curve from graph
     this.calculateMedian(); // Calculate median of graph
-    this.spreadInitialCurve(); // Spread generated curve to many
-    // this.initPaths(); // Render SVG paths
+    this.spreadCurve(); // Spread generated curve to many
 
     if (this.graph.animation.enabled) {
-      const currentSpread = changes.graph.currentValue.spread;
-      const previousSpread = changes.graph.previousValue.spread;
-
-      if (currentSpread !== previousSpread) {
-        this.initPaths();
-      } else {
-        this.refreshPaths();
-      }
-     } else {
+      this.refreshPaths();
+    } else {
       this.initPaths();
     }
   }
 
   ngOnDestroy() {
-    this.clearSVG();
+    this.clearCanvas();
   }
 
   private initPaths(): void {
-    this.clearSVG();
+    this.clearCanvas();
     this.appendPaths();
   }
 
-  private clearSVG(): void {
+  private clearCanvas(): void {
     this.group.selectAll('*').remove();
     this.pathList = [];
   }
@@ -117,14 +92,16 @@ export class NlsGuillocheDirective implements OnChanges, OnDestroy {
    * Clean up existing groups, paths and points.
    * Specify where to append the generated curves.
    */
-  private initSVG(): void {
-    // init SVG
-    this.group = Selection.select(this.el.nativeElement);
-    // Set configuration of handed in graph
-    this.group
-      .attr('stroke', this.graph.color)
-      .attr('stroke-width', this.graph.stroke)
-      .attr('fill', 'none');
+  private initGroup(): void {
+    if (!this.group) {
+      // init SVG
+      this.group = Selection.select(this.el.nativeElement);
+      // Set configuration of handed in graph
+      this.group
+        .attr('stroke', this.graph.color)
+        .attr('stroke-width', this.graph.stroke)
+        .attr('fill', 'none');
+    }
   }
 
   /**
@@ -133,7 +110,7 @@ export class NlsGuillocheDirective implements OnChanges, OnDestroy {
    * the median point and index for later usage to spread
    * curves on the axis of medians' radians.
    */
-  private initInitialCurve(): void {
+  private initCurve(): void {
     this.initialCurve = this.graphService.getCurve(this.graph);
   }
 
@@ -147,8 +124,7 @@ export class NlsGuillocheDirective implements OnChanges, OnDestroy {
    * radians by specific amount of times. Amount of spreaded
    * curves can be set inside graph parameters.
    */
-  private spreadInitialCurve(): void {
-    const spreadCurveList = [];
+  private spreadCurve(): void {
     const medians = [];
     const preMedians = [];
     const postMedians = [];
@@ -160,11 +136,11 @@ export class NlsGuillocheDirective implements OnChanges, OnDestroy {
 
     const shiftPreMedian = this.graphService.spreadOrthogonal(
       this.initialCurve[this.medianIndex - 1],
-      this.graph.spread.spacing * 0.5
+      this.graph.spread.spacing * 0.8
     );
     const shiftPostMedian = this.graphService.spreadOrthogonal(
       this.initialCurve[this.medianIndex + 1],
-      this.graph.spread.spacing * 0.5
+      this.graph.spread.spacing * 0.8
     );
 
     for (let i = 0; i < this.graph.spread.amount; i++) {
@@ -214,22 +190,13 @@ export class NlsGuillocheDirective implements OnChanges, OnDestroy {
    * Update existing paths with transition
    */
   private refreshPaths(): void {
-    /*const transitionFinished = this.transitionFinished();
-    const duration = (this.graph.animation.enabled)
-      ? this.graph.animation.interval
-      : 0;
-    const ease = DEFAULT_EASE;*/
-
-    this.pathList.forEach((path, i) => {
-      path
+    this.curveList.forEach((curve, i) => {
+      this.pathList[this.curveList.length - i - 1]
         .attr('d', Shape.line()
           .x(p => p.x)
           .y(p => p.y)
-          .curve(CURVE_SHAPE)(this.curveList[i])
+          .curve(CURVE_SHAPE)(curve)
         );
-        // .on('end', () => {
-        //   transitionFinished.next();
-        // });
     });
   }
 

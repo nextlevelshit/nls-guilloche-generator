@@ -43,17 +43,15 @@ export const environment = {
     nodes: 4,
     stroke: 0.6,
     spread: {
-      amount: 30,
-      spacing: 20
+      amount: 20,
+      spacing: 14
     },
     animation: {
-      enabled: false,
-      shift: 50,
-      interval: 7000,
+      enabled: true,
       radius: 0.3,
       amplitude: 0.6,
       frequency: 15,
-      ticksTotal: 1250
+      ticksTotal: 2000
     }
   }
 };

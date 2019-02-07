@@ -54,6 +54,7 @@
     "ngx-moment": "^3.1.0",
     "open-simplex-noise": "^1.5.0",
     "rxjs": "6.0.0",
+    "tooloud": "^2.0.4",
     "zone.js": "^0.8.26"
   },
   "devDependencies": {
