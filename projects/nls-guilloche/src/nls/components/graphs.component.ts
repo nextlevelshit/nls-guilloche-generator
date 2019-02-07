@@ -25,14 +25,12 @@ import tooloud from 'tooloud';
 import { Matrix } from './../models/matrix.model';
 import { Graph } from './../models/graph.model';
 import { Config } from './../models/config.model';
-import { ConfigForm } from './../../../../../src/app/forms/config.form';
 import { Point } from './../models/point.model';
 import { NlsCanvasService } from './../services/canvas.service';
 import { NlsHistoryService } from './../services/history.service';
 import { NlsMathService } from './../services/math.service';
 import { NlsGuillocheDirective } from './../directives/guilloche.directive';
 import { NlsGraphService } from './../services/graph.service';
-import { isAbsolute } from 'path';
 
 const RESIZING_TIMEOUT = 800;
 const { Simplex } = tooloud;

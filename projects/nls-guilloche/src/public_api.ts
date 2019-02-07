@@ -7,7 +7,7 @@ export * from './nls/directives/guilloche.directive';
 export * from './nls/models/config.model';
 export * from './nls/models/graph.model';
 export * from './nls/models/point.model';
-export * from './nls/services/animation.service';
+export * from './nls/models/matrix.model';
 export * from './nls/services/canvas.service';
 export * from './nls/services/graph.service';
 export * from './nls/services/history.service';
