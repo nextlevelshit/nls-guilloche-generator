@@ -56,7 +56,7 @@ export class NlsGraphsComponent implements OnChanges {
   @Input() config: Config;
   @Input() restoredHistory: any;
   @Output() svgChange = new EventEmitter();
-  @Output() graphChange = new EventEmitter();
+  // @Output() graphChange = new EventEmitter();
   @ViewChild('svg') svgElementRef;
 
   // @HostListener('window:resize', ['$event'])
@@ -109,27 +109,6 @@ export class NlsGraphsComponent implements OnChanges {
           this.createGraphs();
         }
       }
-
-
-
-      // if (this.graphs && this.config.animation.enabled) {
-      //   this.updateGraphs();
-      // } else {
-      //   if (changes.config.firstChange) {
-      //     this.createGraphs();
-      //   } else {
-      //     const currentConfig = changes.config.currentValue.animation;
-      //     const previousConfig = changes.config.previousValue.animation;
-
-      //     if (
-      //       previousConfig.interval === currentConfig.interval
-      //       && previousConfig.enabled === currentConfig.enabled
-      //       && previousConfig.shift === currentConfig.shift
-      //     ) {
-      //       this.createGraphs();
-      //     }
-      //   }
-      // }
       this.saveGraphs();
     }
   }
@@ -141,6 +120,17 @@ export class NlsGraphsComponent implements OnChanges {
   private restoreGraphs() {
     this.graphs = this.restoredHistory.graphs;
     this.config = this.restoredHistory.config;
+    this.renderedGraphs = this.graphs.map(graph => {
+      return {
+        start: graph.start,
+        end: graph.end,
+        spread: graph.spread,
+        color: graph.color,
+        stroke: graph.stroke,
+        nodes: graph.nodes,
+        animation: graph.animation
+      };
+    });
   }
 
   private saveGraphs() {

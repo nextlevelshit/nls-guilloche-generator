@@ -72,7 +72,7 @@ export let ConfigForm: FormGroup = fb.group({
     amount: fb.control('', Validators.min(1)),
     spacing: fb.control('', Validators.compose([
       Validators.min(0),
-      Validators.max(50)
+      Validators.max(200)
     ])),
   }),
   animation: fb.group({

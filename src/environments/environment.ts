@@ -47,7 +47,7 @@ export const environment = {
       spacing: 14
     },
     animation: {
-      enabled: true,
+      enabled: false,
       radius: 0.3,
       amplitude: 0.6,
       frequency: 15,
