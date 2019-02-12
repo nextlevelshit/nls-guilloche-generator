@@ -233,10 +233,6 @@ export class NlsGraphsComponent implements OnChanges {
     });
   }
 
-  private get animationShift(): number {
-    return this.config.animation.shift * this.matrix.unit;
-  }
-
   private updateGraphs(): void {
     this.renderedGraphs = this.graphs.map(graph => {
       graph = {
@@ -253,7 +249,7 @@ export class NlsGraphsComponent implements OnChanges {
         }
       };
 
-      return this.appendNodesradians(graph);
+      return this.appendNodesRadians(graph);
     });
   }
 
@@ -272,6 +268,8 @@ export class NlsGraphsComponent implements OnChanges {
       }).reduceRight((acc, val, i) => {
         return i % 2 === 0 ? [...acc, val] : [val, ...acc];
       }, []);
+
+    shadowGroup.remove();
 
     graph = {
       ...graph,
@@ -295,7 +293,7 @@ export class NlsGraphsComponent implements OnChanges {
       }),
     };
 
-    return this.appendNodesradians(graph);
+    return this.appendNodesRadians(graph);
   }
 
   private createShadowGroup(): any {
@@ -320,7 +318,7 @@ export class NlsGraphsComponent implements OnChanges {
     });
   }
 
-  private appendNodesradians(graph: Graph): Graph {
+  private appendNodesRadians(graph: Graph): Graph {
     return {
       ...graph,
       nodes: graph.nodes.map((point: Point, i, allNodes) => {
@@ -410,10 +408,22 @@ export class NlsGraphsComponent implements OnChanges {
     }
   }
 
-  public finishedRefresh(graphId: string): void {
-    if (this.graphsPreparedForExport) {
-      this.svgChange.emit(this.svgElementRef);
+  private *allGraphsLoaded() {
+    let cycles = 1;
+
+    while (true) {
+      if (cycles % this.graphs.length === 0) {
+        yield true;
+      } else {
+        yield false;
+      }
+      cycles++;
     }
+  }
+
+
+  private get animationShift(): number {
+    return this.config.animation.shift * this.matrix.unit;
   }
 
   private *shiftNumber(
@@ -430,16 +440,10 @@ export class NlsGraphsComponent implements OnChanges {
       index++;
     }
   }
-  private *allGraphsLoaded() {
-    let cycles = 1;
 
-    while (true) {
-      if (cycles % this.graphs.length === 0) {
-        yield true;
-      } else {
-        yield false;
-      }
-      cycles++;
+  public finishedRefresh(graphId: string): void {
+    if (this.graphsPreparedForExport) {
+      this.svgChange.emit(this.svgElementRef);
     }
   }
 }
