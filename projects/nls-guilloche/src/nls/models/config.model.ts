@@ -15,6 +15,10 @@
  */
 
 export interface Config {
+  canvas?: {
+    width?: number;
+    height?: number;
+  };
   margin: {
     x: number;
     y: number;

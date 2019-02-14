@@ -71,6 +71,8 @@ export class NlsGraphsComponent implements OnChanges {
     this.adjustCanvas();
     this.calcMatrix();
 
+    console.log(this.config);
+
     if ('restoredHistory' in changes
       && !changes.restoredHistory.firstChange
     ) {
@@ -336,8 +338,12 @@ export class NlsGraphsComponent implements OnChanges {
   }
 
   private calcMatrix(): void {
-    const canvasWidth = this.canvas.getBoundingClientRect().width;
-    const canvasHeight = this.canvas.getBoundingClientRect().height;
+    const canvasWidth = this.config.canvas.width
+      ? this.config.canvas.width
+      : this.canvas.getBoundingClientRect().width;
+    const canvasHeight = this.config.canvas.height
+      ? this.config.canvas.height
+      : this.canvas.getBoundingClientRect().height;
     const totalCenter = this.math.centerOfArea(canvasWidth, canvasHeight);
     const marginY = this.config.margin.y;
     const marginX = this.config.margin.x;

@@ -20,6 +20,9 @@ import { Component, OnInit, HostListener, ViewChild, ElementRef } from '@angular
 import { FormGroup } from '@angular/forms';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import * as moment from 'moment';
+import * as Zoom from 'd3-zoom';
+import * as Selection from 'd3-selection';
+import { event as CurrentEvent } from 'd3';
 import 'moment/min/locales';
 import { CanvasPresets } from './presets/canvas.preset';
 
@@ -68,7 +71,7 @@ export class AppComponent implements OnInit {
       canvas: CanvasPresets
     };
     this.list = [];
-    this.showList = false;
+    this.showList = true;
     this.isFullscreen = false;
   }
 
@@ -117,9 +120,27 @@ export class AppComponent implements OnInit {
   private resetCanvas(): void {
     const dimensions = this.configForm.value.canvas;
     const canvasEl = this.canvasRef.nativeElement;
+    const containerEl = this.containerRef.nativeElement;
 
     canvasEl.style.width = dimensions.width + 'px';
     canvasEl.style.height = dimensions.height + 'px';
+
+    Selection
+      .select(containerEl)
+      .call(Zoom.zoom()
+        .scaleExtent([1 / 2, 4])
+        // arrow function does not work, because
+        // 'this' would be part of the class scope
+        // and not the HTML element scope anymore
+        .on('zoom', function() {
+          const transform = CurrentEvent.transform;
+
+          Selection.select(canvasEl).style(
+            'transform',
+            `scale(${transform.k})`
+          );
+        })
+      );
   }
 
   private refreshHistory(): void {

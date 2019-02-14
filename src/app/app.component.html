@@ -1,5 +1,5 @@
 <div>
-  <div class="canvas col-sm-8 col-lg-9 col-xl-9" (click)="updateGraphs()" #containerRef>
+  <div class="canvas col-sm-8 col-lg-9 col-xl-9" #containerRef>
     <div class="canvas-inner" #canvasRef>
       <nls-graphs [config]="config" [restoredHistory]="restoredHistory" (svgChange)="prepareSvgExport($event)" *ngIf="config"></nls-graphs>
     </div>
