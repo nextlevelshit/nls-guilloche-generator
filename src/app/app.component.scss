@@ -28,11 +28,9 @@
   background: $gray-200;
 
   &-inner {
-    $this-width: 30vw;
-
     position: relative;
-    height: 1.41 * $this-width;
-    width: $this-width;
+    height: 482px;
+    width: 284px;
     background: $white;
     box-shadow: 0 0.2rem 1rem $gray-500;
     // transition: all 200ms;

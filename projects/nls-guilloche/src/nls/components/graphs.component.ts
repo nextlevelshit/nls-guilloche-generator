@@ -56,19 +56,7 @@ export class NlsGraphsComponent implements OnChanges {
   @Input() config: Config;
   @Input() restoredHistory: any;
   @Output() svgChange = new EventEmitter();
-  // @Output() graphChange = new EventEmitter();
   @ViewChild('svg') svgElementRef;
-
-  // @HostListener('window:resize', ['$event'])
-  // onResize(event) {
-  //   clearTimeout(this.resizingWindow);
-
-  //   this.resizingWindow = setTimeout(() => {
-  //     this.adjustCanvas();
-  //     this.calcMatrix();
-  //     this.updateGraphs();
-  //   }, RESIZING_TIMEOUT);
-  // }
 
   constructor(
     private canvasService: NlsCanvasService,
@@ -165,6 +153,7 @@ export class NlsGraphsComponent implements OnChanges {
         id: this.historyService.hash(graph),
         spread: this.config.spread,
         debug: this.config.debug,
+        stroke: this.config.stroke,
         animation: {
           enabled: false
         }
@@ -350,8 +339,8 @@ export class NlsGraphsComponent implements OnChanges {
     const canvasWidth = this.canvas.getBoundingClientRect().width;
     const canvasHeight = this.canvas.getBoundingClientRect().height;
     const totalCenter = this.math.centerOfArea(canvasWidth, canvasHeight);
-    const marginY = this.config.margin.y * canvasHeight;
-    const marginX = this.config.margin.x * canvasWidth;
+    const marginY = this.config.margin.y;
+    const marginX = this.config.margin.x;
     const lineSpacing = this.config.vectors.spacing;
     const vectorStart = this.config.vectors.start;
     const vectorEnd = this.config.vectors.end;

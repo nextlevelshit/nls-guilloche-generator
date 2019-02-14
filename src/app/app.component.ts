@@ -26,10 +26,6 @@ import { CanvasPresets } from './presets/canvas.preset';
 import { environment as env } from '../environments/environment';
 import { NlsHistoryService } from 'projects/nls-guilloche/src/public_api';
 
-export enum KEY_CODE {
-  ESCAPE = 27
-}
-
 export enum CANVAS {
   MARGIN = 100,
   TIMEOUT = 400
@@ -46,7 +42,6 @@ export enum DELAY {
 })
 export class AppComponent implements OnInit {
 
-  private resizingWindow: any;
   private inputDelay: any;
 
   public config: any | null;
@@ -61,23 +56,6 @@ export class AppComponent implements OnInit {
 
   @ViewChild('canvasRef', { read: ElementRef }) canvasRef: ElementRef;
   @ViewChild('containerRef', { read: ElementRef }) containerRef: ElementRef;
-
-  @HostListener('window:keyup', ['$event'])
-  keyEvent(event: KeyboardEvent) {
-    if (event.keyCode === KEY_CODE.ESCAPE) {
-      this.disableFullscreen();
-    }
-  }
-
-  @HostListener('window:resize', ['$event'])
-  onResize(event) {
-    clearTimeout(this.resizingWindow);
-
-    this.resizingWindow = setTimeout(() => {
-      this.resetCanvas();
-      this.updateGraphs();
-    }, CANVAS.TIMEOUT);
-  }
 
   constructor(
     private historyService: NlsHistoryService,
@@ -138,43 +116,10 @@ export class AppComponent implements OnInit {
 
   private resetCanvas(): void {
     const dimensions = this.configForm.value.canvas;
-    const container = {
-      el: this.containerRef.nativeElement,
-      width: this.containerRef.nativeElement.clientWidth,
-      height: this.containerRef.nativeElement.clientHeight,
-      aspectRatio: function() {
-        return this.width / this.height;
-      }
-    };
-    const canvas = {
-      el: this.canvasRef.nativeElement,
-      width: dimensions.width,
-      height: dimensions.height,
-      aspectRatio: function() {
-        return this.width / this.height;
-      }
-    };
-    let unit = 1;
+    const canvasEl = this.canvasRef.nativeElement;
 
-    if (container.aspectRatio() > canvas.aspectRatio()) {
-      // fit canvas by height to conainter
-      unit = container.height / canvas.height;
-    } else {
-      // fit canvas by width to container
-      unit = container.width / canvas.width;
-    }
-
-    canvas.el.style.width =
-      canvas.width *
-      unit -
-      CANVAS.MARGIN +
-      'px';
-
-    canvas.el.style.height =
-      canvas.height *
-      unit -
-      CANVAS.MARGIN +
-      'px';
+    canvasEl.style.width = dimensions.width + 'px';
+    canvasEl.style.height = dimensions.height + 'px';
   }
 
   private refreshHistory(): void {

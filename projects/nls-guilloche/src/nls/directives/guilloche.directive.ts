@@ -57,6 +57,8 @@ export class NlsGuillocheDirective implements OnChanges, OnDestroy {
   }
 
   ngOnChanges(changes: SimpleChanges) {
+    console.log(this.graph);
+
     this.initGroup(); // Prepare canvas and group
     this.initCurve(); // Generate curve from graph
     this.calculateMedian(); // Calculate median of graph

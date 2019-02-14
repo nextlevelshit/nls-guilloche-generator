@@ -26,32 +26,32 @@ export const environment = {
     },
     debug: false,
     canvas: {
-      width: 1,
-      height: 1.41,
+      width: 284,
+      height: 482
     },
     margin: {
-      x: 0.0282,
-      y: 0.02
+      x: 28,
+      y: 272
     },
-    overlap: 0.6,
+    overlap: 0.4,
     vectors: {
       start: 0.5,
       end: 0,
-      tension: 0.6,
-      spacing: 5
+      tension: 0.1,
+      spacing: 4
     },
     nodes: 4,
-    stroke: 0.6,
+    stroke: 0.7,
     spread: {
-      amount: 20,
+      amount: 13,
       spacing: 14
     },
     animation: {
       enabled: false,
-      radius: 0.3,
+      radius: 0.5,
       amplitude: 0.6,
       frequency: 15,
-      ticksTotal: 2000
+      ticksTotal: 10
     }
   }
 };
