@@ -111,7 +111,7 @@ The author of this software is Michael Czechowski, web developer based in Stuttg
 ## Contributors
 
 - [Michael Czechowski](//github.com/nextlevelshit) (<mail@dailysh.it>)
-- Erik Kimsey
+- [Erik Kimsey](//github.com/ErikKimsey)
 - [Martin Maga](//github.com/qualiacode)
 
 ## License
