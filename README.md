@@ -15,6 +15,8 @@
 
 ---
 
+> DEPRECATED: This version of the guilloche generator is not anymore maintained. Feel free do use it, but with caution. This package has been replaced by [spline-generator](//github.com/nextlevelshit/spline-generator)
+
 # Getting started
 
 ## 1) Add dependency to your project
@@ -113,9 +115,9 @@ The author of this software is Michael Czechowski, web developer based in Stuttg
 
 ## Contributors
 
-- Michael Czechowski (<mail@dailysh.it>)
+- [Michael Czechowski](//github.com/nextlevelshit) (<mail@dailysh.it>)
 - Erik Kimsey
-- Martin Maga
+- [Martin Maga](//github.com/qualiacode)
 
 ## License
 
