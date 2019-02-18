@@ -2,9 +2,6 @@
   <img src="https://user-images.githubusercontent.com/10194510/44956832-63746780-aeca-11e8-85a4-09fa8138e659.png" alt="Random Guilloche Generator" height="300" />
 </div>
 
-
----
-
 <h1 align="center"><strong>Random Guilloche Generator</strong></h1>
 
 <div align="center">
@@ -12,8 +9,6 @@
     <img src="https://badgen.now.sh/npm/v/nls-guilloche" alt="version" />
   </a>
 </div>
-
----
 
 > DEPRECATED: This version of the guilloche generator is not anymore maintained. Feel free do use it, but with caution. This package has been replaced by [spline-generator](//github.com/nextlevelshit/spline-generator)
 
