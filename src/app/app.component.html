@@ -8,10 +8,10 @@
   <aside class="col-sm-4 col-lg-3 col-xl-3">
     <div class="aside-inner">
 
-      <!-- <h5>Zeichenfläche</h5>
+      <h5>Zeichenfläche</h5>
       <hr>
 
-      <form [formGroup]="presetForm" novalidate>
+      <!-- <form [formGroup]="presetForm" novalidate>
         <fieldset [disabled]="animationEnabled">
           <div class="form-group" *ngIf="presets.canvas">
             <label class="form-control-label">
@@ -29,7 +29,7 @@
       <form [formGroup]="configForm" (ngSubmit)="updateGraphs()" novalidate>
         <fieldset [disabled]="animationEnabled">
 
-          <!-- <div class="pb-5">
+          <div class="pb-5">
             <div class="row">
               <div class="col-md-6">
                 <div class="form-group">
@@ -38,7 +38,7 @@
                     <label class="form-control-label">
                       Breite:
                     </label>
-                    <input type="number" class="form-control" formControlName="width" min="1" step="0.01"/>
+                    <input type="number" class="form-control" formControlName="width" min="1" step="1"/>
                   </ng-container>
 
                 </div>
@@ -50,7 +50,7 @@
                     <label class="form-control-label">
                       Rand horizontal:
                     </label>
-                    <input type="number" class="form-control" min="0" max="1" step="0.01" formControlName="x">
+                    <input type="number" class="form-control" min="0" step="1" formControlName="x">
                   </ng-container>
 
                 </div>
@@ -65,7 +65,7 @@
                     <label class="form-control-label">
                       Höhe:
                     </label>
-                    <input type="number" class="form-control" formControlName="height" min="1" step="0.01"/>
+                    <input type="number" class="form-control" formControlName="height" min="1" step="1"/>
                   </ng-container>
 
                 </div>
@@ -77,15 +77,15 @@
                     <label class="form-control-label">
                       Rand vertikal:
                     </label>
-                    <input type="number" class="form-control" min="0" max="1" step="0.01" formControlName="y">
+                    <input type="number" class="form-control" min="0" step="1" formControlName="y">
                   </ng-container>
 
                 </div>
               </div>
             </div>
-          </div> -->
+          </div>
 
-          <!-- <div class="pb-5">
+          <div class="pb-5">
             <h5>Ausgangspunkte</h5>
             <hr>
             <ng-container formGroupName="vectors">
@@ -123,7 +123,7 @@
                 <input type="range" class="custom-range" formControlName="spacing" min="0" max="100" step="0.1">
               </div>
             </ng-container>
-          </div> -->
+          </div>
 
           <div class="pb-5">
             <h5>Graph</h5>
@@ -139,7 +139,7 @@
               <label class="form-control-label">
                 Windungen: {{ configForm.value.nodes }}
               </label>
-              <input type="range" class="custom-range" formControlName="nodes" min="2" max="4">
+              <input type="range" class="custom-range" formControlName="nodes" min="2" max="8">
             </div>
 
             <!-- <div class="form-group">
@@ -150,17 +150,17 @@
             </div> -->
 
             <ng-container formGroupName="spread">
-              <!-- <div class="form-group mb-4">
+              <div class="form-group mb-4">
                 <label class="form-control-label">
                   Linienanzahl:  {{ configForm.value.spread.amount }}
                 </label>
                 <input type="range" class="custom-range" min="1" formControlName="amount">
-              </div> -->
+              </div>
               <div class="form-group mb-4">
                 <label class="form-control-label">
                   Linienabstände: {{ configForm.value.spread.spacing }}
                 </label>
-                <input type="range" class="custom-range" formControlName="spacing" min="0" max="200">
+                <input type="range" class="custom-range" formControlName="spacing" min="0" max="30">
               </div>
             </ng-container>
           </div>
@@ -189,7 +189,7 @@
           </ng-container> -->
         </fieldset>
 
-        <!-- <div class="form-group d-flex flex-colmn justify-content-between align-items-center mb-4">
+        <!-- <div class="form-group d-flex flex-column justify-content-between align-items-center mb-4">
           <div class="custom-control custom-checkbox" formGroupName="animation">
             <input type="checkbox" class="custom-control-input" id="animationEnabled" formControlName="enabled">
             <label class="custom-control-label" for="animationEnabled">
@@ -198,7 +198,7 @@
           </div>
         </div> -->
 
-        <!-- <div class="form-group d-flex flex-colmn justify-content-between align-items-center mb-4">
+        <!-- <div class="form-group d-flex flex-column justify-content-between align-items-center mb-4">
           <label class="form-control-label">
             Vollbild
           </label>
